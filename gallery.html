@@ -397,6 +397,60 @@
     font-size: 15.5px;
     margin: 0 0 16px;
   }
+  .gallery-heading {
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 500;
+    font-size: 26px;
+    margin: 96px 0 24px;
+  }
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 14px;
+  }
+  .grid-photo {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 4px;
+    cursor: pointer;
+    background: linear-gradient(155deg, var(--stone) 0%, var(--line) 100%);
+  }
+  .grid-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+  .grid-photo:hover img {
+    transform: scale(1.04);
+    opacity: 0.9;
+  }
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10,9,8,0.88);
+    cursor: pointer;
+    padding: 24px;
+  }
+  .lightbox.open { display: flex; }
+  .lightbox-photo {
+    max-width: min(90vw, 1100px);
+    max-height: 88vh;
+    cursor: default;
+  }
+  .lightbox-photo img {
+    max-width: 100%;
+    max-height: 88vh;
+    display: block;
+    border-radius: 4px;
+  }
+
   .involved {
     text-align: center;
     max-width: 620px;
@@ -537,12 +591,40 @@
       </div>
     </div>
 
+    <h2 class="gallery-heading">Silk, thread &amp; warp</h2>
+    <div class="photo-grid" id="photoGrid">
+      <div class="grid-photo" data-photo-label="Silk, colors"><img src="pics/silk-colors.jpg" alt="Silk, colors" loading="lazy"></div>
+      <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin1.jpg" alt="Silk on mannequin" loading="lazy"></div>
+      <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin2.jpg" alt="Silk on mannequin" loading="lazy"></div>
+      <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin3.jpg" alt="Silk on mannequin" loading="lazy"></div>
+      <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin4.jpg" alt="Silk on mannequin" loading="lazy"></div>
+      <div class="grid-photo" data-photo-label="Silk, modeled"><img src="pics/silk-model1.jpg" alt="Silk, modeled" loading="lazy"></div>
+      <div class="grid-photo" data-photo-label="Silk, modeled"><img src="pics/silk-model2.jpg" alt="Silk, modeled" loading="lazy"></div>
+      <div class="grid-photo" data-photo-label="Silk, modeled"><img src="pics/silk-model3.jpg" alt="Silk, modeled" loading="lazy"></div>
+      <div class="grid-photo" data-photo-label="Silk, worn"><img src="pics/silk-people.jpg" alt="Silk, worn" loading="lazy"></div>
+      <div class="grid-photo" data-photo-label="Silk, worn"><img src="pics/silk-people1.jpg" alt="Silk, worn" loading="lazy"></div>
+      <div class="grid-photo" data-photo-label="Silk"><img src="pics/silk1.jpg" alt="Silk" loading="lazy"></div>
+      <div class="grid-photo" data-photo-label="Silk"><img src="pics/silk2.jpg" alt="Silk" loading="lazy"></div>
+      <div class="grid-photo" data-photo-label="Thread"><img src="pics/thread1.jpg" alt="Thread" loading="lazy"></div>
+      <div class="grid-photo" data-photo-label="Warp, boat shuttle"><img src="pics/warp-boat.jpg" alt="Warp, boat shuttle" loading="lazy"></div>
+      <div class="grid-photo" data-photo-label="Warp, colors"><img src="pics/warp-colors.jpg" alt="Warp, colors" loading="lazy"></div>
+      <div class="grid-photo" data-photo-label="Warp, side view"><img src="pics/warp-side.jpg" alt="Warp, side view" loading="lazy"></div>
+      <div class="grid-photo" data-photo-label="Warp strings"><img src="pics/warp-strings.png" alt="Warp strings" loading="lazy"></div>
+      <div class="grid-photo" data-photo-label="Warp, upright"><img src="pics/warp-up.jpg" alt="Warp, upright" loading="lazy"></div>
+      <div class="grid-photo" data-photo-label="Warp"><img src="pics/warp1.jpg" alt="Warp" loading="lazy"></div>
+      <div class="grid-photo" data-photo-label="Warp"><img src="pics/warp2.jpg" alt="Warp" loading="lazy"></div>
+    </div>
+
     <div class="involved">
       <h3>Get involved</h3>
       <p>Interested in planning an event here, displaying your art on our walls, or sharing the space in some other way? We'd love to hear from you — reach out and let's talk about what's possible.</p>
       <a href="mailto:hello@interwoven.example" class="btn-link">Contact us</a>
     </div>
   </main>
+
+  <div class="lightbox" id="lightbox">
+    <div class="lightbox-photo" id="lightboxPhoto"></div>
+  </div>
   <footer class="site-footer">
     <div class="footer-weave" id="footerWeave"></div>
     <div class="footer-social">
@@ -589,6 +671,25 @@
     window.addEventListener('scroll', () => {
       nav.classList.toggle('scrolled', window.scrollY > 40);
     }, { passive: true });
+
+    // Lightbox: click any grid photo to see it larger, click anywhere
+    // outside the enlarged photo to close it
+    const lightbox = document.getElementById('lightbox');
+    const lightboxPhoto = document.getElementById('lightboxPhoto');
+    document.querySelectorAll('.grid-photo').forEach(photo => {
+      photo.addEventListener('click', () => {
+        const img = photo.querySelector('img');
+        lightboxPhoto.innerHTML = '';
+        const full = document.createElement('img');
+        full.src = img.src;
+        full.alt = photo.dataset.photoLabel || img.alt;
+        lightboxPhoto.appendChild(full);
+        lightbox.classList.add('open');
+      });
+    });
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) lightbox.classList.remove('open');
+    });
   </script>
 </body>
 </html>
