@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<<<<<<< HEAD
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interwoven</title>
@@ -503,3 +504,1152 @@
   
 </body>
 </html>
+=======
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interwoven — A Museum of Light and Object</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600&family=Work+Sans:wght@300;400;500&family=Tangerine:wght@400;700&display=swap');
+
+  :root {
+    --ink: #1a1816;
+    --ivory: #f6f2ea;
+    /* ---------- PALETTE ----------
+       The three leaves in the Interwoven mark, sampled straight from the logo
+       art (the RMF mark uses the same three). These are the source of truth. */
+    --leaf-red:    #ed1a24;
+    --leaf-yellow: #fef100;
+    --leaf-blue:   #2e3093;
+
+    /* Role tokens, tuned per theme for legibility on the ivory paper. The raw
+       yellow only manages 1.06:1 against ivory, so the warm accent is that
+       same yellow carried toward the ink until it clears 4.5:1; the red needs
+       a small nudge. The blue already sits at 9.6:1, so it's used as-is. */
+    --burgundy: #da1a23;   /* leaf red,    4.53:1 on ivory */
+    --gold:     #77710d;   /* leaf yellow, 4.52:1 on ivory */
+    --indigo:   #2e3093;   /* leaf blue,   9.59:1 on ivory */
+    --stone:    #8a857c;   /* warm neutral for placeholder fills */
+    --line: rgba(26,24,22,0.12);
+    --ff-display: "Fraunces", Georgia, serif;
+    --ff-body: "Work Sans", -apple-system, sans-serif;
+    --ff-script: "Tangerine", "Allura", cursive;
+    --nav-h: 84px;
+    --footer-h: 56px;
+
+    /* Logo size drives the underline. The wordmark art is 400x133 with a 10px
+       stroke; the weave art is 400x69 with the same 10px stroke. So rendering
+       the weave at logo-height x 69/133 (0.5188) makes the two strokes land on
+       exactly the same thickness -- shrink the logo and the line follows. */
+    --logo-h: 60px;
+    --nav-pad: 48px;
+    --weave-h: calc(var(--logo-h) * 0.5188);
+
+    --bg: var(--ivory);
+    --text: var(--ink);
+    --text-muted: #4a4640;
+    --label-color: #000000;
+  }
+
+  body.dark {
+    --bg: #14120f;
+    --text: #ece7db;
+    --text-muted: #b8b2a4;
+    --line: rgba(236,231,220,0.12);
+    /* Same three leaves, re-tuned against the dark paper: the blue is
+       unreadable at 1.75:1 down here so it lifts toward ivory, and the raw
+       yellow is glaring at 15.8:1 so it drops back toward the background. */
+    --burgundy: #ee2d36;   /* 4.51:1 on dark */
+    --gold:     #c4b904;   /* 9.17:1 on dark */
+    --indigo:   #7878b3;   /* 4.56:1 on dark */
+    --stone:    #615d56;
+    --label-color: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    font-family: var(--ff-body);
+    color: var(--text);
+    background: var(--bg);
+    font-weight: 300;
+    transition: background 0.4s ease, color 0.4s ease;
+  }
+
+  .scroll-container {
+    display: flex;
+    margin-top: var(--nav-h);
+    height: calc(100vh - var(--nav-h) - var(--footer-h));
+    height: calc(100svh - var(--nav-h) - var(--footer-h));
+    width: 100vw;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .panel {
+    flex: 0 0 100vw;
+    width: 100vw;
+    height: 100%;
+    overflow-y: auto;
+  }
+
+  /* Heart/Food/Fabric/Gallery get a touch of extra scroll room */
+  .panel-wide {
+    flex: 0 0 105vw;
+    width: 105vw;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* ---------- NAVBAR ---------- */
+
+  .navbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    height: var(--nav-h);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--nav-pad);
+    background: var(--bg);
+    transition: background 0.4s ease;
+  }
+
+  /* ---------- NAVBAR UNDERLINE ----------
+     Three pieces, all cut from your one 400x69 stroke, rendered 31px tall so the
+     line's vertical weight matches the underline baked into the INterwoven
+     wordmark (both land on a ~4.5px stroke).
+
+       ::before  START CAP -- the stroke mirrored vertically, so its longer curl
+                 (the one that used to hang below on the left) now rises on top
+                 and hooks up into the wordmark's lower flare. Cropped at x=367,
+                 where the stroke is still dead flat, so it hands off cleanly.
+                 Nudged up 0.9px: flipping moves the flat run 2 source-px down,
+                 and this puts it back on the same baseline as the tiles.
+
+       ::after   THE CHAIN -- starts immediately after the cap and runs right, so
+                 nothing spills off the left edge of the screen. Two layers:
+                 the 300px flare tile (stroke pre-overlapped by 100px) on top for
+                 the hand-drawn flares, all in the original orientation; and a
+                 140px crop of the pure flat middle (source x=110..250) beneath,
+                 which fills the small pen-lift gaps at every seam so the
+                 horizontal line reads as one continuous stroke.
+
+     --weave-start slides the whole assembly sideways to meet the logo. */
+  .navbar-weave {
+    /* Every length below is derived from --weave-h, so the whole assembly
+       rescales with the logo and stays touching it at any breakpoint.
+       Ratios come straight from the source art (400x69):
+         cap   367/69 = 5.3188   flare tile 300/69 = 4.3478
+         flat  140/69 = 2.0290   flip nudge   2/69 = 0.0290
+       --weave-start puts the cap's up-tip under the wordmark's flare tip
+       (source x 7.76 of a 400x133 art), and bottom lifts it so they meet. */
+    --cap-w: calc(var(--weave-h) * 5.3188);
+    --tile-w: calc(var(--weave-h) * 4.3478);
+    --weave-start: calc(var(--nav-pad) + var(--logo-h) * 0.0584 - var(--weave-h) * 0.1159);
+    --chain-x: calc(var(--weave-start) + var(--cap-w));
+    position: absolute;
+    left: var(--weave-start);
+    right: 0;
+    bottom: calc(var(--nav-h) / 2 + 3px - var(--logo-h) * 1.0173);
+    height: var(--weave-h);
+    pointer-events: none;
+  }
+
+  .navbar-weave::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: calc(var(--weave-h) * -0.029);
+    width: var(--cap-w);
+    height: var(--weave-h);
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-size: var(--cap-w) var(--weave-h);
+    background-image: url('img/weave-cap-light.png');
+  }
+
+  .navbar-weave::after {
+    content: '';
+    position: absolute;
+    left: var(--cap-w);
+    right: 0;
+    top: 0;
+    height: var(--weave-h);
+    background-repeat: repeat-x;
+    background-position: left center;
+    background-size: var(--tile-w) var(--weave-h);
+    background-image: url('img/weave-tile-light.png');
+  }
+
+  body.dark .navbar-weave::before {
+    background-image: url('img/weave-cap-dark.png');
+  }
+
+  body.dark .navbar-weave::after {
+    background-image: url('img/weave-tile-dark.png');
+  }
+
+  /* No shadow or hairline under the bar any more -- the stylized stroke is
+     the only separator, top and bottom. (.scrolled is still toggled by the
+     scroll handler in case you want to hook something onto it later.) */
+
+  .nav-logo {
+    font-family: var(--ff-display);
+    font-size: 21px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: 24px;
+    flex-shrink: 0;
+  }
+
+  .nav-logo-text { color: inherit; display: flex; align-items: center; }
+
+  .nav-logo-wordmark { height: var(--logo-h); width: auto; display: block; }
+
+  .nav-logo-wordmark-dark { display: none; }
+  body.dark .nav-logo-wordmark-light { display: none; }
+  body.dark .nav-logo-wordmark-dark { display: block; }
+
+  .nav-logo-by { font-size: 11px; letter-spacing: 0.02em; }
+
+  .nav-logo-img { width: 58px; height: 58px; display: block; }
+
+  .nav-logo-img-dark { display: none; }
+  body.dark .nav-logo-img-light { display: none; }
+  body.dark .nav-logo-img-dark { display: block; }
+
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+  }
+
+  .nav-links li a {
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text);
+    position: relative;
+    padding-bottom: 4px;
+  }
+
+  .nav-links li a::after {
+    content: '';
+    position: absolute;
+    left: 0; bottom: 0;
+    width: 0%;
+    height: 1px;
+    background: currentColor;
+    transition: width 0.3s ease;
+  }
+
+  .nav-links li a:hover::after { width: 100%; }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    /* Keeps CONTACT off "THE CALENDAR" once the bar starts getting tight */
+    margin-left: 40px;
+  }
+
+  .nav-lang {
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    color: var(--text);
+    opacity: 0.7;
+  }
+
+  .nav-ticket {
+    font-size: 12.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border: 1px solid var(--text);
+    color: var(--text);
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 22px;
+    transition: all 0.3s ease;
+  }
+
+  .nav-ticket:hover {
+    background: var(--text);
+    color: var(--bg);
+  }
+
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: none;
+    cursor: pointer;
+    color: var(--text);
+    transition: border-color 0.3s ease;
+  }
+
+  .theme-toggle:hover { border-color: var(--text); }
+
+  .theme-toggle svg { width: 16px; height: 16px; }
+
+  .theme-toggle .icon-moon { display: none; }
+  body.dark .theme-toggle .icon-sun { display: none; }
+  body.dark .theme-toggle .icon-moon { display: block; }
+
+  /* Hamburger: hidden by default, only shown once the nav links no
+     longer fit (see the mobile media query below) */
+  .nav-hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+
+  .nav-hamburger span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: var(--text);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+  .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* The dropdown itself — closed by default (max-height: 0), expands
+     open when toggled. Holds the same section links plus the language
+     toggle, since both get hidden from the main bar on narrow screens. */
+  .nav-mobile-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    max-height: 0;
+    overflow: hidden;
+    background: var(--bg);
+    transition: max-height 0.35s ease;
+  }
+
+  .nav-mobile-menu.open { max-height: 400px; }
+
+  .nav-mobile-menu a {
+    padding: 16px 24px;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text);
+    border-bottom: 1px solid var(--line);
+    transition: all 0.3s ease;
+  }
+
+  /* Same invert-on-hover as the CONTACT button */
+  .nav-mobile-menu a:hover {
+    background: var(--text);
+    color: var(--bg);
+  }
+
+  .nav-mobile-menu a:last-child { border-bottom: none; }
+
+  /* ---------- HERO ---------- */
+
+  .hero {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    padding: 84px 24px 24px;
+    background: var(--bg);
+    transition: background 0.4s ease;
+    overflow: visible;
+  }
+
+  .hero-frame {
+    position: relative;
+    width: 100%;
+    border-radius: 18px;
+    overflow: hidden;
+    background: transparent;
+    -webkit-mask-image: linear-gradient(to right, black 0%, black 84%, transparent 95%);
+    mask-image: linear-gradient(to right, black 0%, black 84%, transparent 95%);
+    transition: opacity 0.06s linear;
+  }
+
+  .hero-art {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+  }
+
+  /* One cut-out PNG serves both themes -- the page background shows through
+     the transparent areas, so there's nothing to swap. */
+
+  /* Fade behind the title. Light mode sits on the white-backed image,
+     dark mode on the black-backed one, so each is tinted to match. */
+  .hero-content {
+    position: absolute;
+    left: 0; right: 0; bottom: 24px;
+    z-index: 6;
+    padding: 0 48px;
+    max-width: 100%;
+    color: var(--ivory);
+  }
+
+  .hero-eyebrow {
+    font-size: 12.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 18px;
+  }
+
+  .hero-title-img {
+    height: clamp(110px, 15vw, 240px);
+    width: auto;
+    display: block;
+  }
+
+  .hero-title-img-dark { display: none; }
+  body.dark .hero-title-img-light { display: none; }
+  body.dark .hero-title-img-dark { display: block; }
+
+  #gallery-tagline {
+    font-variant: small-caps;
+    letter-spacing: 0.03em;
+  }
+
+  #gallery-tagline::first-letter {
+    font-size: 1.4em;
+  }
+
+  .hero-sub {
+    margin-top: 20px;
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 480px;
+    color: rgba(246,242,234,0.82);
+    font-weight: 300;
+  }
+
+  .hero-cta {
+    display: inline-block;
+    margin-top: 32px;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 14px 30px;
+    border: 1px solid var(--ivory);
+    transition: all 0.3s ease;
+  }
+
+  .hero-cta:hover {
+    background: var(--ivory);
+    color: var(--ink);
+  }
+
+  .scroll-cue {
+    position: absolute;
+    right: 48px;
+    bottom: 40px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: rgba(246,242,234,0.7);
+  }
+
+  .scroll-cue span {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .scroll-cue .line {
+    width: 42px;
+    height: 1px;
+    background: rgba(246,242,234,0.5);
+    animation: pulse-line 2.2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-line {
+    0%, 100% { transform: scaleX(1); opacity: 0.6; }
+    50% { transform: scaleX(0.6); opacity: 1; }
+  }
+
+  /* ---------- BELOW-FOLD PLACEHOLDER SECTION ---------- */
+
+  .section {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 48px;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: 12.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--label-color);
+    margin-bottom: 20px;
+  }
+
+  .section h2 {
+    font-family: var(--ff-display);
+    font-weight: 500;
+    font-size: clamp(28px, 4vw, 40px);
+    max-width: 640px;
+    line-height: 1.2;
+  }
+
+  .section p {
+    margin-top: 20px;
+    max-width: 560px;
+    line-height: 1.7;
+    color: var(--text-muted);
+    font-size: 15.5px;
+  }
+
+  /* ---------- BUTTON ---------- */
+
+  .btn-link {
+    display: inline-block;
+    font-size: 12.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text);
+    border: 1px solid var(--text);
+    padding: 12px 22px;
+    white-space: nowrap;
+    transition: background 0.25s ease, color 0.25s ease;
+  }
+
+  .btn-link:hover { background: var(--text); color: var(--bg); }
+
+  .btn-link-block { margin-top: 28px; align-self: flex-start; }
+
+  .section-body {
+    margin-top: 24px;
+    max-width: 60ch;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-muted);
+  }
+
+  /* ---------- CALENDAR SECTION ---------- */
+
+  .section-top-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .section-top-row h2 { margin: 0; }
+
+  .event-list {
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .event-card {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .event-card:last-child { border-bottom: none; }
+
+  .event-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 56px;
+    width: 56px;
+    height: 56px;
+    border: 1px solid var(--line);
+    color: var(--label-color);
+  }
+
+  .event-month { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; }
+  .event-day { font-size: 20px; font-family: var(--ff-display); line-height: 1.2; }
+
+  .event-info h3 {
+    font-family: var(--ff-display);
+    font-weight: 500;
+    font-size: 18px;
+  }
+
+  .event-info p {
+    margin-top: 4px;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+
+  /* Notice for details still to be confirmed */
+  .info-note {
+    margin-top: 28px;
+    padding: 18px 20px;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--gold);
+    border-radius: 3px;
+    background: rgba(119,113,13,0.06);
+  }
+
+  .info-note-label {
+    font-size: 11.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--label-color);
+    margin-bottom: 6px;
+  }
+
+  .info-note p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 14.5px;
+    line-height: 1.65;
+  }
+
+  /* ---------- PLACEHOLDER PHOTOS + LIGHTBOX ---------- */
+
+  .ph-photo {
+    display: flex;
+    align-items: flex-end;
+    padding: 12px;
+    background: linear-gradient(155deg, var(--stone) 0%, var(--line) 100%);
+    color: var(--text-muted);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+
+  .ph-photo:hover { opacity: 0.82; }
+
+  .space-gallery { margin-top: 28px; display: flex; flex-direction: column; gap: 12px; }
+
+  .ph-photo-large { height: 260px; border-radius: 4px; }
+
+  .ph-photo-strip {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .ph-photo-strip .ph-photo {
+    flex: 0 0 160px;
+    height: 110px;
+    border-radius: 4px;
+  }
+
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10,9,8,0.88);
+    cursor: pointer;
+  }
+
+  .lightbox.open { display: flex; }
+
+  .lightbox-photo {
+    width: min(80vw, 900px);
+    height: min(80vh, 640px);
+    background: linear-gradient(155deg, var(--stone) 0%, var(--line) 100%);
+    display: flex;
+    align-items: flex-end;
+    padding: 24px;
+    color: var(--ivory);
+    font-size: 15px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-radius: 4px;
+    cursor: default;
+  }
+
+  @media (max-width: 860px) {
+    .nav-links { display: none; }
+    .nav-lang { display: none; }
+    .nav-ticket { display: none; }
+    .nav-hamburger { display: flex; }
+    .navbar, .hero-content, .scroll-cue, .section { padding-left: 24px; padding-right: 24px; }
+    .scroll-cue { display: none; }
+    .nav-logo { margin-right: 12px; gap: 8px; }
+    .nav-logo-img { width: 40px; height: 40px; }
+    /* Only these two change on mobile -- the underline's thickness, its
+       position against the logo, and the footer line all recompute from
+       them, so everything stays matched and touching. */
+    :root { --logo-h: 34px; --nav-pad: 24px; }
+  }
+
+  /* Fixed footer bar, mirroring the navbar — since the site is a single
+     fixed-viewport horizontal scroll, there's no "bottom of the page" to
+     put a normal footer, so this stays visible across every panel instead. */
+  .site-footer {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    z-index: 100;
+    height: var(--footer-h);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    background: var(--bg);
+    transition: background 0.4s ease;
+  }
+
+  /* Footer line: the same stroke as the navbar, mirrored vertically so its
+     hooks curl up instead of down. It carries the identical --weave-h and the
+     identical tile width, and its background-position-x is locked to the
+     navbar chain's origin (--chain-x), so every hook sits at the same x as the
+     one above it -- the two lines read as a symmetrical pair, top and bottom.
+     No start cap here: it just runs straight across from edge to edge.
+     Because all of it keys off --weave-h, any resize of the top line is
+     mirrored by this one automatically. */
+  .footer-weave {
+    --cap-w: calc(var(--weave-h) * 5.3188);
+    --tile-w: calc(var(--weave-h) * 4.3478);
+    --weave-start: calc(var(--nav-pad) + var(--logo-h) * 0.0584 - var(--weave-h) * 0.1159);
+    --chain-x: calc(var(--weave-start) + var(--cap-w));
+    position: absolute;
+    left: 0; right: 0;
+    top: calc(var(--weave-h) * -0.5072);
+    height: var(--weave-h);
+    pointer-events: none;
+    /* Same tile as the navbar, mirrored -- so the hooks curl up and
+       mirror the line above without needing a second set of images. */
+    transform: scaleY(-1);
+    background-repeat: repeat-x;
+    background-position: var(--chain-x) center;
+    background-size: var(--tile-w) var(--weave-h);
+    background-image: url('img/weave-tile-light.png');
+  }
+
+  body.dark .footer-weave {
+    background-image: url('img/weave-tile-dark.png');
+  }
+
+  .footer-social { display: flex; gap: 18px; }
+  .footer-social a { color: var(--text); display: flex; opacity: 0.8; transition: opacity 0.25s ease; }
+  .footer-social a:hover { opacity: 1; }
+  .footer-social svg { width: 18px; height: 18px; }
+  .footer-copy { font-size: 11px; color: var(--text-muted); letter-spacing: 0.04em; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-cue .line { animation: none; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body class="dark">
+
+  <nav class="navbar" id="navbar">
+    <div class="nav-logo">
+      <!-- ==========================================================================
+           NAVBAR WORDMARK  ("Interwoven")
+           ---------------------------------------------------------------------
+           2 files, one per theme. Both live on disk now.
+           LIGHT MODE : logo-wordmark-light.png   (dark ink art, for ivory bg)
+           DARK  MODE : logo-wordmark-dark.png    (cream art, for dark bg)
+           Keep the class names — they drive the light/dark swap.
+           ========================================================================== -->
+      <a href="index.html" class="nav-logo-text" aria-label="Interwoven — home">
+        <img src="logos/interwoven-wordmark-light.png" alt="Interwoven" class="nav-logo-wordmark nav-logo-wordmark-light">
+        <img src="logos/interwoven-wordmark-dark.png" alt="Interwoven" class="nav-logo-wordmark nav-logo-wordmark-dark">
+      </a>
+      <span class="nav-logo-by">by</span>
+      <!-- ==========================================================================
+           RHONDA M. FAZIO MARK (navbar, right of wordmark)
+           ---------------------------------------------------------------------
+           2 files, one per theme. Both live on disk now.
+           LIGHT MODE : logo-rmf-light.png
+           DARK  MODE : logo-rmf-dark.png
+           ========================================================================== -->
+      <a href="https://rhondamfazio.com" target="_blank" rel="noopener" class="nav-logo-img-link" aria-label="Rhonda M. Fazio">
+        <img src="logos/rmf-mark-light.png" alt="Rhonda M. Fazio" class="nav-logo-img nav-logo-img-light">
+        <img src="logos/rmf-mark-dark.png" alt="Rhonda M. Fazio" class="nav-logo-img nav-logo-img-dark">
+      </a>
+    </div>
+
+    <ul class="nav-links">
+      <li><a href="gallery.html">The Gallery</a></li>
+      <li><a href="artists.html">The Artists</a></li>
+      <li><a href="calendar.html">The Calendar</a></li>
+    </ul>
+
+    <div class="nav-right">
+      <a href="mailto:interwovenartstudio@gmail.com" class="nav-ticket">Contact</a>
+      <a href="#" class="nav-lang">EN</a>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.5V5M12 19v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2.5 12H5M19 12h2.5M4.2 19.8L6 18M18 6l1.8-1.8" stroke-linecap="round"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5z" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button class="nav-hamburger" id="navHamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="nav-mobile-menu" id="navMobileMenu">
+      <a href="gallery.html">The Gallery</a>
+      <a href="artists.html">The Artists</a>
+      <a href="calendar.html">The Calendar</a>
+      <a href="#" class="nav-lang">EN</a>
+      <a href="mailto:interwovenartstudio@gmail.com">Contact</a>
+    </div>
+    <div class="navbar-weave" id="navbarWeave"></div>
+  </nav>
+
+  <div class="scroll-container" id="scrollContainer">
+
+    <header class="hero panel">
+      <div class="hero-frame" id="heroFrame">
+        <!-- ==========================================================================
+             HERO IMAGE (the woven-threads photo)
+             ---------------------------------------------------------------------
+             Now a single cut-out PNG with real transparency, so the page
+             background shows through it directly. That means it works in BOTH
+             themes from one file -- no separate ivory-backed and black-backed
+             copies to keep in sync any more.
+             ========================================================================== -->
+        <div class="hero-art" style="background-image: url('img/hero-warp.png');"></div>
+      </div>
+
+      <div class="hero-content">
+        <!-- ==========================================================================
+             HERO TITLE WORDMARK (large "Interwoven" over photo)
+             ---------------------------------------------------------------------
+             2 files, one per theme. Both live on disk now.
+             LIGHT MODE : hero-title-light.png   (near-black art)
+             DARK  MODE : hero-title-dark.png    (near-white art)
+             ========================================================================== -->
+        <h1 class="hero-title">
+          <img src="img/hero-title-light.png" alt="Interwoven" class="hero-title-img hero-title-img-light">
+          <img src="img/hero-title-dark.png" alt="Interwoven" class="hero-title-img hero-title-img-dark">
+        </h1>
+      </div>
+
+      <div class="scroll-cue">
+        <span>Scroll</span>
+        <div class="line"></div>
+      </div>
+    </header>
+
+
+    <section class="section panel panel-wide" id="calendar">
+      <div class="section-label">The Calendar</div>
+      <div class="section-top-row">
+        <h2>Three things coming up</h2>
+        <a href="calendar.html" class="btn-link">See all upcoming events</a>
+      </div>
+      <div class="event-list" id="eventList">
+        <div class="event-card">
+          <div class="event-date"><span class="event-month">AUG</span><span class="event-day">14</span></div>
+          <div class="event-info">
+            <h3>Placeholder Event Title</h3>
+            <p>6:00 PM &middot; Placeholder location — pulled from Google Calendar once connected</p>
+          </div>
+        </div>
+        <div class="event-card">
+          <div class="event-date"><span class="event-month">AUG</span><span class="event-day">21</span></div>
+          <div class="event-info">
+            <h3>Placeholder Event Title</h3>
+            <p>1:00 PM &middot; Placeholder location — pulled from Google Calendar once connected</p>
+          </div>
+        </div>
+        <div class="event-card">
+          <div class="event-date"><span class="event-month">SEP</span><span class="event-day">03</span></div>
+          <div class="event-info">
+            <h3>Placeholder Event Title</h3>
+            <p>10:00 AM &middot; Placeholder location — pulled from Google Calendar once connected</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-note">
+        <div class="info-note-label">Coming soon</div>
+        <p>Address &amp; event details to be confirmed — full information will be posted here shortly.</p>
+      </div>
+    </section>
+
+
+    <section class="section panel panel-wide" id="gallery">
+      <div class="section-label">The Gallery</div>
+      <h2 id="gallery-tagline">Made to tell a story</h2>
+      <div class="space-gallery">
+        <div class="ph-photo ph-photo-large" data-photo-label="The main room">Photo — the main room</div>
+        <div class="ph-photo-strip">
+          <div class="ph-photo" data-photo-label="Entryway">Photo</div>
+          <div class="ph-photo" data-photo-label="Workshop table">Photo</div>
+          <div class="ph-photo" data-photo-label="Reading nook">Photo</div>
+          <div class="ph-photo" data-photo-label="North window">Photo</div>
+          <div class="ph-photo" data-photo-label="Courtyard">Photo</div>
+        </div>
+      </div>
+      <a href="gallery.html" class="btn-link btn-link-block">Learn more about the space</a>
+    </section>
+
+
+    <section class="section panel panel-wide" id="artists">
+      <div class="section-label">The Artists</div>
+      <h2 id="artists-tagline">The hands behind the work</h2>
+      <div class="space-gallery">
+        <div class="ph-photo ph-photo-large" data-photo-label="Artist at work">Photo — artist at work</div>
+        <div class="ph-photo-strip">
+          <div class="ph-photo" data-photo-label="Resident artist">Photo</div>
+          <div class="ph-photo" data-photo-label="Guest weaver">Photo</div>
+          <div class="ph-photo" data-photo-label="Ceramics studio">Photo</div>
+          <div class="ph-photo" data-photo-label="Printmaker">Photo</div>
+          <div class="ph-photo" data-photo-label="Open studio night">Photo</div>
+        </div>
+      </div>
+      <p class="section-body">Placeholder text — a short introduction to the makers who share this space, what they work in, and how their practices overlap. Replace with real bios and portraits when they're ready.</p>
+      <a href="artists.html" class="btn-link btn-link-block">Meet the artists</a>
+    </section>
+
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-weave" id="footerWeave"></div>
+    <div class="footer-social">
+      <a href="https://www.facebook.com/InterwovenNB/" target="_blank" rel="noopener" aria-label="Facebook">
+        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7H8v-2.9h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6v1.9H16l-.4 2.9h-2.1v7A10 10 0 0 0 22 12z"/></svg>
+      </a>
+      <a href="https://www.instagram.com/interwoven_artstudio" target="_blank" rel="noopener" aria-label="Instagram">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="3" width="18" height="18" rx="5"/>
+          <circle cx="12" cy="12" r="4"/>
+          <circle cx="17.3" cy="6.7" r="1.1" fill="currentColor" stroke="none"/>
+        </svg>
+      </a>
+    </div>
+    <p class="footer-copy">&copy; Interwoven</p>
+  </footer>
+
+  <div class="lightbox" id="lightbox">
+    <div class="lightbox-photo" id="lightboxPhoto"></div>
+  </div>
+
+  <script>
+    const nav = document.getElementById('navbar');
+
+    // Live "Three things coming up" panel — pulls the next 3 events from
+    // the same public Google Calendar used in calendar.html. Falls back
+    // to the placeholder cards already in the markup if the key isn't
+    // set yet, or if the request fails for any reason.
+    const GOOGLE_CALENDAR_API_KEY = 'YOUR_API_KEY_HERE'; // <-- paste your key here
+    const GOOGLE_CALENDAR_ID = '8e0275f07626c0370b20b5a0f98dbe3bf5d1145a5df759d0ee3043ee45e647bd@group.calendar.google.com';
+
+    async function loadUpcomingEvents() {
+      const listEl = document.getElementById('eventList');
+      if (!listEl || GOOGLE_CALENDAR_API_KEY === 'YOUR_API_KEY_HERE') return;
+
+      const escapeHtml = (str) => String(str).replace(/[&<>"']/g, (c) => (
+        { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+      ));
+
+      const timeMin = encodeURIComponent(new Date().toISOString());
+      const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(GOOGLE_CALENDAR_ID)}/events` +
+        `?key=${GOOGLE_CALENDAR_API_KEY}&timeMin=${timeMin}&maxResults=3&singleEvents=true&orderBy=startTime`;
+
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`Calendar API responded ${res.status}`);
+        const data = await res.json();
+        const events = (data.items || []).slice(0, 3);
+        if (events.length === 0) return; // keep placeholders rather than show an empty panel
+
+        listEl.innerHTML = events.map(ev => {
+          const start = ev.start.dateTime || ev.start.date;
+          const d = new Date(start);
+          const month = d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
+          const day = d.toLocaleDateString('en-US', { day: '2-digit' });
+          const time = ev.start.dateTime
+            ? d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+            : 'All day';
+          const location = ev.location ? ` &middot; ${escapeHtml(ev.location)}` : '';
+          const title = escapeHtml(ev.summary || 'Untitled event');
+          return `
+            <div class="event-card">
+              <div class="event-date"><span class="event-month">${month}</span><span class="event-day">${day}</span></div>
+              <div class="event-info">
+                <h3>${title}</h3>
+                <p>${time}${location}</p>
+              </div>
+            </div>`;
+        }).join('');
+      } catch (err) {
+        console.warn('Could not load live calendar events, showing placeholders instead:', err);
+      }
+    }
+    loadUpcomingEvents();
+
+    // Lightbox: click any placeholder photo to see it larger, click
+    // anywhere outside the enlarged photo to close it
+    const lightbox = document.getElementById('lightbox');
+    const lightboxPhoto = document.getElementById('lightboxPhoto');
+    document.querySelectorAll('.ph-photo').forEach(photo => {
+      photo.addEventListener('click', () => {
+        lightboxPhoto.textContent = photo.dataset.photoLabel || photo.textContent;
+        lightbox.classList.add('open');
+      });
+    });
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) lightbox.classList.remove('open');
+    });
+
+    // Lift the hero image so its bottom edge lands at the vertical
+    // midpoint of the "Interwoven" title, rather than under its full height
+    const heroFrame = document.getElementById('heroFrame');
+    const heroTitle = document.querySelector('.hero-title');
+    const heroEl = document.querySelector('.hero');
+    function liftHeroFrame() {
+      if (!heroFrame || !heroTitle || !heroEl) return;
+      const titleH = heroTitle.getBoundingClientRect().height;
+      heroFrame.style.height = `calc(100% - ${titleH / 2}px)`;
+    }
+    liftHeroFrame();
+    window.addEventListener('resize', liftHeroFrame);
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(liftHeroFrame);
+    }
+    const container = document.getElementById('scrollContainer');
+
+    // Dark mode toggle
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+    });
+
+    // Mobile hamburger menu
+    const navHamburger = document.getElementById('navHamburger');
+    const navMobileMenu = document.getElementById('navMobileMenu');
+    navHamburger.addEventListener('click', () => {
+      const isOpen = navHamburger.classList.toggle('open');
+      navMobileMenu.classList.toggle('open', isOpen);
+      navHamburger.setAttribute('aria-expanded', isOpen);
+    });
+    // Tapping a link inside it should close it, same as any mobile menu
+    navMobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        navHamburger.classList.remove('open');
+        navMobileMenu.classList.remove('open');
+        navHamburger.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    // Condense the navbar once we've moved past the hero panel,
+    // and drive the loom reed (posts + threads) with scroll position
+    // Measure real panel boundaries instead of assuming every panel is the
+    // same width (Heart/Food/Fabric/Gallery are now wider than the viewport)
+    const panelEls = Array.from(document.querySelectorAll('.panel'));
+    let boundaries = [];
+    function updateBoundaries() {
+      boundaries = panelEls.map(el => el.offsetLeft);
+      const last = panelEls[panelEls.length - 1];
+      boundaries.push(last.offsetLeft + last.offsetWidth);
+    }
+    updateBoundaries();
+    window.addEventListener('resize', updateBoundaries);
+
+    const onScroll = () => {
+      if (container.scrollLeft > 40) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+
+      const scrollLeft = container.scrollLeft;
+
+      // Find which panel we're currently inside
+      let segIndex = boundaries.length - 2;
+      for (let i = 0; i < boundaries.length - 1; i++) {
+        if (scrollLeft < boundaries[i + 1] - 0.5) { segIndex = i; break; }
+      }
+      const segEnd = boundaries[segIndex + 1];
+      const distFromEnd = segEnd - scrollLeft;
+
+      // The hero image fades out as its panel leaves. This used to be 0.38 to
+      // match the old 36vw gap between panels; with the panels butted together
+      // that would start the fade while the hero is still being read, so it's
+      // now a short fade right at the edge. Raise it for a longer fade.
+      const TRANSITION_W = window.innerWidth * 0.15;
+      let frac = distFromEnd >= TRANSITION_W ? 0 : 1 - distFromEnd / TRANSITION_W;
+      frac = Math.max(0, Math.min(1, frac));
+
+      // frac is recomputed from the actual scroll position on every call, so
+      // scrolling backward reverses this automatically — there's no separate
+      // "reverse" case to handle.
+      if (heroFrame) heroFrame.style.opacity = 1 - frac;
+    };
+    container.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    // Force all wheel input (vertical or horizontal) into horizontal movement.
+    // No snapping — the scroll position settles exactly where the user stops.
+    container.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      container.scrollLeft += e.deltaY + e.deltaX;
+    }, { passive: false });
+
+    // Smooth-scroll nav links to their matching panel horizontally
+    document.querySelectorAll('.nav-links a, .nav-logo-text, .nav-mobile-menu a').forEach(link => {
+      link.addEventListener('click', (e) => {
+        const id = link.getAttribute('href');
+        if (!id || id.length < 2 || !id.startsWith('#')) return;
+        const target = document.querySelector(id);
+        if (target) {
+          e.preventDefault();
+          container.scrollTo({ left: target.offsetLeft, behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
+>>>>>>> 102c65b (Initial commit)
