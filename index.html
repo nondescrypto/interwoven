@@ -413,7 +413,7 @@
     position: absolute;
     left: 0; right: 0; bottom: 24px;
     z-index: 6;
-    padding: 0 48px;
+    padding: 0 72px;
     max-width: 100%;
     color: var(--ivory);
   }
@@ -522,7 +522,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 0 48px;
+    padding: 0 72px;
     max-width: 720px;
     margin: 0 auto;
   }
@@ -797,13 +797,64 @@
     .nav-ticket { display: none; }
     .nav-hamburger { display: flex; }
     .navbar, .hero-content, .scroll-cue, .section { padding-left: 24px; padding-right: 24px; }
-    .scroll-cue { display: none; }
+    /* Re-enabled and bumped up rather than hidden -- a horizontal-scroll
+       page is much less obvious on a touchscreen than with a visible
+       scrollbar/cursor on desktop, so the cue needs to read clearly here,
+       not less. */
+    .scroll-cue {
+      right: 24px;
+      bottom: 28px;
+      gap: 12px;
+      color: rgba(246,242,234,0.95);
+    }
+    .scroll-cue span { font-size: 13px; }
+    .scroll-cue .line { width: 30px; background: rgba(246,242,234,0.8); }
+    .scroll-cue .arrow svg { width: 26px; height: 26px; }
     .nav-logo { margin-right: 12px; gap: 8px; }
     .nav-logo-img { width: 40px; height: 40px; }
     /* Only these two change on mobile -- the underline's thickness, its
        position against the logo, and the footer line all recompute from
        them, so everything stays matched and touching. */
     :root { --logo-h: 34px; --nav-pad: 24px; }
+
+    /* Each panel's vertical space (100svh minus navbar/footer) is much
+       tighter on a phone. Centering tall content in that space pushed the
+       top out of view before you'd scrolled at all and the bottom out
+       after -- reading as "cut off" on both ends. Anchoring to the top
+       with real breathing-room padding keeps the heading visible
+       immediately; everything below is also shrunk so each section's
+       content actually fits without needing that scroll. */
+    .section {
+      justify-content: flex-start;
+      padding-top: 20px;
+      padding-bottom: 20px;
+    }
+
+    .section-label { margin-bottom: 10px; }
+
+    .section h2 { font-size: clamp(22px, 6vw, 28px); }
+
+    .section-body {
+      margin-top: 12px;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .btn-link-block { margin-top: 16px; }
+
+    .event-list { margin-top: 18px; gap: 12px; }
+
+    .info-note { margin-top: 16px; padding: 14px 16px; }
+
+    .space-gallery { margin-top: 16px; gap: 10px; }
+
+    .ph-photo-large { height: 150px; }
+
+    .ph-photo-strip .ph-photo { flex: 0 0 130px; height: 85px; }
+
+    .photo-row { margin-top: 16px; }
+
+    .photo-row .ph-photo { flex: 0 0 190px; height: 140px; }
   }
 
   /* Fixed footer bar, mirroring the navbar — since the site is a single
@@ -1016,15 +1067,10 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
           <div class="ph-photo-strip">
-            <div class="ph-photo" data-photo-label="Artist at work"><img src="pics/artist1.jpg" alt="Artist at work" loading="lazy"></div>
-            <div class="ph-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin1.jpg" alt="Silk on mannequin" loading="lazy"></div>
-            <div class="ph-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin2.jpg" alt="Silk on mannequin" loading="lazy"></div>
-            <div class="ph-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin3.jpg" alt="Silk on mannequin" loading="lazy"></div>
-            <div class="ph-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin4.jpg" alt="Silk on mannequin" loading="lazy"></div>
-            <div class="ph-photo" data-photo-label="Dye process"><img src="pics/dyes1.jpg" alt="Dye process" loading="lazy"></div>
-            <div class="ph-photo" data-photo-label="Dye process"><img src="pics/dyes2.jpg" alt="Dye process" loading="lazy"></div>
-            <div class="ph-photo" data-photo-label="Silk, worn"><img src="pics/silk-people.jpg" alt="Silk, worn" loading="lazy"></div>
-            <div class="ph-photo" data-photo-label="Silk, worn"><img src="pics/silk-people1.jpg" alt="Silk, worn" loading="lazy"></div>
+            <div class="ph-photo" data-photo-label="Artist at work"><img src="pics/event.jpg" alt="Artist at work" loading="lazy"></div>
+            <div class="ph-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin.jpg" alt="Silk on mannequin" loading="lazy"></div>
+            <div class="ph-photo" data-photo-label="People with silk"><img src="pics/silk-people.jpg" alt="Silk, worn" loading="lazy"></div>
+            <div class="ph-photo" data-photo-label="Loom"><img src="pics/loom.jpg" alt="Loom" loading="lazy"></div>
           </div>
           <button type="button" class="pan-btn pan-next" aria-label="Scroll photos right">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -1043,12 +1089,9 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
         <div class="photo-row">
-          <div class="ph-photo" data-photo-label="Artist at work"><img src="pics/artist.jpg" alt="Artist at work" loading="lazy"></div>
-          <div class="ph-photo" data-photo-label="Resident artist">Photo</div>
-          <div class="ph-photo" data-photo-label="Resident artist">Photo</div>
-          <div class="ph-photo" data-photo-label="Resident artist">Photo</div>
-          <div class="ph-photo" data-photo-label="Resident artist">Photo</div>
-          <div class="ph-photo" data-photo-label="Resident artist">Photo</div>
+          <div class="ph-photo" data-photo-label="Rhonda Fazio"><img src="pics/artist.jpg" alt="Rhonda Fazio" loading="lazy"></div>
+          <div class="ph-photo" data-photo-label="Kim Gatesman"><img src="pics/artist-kim.png" alt="Kim Gatesman" loading="lazy"></div>
+          <div class="ph-photo" data-photo-label="Margaret"><img src="pics/angel.jpg" alt="Margaret" loading="lazy"></div>
         </div>
         <button type="button" class="pan-btn pan-next" aria-label="Scroll photos right">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>

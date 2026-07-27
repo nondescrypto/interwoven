@@ -375,7 +375,7 @@
     height: 420px;
     border-radius: 4px;
     overflow: hidden;
-    background: linear-gradient(155deg, var(--stone) 0%, var(--line) 100%);
+    background: var(--bg);
     display: flex;
     align-items: flex-end;
     padding: 20px;
@@ -390,7 +390,7 @@
     inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     display: block;
   }
   .layout-text {
@@ -428,12 +428,31 @@
   .artist-row.reverse {
     flex-direction: row-reverse;
   }
+  .artist-name-row {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin: 0 0 6px;
+  }
   .artist-name {
     font-family: "Fraunces", Georgia, serif;
     font-weight: 500;
     font-size: 26px;
-    margin: 0 0 6px;
+    margin: 0;
   }
+  .artist-links {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .artist-links a {
+    display: flex;
+    color: var(--text);
+    opacity: 0.75;
+    transition: opacity 0.25s ease;
+  }
+  .artist-links a:hover { opacity: 1; }
+  .artist-links svg { width: 16px; height: 16px; }
   .artist-medium {
     font-size: 12.5px;
     letter-spacing: 0.12em;
@@ -580,32 +599,89 @@
 
     <div class="artist-rows">
       <div class="artist-row">
-        <div class="layout-photo" data-photo-label="Artist Name One"><img src="pics/artist.jpg" alt="Artist Name One" loading="lazy"></div>
+        <div class="layout-photo" data-photo-label="Rhonda Fazio"><img src="pics/artist.jpg" alt="Rhonda Fazio" loading="lazy"></div>
         <div class="layout-text">
-          <h2 class="artist-name">Rhonda M. Fazio</h2>
+          <div class="artist-name-row">
+            <h2 class="artist-name">Rhonda M. Fazio</h2>
+            <div class="artist-links">
+              <a href="https://rhondamfazio.com" target="_blank" rel="noopener" aria-label="Rhonda M. Fazio — website">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="12" cy="12" r="9"/>
+                  <path d="M3 12h18M12 3c2.5 2.5 4 6 4 9s-1.5 6.5-4 9c-2.5-2.5-4-6-4-9s1.5-6.5 4-9z"/>
+                </svg>
+              </a>
+              <a href="https://www.instagram.com/dyermakerstudio" target="_blank" rel="noopener" aria-label="Rhonda M. Fazio — Instagram">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="3" y="3" width="18" height="18" rx="5"/>
+                  <circle cx="12" cy="12" r="4"/>
+                  <circle cx="17.3" cy="6.7" r="1.1" fill="currentColor" stroke="none"/>
+                </svg>
+              </a>
+              <a href="mailto:dyermakerstudio@gmail.com" aria-label="Rhonda M. Fazio — email">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="3" y="5" width="18" height="14" rx="2"/>
+                  <path d="M3 7l9 6 9-6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </a>
+            </div>
+          </div>
           <p class="artist-medium">Food &amp; Fabric</p>
           <p>Rhonda M. Fazio is the founder and designer of <a href="https://dyermakerstudio.com" target="_blank" rel="noopener">Dyer Maker Studio</a>, a traveling Maker Space specializing in natural colors and sustainable textile design.</p>
           <p>Rhonda teaches "Dyeing to Wear It", weaving and cooking classes and is the Creative Curator of Interwoven.</p>
+          <p>"My work with food and fabric reflect the essential connection between people from all over the world in relation to the journey of the human narrative.  In America, it is a story we all share, and we are all Interwoven because of it."</p>
         </div>
       </div>
 
       <div class="artist-row reverse">
-        <div class="layout-photo" data-photo-label="Artist Name Two">Photo — photo two</div>
+        <div class="layout-photo" data-photo-label="Kim Gatesman"><img src="pics/artist-kim.png" alt="Kim Gatesman" loading="lazy"></div>
         <div class="layout-text">
-          <h2 class="artist-name">Kim Gatesman</h2>
-          <p class="artist-medium">Printmaking</p>
-          <p>Placeholder bio — a short introduction to this artist, what drew them to the medium, and what they're working on now. Swap in real copy when it's ready.</p>
-          <p>A second paragraph of placeholder copy, for whenever there's more to say than fits in one.</p>
+          <div class="artist-name-row">
+            <h2 class="artist-name">Kim Gatesman</h2>
+            <div class="artist-links">
+              <a href="https://kimgatesman.com" target="_blank" rel="noopener" aria-label="Kim Gatesman — website">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="12" cy="12" r="9"/>
+                  <path d="M3 12h18M12 3c2.5 2.5 4 6 4 9s-1.5 6.5-4 9c-2.5-2.5-4-6-4-9s1.5-6.5 4-9z"/>
+                </svg>
+              </a>
+              <a href="https://www.instagram.com/kimgatesman_thirdswitchpress" target="_blank" rel="noopener" aria-label="Kim Gatesman — Instagram">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="3" y="3" width="18" height="18" rx="5"/>
+                  <circle cx="12" cy="12" r="4"/>
+                  <circle cx="17.3" cy="6.7" r="1.1" fill="currentColor" stroke="none"/>
+                </svg>
+              </a>
+              <a href="mailto:contact@kimgatesman.com" aria-label="Kim Gatesman — email">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="3" y="5" width="18" height="14" rx="2"/>
+                  <path d="M3 7l9 6 9-6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+          <p class="artist-medium">Painting + Printmaking + Tinkering</p>
+          <p>Kim is a painter, printmaker, and an overall creative with a professional career that spans a range of disciplines and industries over that last 20 years. With numerous bodies of work, Kim covers a variety of genres from realism to abstract, colorful to black and white, and traditional to esoteric, with all showing the same level of skill and dedication across her portfolio. </p>
+          <p>"I care as much about how work is made as why it’s made, therefore the practical foundation for all of my work is a combination of technique, craftsmanship, intent, and process, all of which give my interests something stable on which to grow. However, the primary drive behind why I make art is the desire for a genuinely honest and thoughtful means of expression, full of fascination and wonder. Unsurprisingly then, my work represents the wide variety of subjects and processes that pique my interests and the quirky ways said variety combines in my imagination. "</p>
         </div>
       </div>
 
       <div class="artist-row">
-        <div class="layout-photo" data-photo-label="Artist Name Three">Photo — photo three</div>
+          <div class="layout-photo" data-photo-label="Margaret"><img src="pics/angel.jpg" alt="Margaret" loading="lazy"></div>
         <div class="layout-text">
-          <h2 class="artist-name">Margaret</h2>
-          <p class="artist-medium">Reupholstery</p>
-          <p>Placeholder bio — a short introduction to this artist, what drew them to the medium, and what they're working on now. Swap in real copy when it's ready.</p>
-          <p>A second paragraph of placeholder copy, for whenever there's more to say than fits in one.</p>
+          <div class="artist-name-row">
+            <h2 class="artist-name">Margaret</h2>
+            <div class="artist-links">
+              <a href="mailto:marplbk1693@gmail.com" aria-label="Margaret — email">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="3" y="5" width="18" height="14" rx="2"/>
+                  <path d="M3 7l9 6 9-6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+          <p class="artist-medium">Reupholstery & Restoration</p>
+          <p>Silent partner who means the world to us here at Interwoven. Deeply grateful for all the support she has given us.</p>
+          <p>Come ask us about reupholstery and restoration if you want to learn more about her.</p>
         </div>
       </div>
     </div>

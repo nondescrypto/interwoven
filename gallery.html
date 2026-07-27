@@ -414,6 +414,19 @@
     font-size: 26px;
     margin: 96px 0 24px;
   }
+  .gallery-heading + .section-note { margin-top: -12px; }
+  .section-note {
+    color: var(--text-muted);
+    line-height: 1.75;
+    font-size: 15.5px;
+    margin: 0 0 24px;
+  }
+  .section-note a {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: opacity 0.25s ease;
+  }
+  .section-note a:hover { opacity: 0.7; }
   .photo-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -541,6 +554,12 @@
     main { padding: 40px 24px 72px; }
     .layout { flex-direction: column; gap: 28px; }
     .layout-photo { width: 100%; height: 280px; }
+    /* Cover crops the edges off on a narrow phone screen where the box's
+       aspect ratio departs further from the photo's than it does on
+       desktop. Contain keeps the full photo in view at this width --
+       the box height (280px) stays capped, so this only shows a thin
+       strip of the placeholder gradient, not a large gray letterbox. */
+    .layout-photo img { object-fit: contain; }
   }
 </style>
 </head>
@@ -599,22 +618,51 @@
         <h2>Interwoven Maker Space</h2>
         <p>A venue created by an artist for artists, it becomes a space to make creativity blossom. It is a gallery for artists, a performance space for musicians and poets, a place to teach a class and learn new skills - a space where everyone is welcome to create and engage with local artists and their art.</p>
         <p>Have some tea or coffee over conversation, all together it forms the culture, art, food, fabric and entertainment of the community.</p>
-        <p>This is the vision of Interwoven Caffe TM open during events, classes, and scheduled city events. </p>
+        <p>This vision of Interwoven Caffe™ is to be open for events, classes, and scheduled city events. </p>
       </div>
     </div>
 
-    <h2 class="gallery-heading">Various works</h2>
+    <h2 class="gallery-heading">Music & Events</h2>
+    <p class="section-note">Interwoven is a venue for many performers, including those that are a part of <a href="https://www.instagram.com/stoveboatconcerts/" target="_blank" rel="noopener">Stoveboat Concerts</a> and <a href="https://scapeghostsounds.com/unexpected-music" target="_blank" rel="noopener">Unexpected Music</a>.</p>
+    <div class="photo-grid" id="photoGrid">
+        <div class="grid-photo" data-photo-label="Music Event"><img src="pics/event.jpg" alt="Music Event" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Music Event"><img src="pics/event1.jpg" alt="Music Event" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Event"><img src="pics/event2.jpg" alt="Event" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Music Event"><img src="pics/event3.jpg" alt="Music Event" loading="lazy"></div>
+    </div>
+
+    <h2 class="gallery-heading">Food</h2>
+    <p class="section-note">As someone of Sicilian heritage, making food is a process Rhonda feels deeply connected to. Like many of the cultures that live in the United States, we all come from somewhere. The way we make our food and the ingredients we use reflect the origins of our cultural heritage. In the Art and Language of Food, Rhonda teaches cooking and food preservation and give our Grandmothers all the credit. You can also find her at the <a href="https://coastalfoodshed.org/pages/new-bedford-farmers-market" target="_blank" rel="noopener">New Bedford Farmer's market</a> sharing food with <a href="https://coastalfoodshed.org/blogs/news" target="_blank" rel="noopener">The Coastal Foodshed</a>.</p>
+    <div class="photo-grid" id="photoGrid">
+        <div class="grid-photo" data-photo-label="Food Colors"><img src="pics/food-colors.jpg" alt="Food Colors" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Canning"><img src="pics/canning.jpg" alt="Canned goods" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Canning"><img src="pics/canning1.jpg" alt="Canned goods" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Canning"><img src="pics/canning2.jpg" alt="Canned goods" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Canning"><img src="pics/canning3.jpg" alt="Canned goods" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Canning"><img src="pics/canning4.jpg" alt="Canned goods" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Canning"><img src="pics/canning5.jpg" alt="Canned goods" loading="lazy"></div>
+    </div>
+
+    <h2 class="gallery-heading">Fabric</h2>
     <div class="photo-grid" id="photoGrid">
       <div class="grid-photo" data-photo-label="Silk, colors"><img src="pics/silk-colors.jpg" alt="Silk, colors" loading="lazy"></div>
+      <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin.jpg" alt="Silk on mannequin" loading="lazy"></div>
       <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin1.jpg" alt="Silk on mannequin" loading="lazy"></div>
       <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin2.jpg" alt="Silk on mannequin" loading="lazy"></div>
       <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin3.jpg" alt="Silk on mannequin" loading="lazy"></div>
       <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin4.jpg" alt="Silk on mannequin" loading="lazy"></div>
+      <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin5.JPG" alt="Silk on mannequin" loading="lazy"></div>
+      <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin6.jpg" alt="Silk on mannequin" loading="lazy"></div>
+      <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin7.jpg" alt="Silk on mannequin" loading="lazy"></div>
+      <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin8.jpg" alt="Silk on mannequin" loading="lazy"></div>
+      <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin9.jpg" alt="Silk on mannequin" loading="lazy"></div>
+      <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequins.jpg" alt="Silk on mannequin" loading="lazy"></div>
       <div class="grid-photo" data-photo-label="Silk, modeled"><img src="pics/silk-model1.jpg" alt="Silk, modeled" loading="lazy"></div>
       <div class="grid-photo" data-photo-label="Silk, modeled"><img src="pics/silk-model2.jpg" alt="Silk, modeled" loading="lazy"></div>
       <div class="grid-photo" data-photo-label="Silk, modeled"><img src="pics/silk-model3.jpg" alt="Silk, modeled" loading="lazy"></div>
-      <div class="grid-photo" data-photo-label="Silk, worn"><img src="pics/silk-people.jpg" alt="Silk, worn" loading="lazy"></div>
-      <div class="grid-photo" data-photo-label="Silk, worn"><img src="pics/silk-people1.jpg" alt="Silk, worn" loading="lazy"></div>
+      <div class="grid-photo" data-photo-label="People with silk"><img src="pics/silk-people.jpg" alt="People with silk" loading="lazy"></div>
+      <div class="grid-photo" data-photo-label="Silk booth"><img src="pics/booth.jpg" alt="Silk booth" loading="lazy"></div>
+      <div class="grid-photo" data-photo-label="Silk booth"><img src="pics/booth1.jpg" alt="Silk booth" loading="lazy"></div>
       <div class="grid-photo" data-photo-label="Silk"><img src="pics/silk1.jpg" alt="Silk" loading="lazy"></div>
       <div class="grid-photo" data-photo-label="Silk"><img src="pics/silk2.jpg" alt="Silk" loading="lazy"></div>
       <div class="grid-photo" data-photo-label="Thread"><img src="pics/thread1.jpg" alt="Thread" loading="lazy"></div>
