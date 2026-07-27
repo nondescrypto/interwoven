@@ -370,9 +370,11 @@
     align-items: center;
   }
   .layout-photo {
+    position: relative;
     flex: 1 1 50%;
     height: 420px;
     border-radius: 4px;
+    overflow: hidden;
     background: linear-gradient(155deg, var(--stone) 0%, var(--line) 100%);
     display: flex;
     align-items: flex-end;
@@ -381,6 +383,15 @@
     font-size: 12px;
     letter-spacing: 0.06em;
     text-transform: uppercase;
+  }
+
+  .layout-photo img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
   .layout-text {
     flex: 1 1 50%;
@@ -554,7 +565,7 @@
     </ul>
 
     <div class="nav-right">
-      <a href="mailto:dms@gmail.com" class="nav-ticket">Contact</a>
+      <a href="mailto:interwovenmakerspace@gmail.com" class="nav-ticket">Contact</a>
       <a href="#" class="nav-lang">EN</a>
       <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
         <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" xmlns="http://www.w3.org/2000/svg">
@@ -574,7 +585,7 @@
       <a href="artists.html">The Artists</a>
       <a href="calendar.html">The Calendar</a>
       <a href="#" class="nav-lang">EN</a>
-      <a href="mailto:dms@gmail.com">Contact</a>
+      <a href="mailto:interwovenmakerspace@gmail.com">Contact</a>
     </div>
     <div class="navbar-weave" id="navbarWeave"></div>
   </nav>
@@ -583,15 +594,16 @@
     <h1>A look inside the space</h1>
 
     <div class="layout">
-      <div class="layout-photo" data-photo-label="The main room">Photo — the main room</div>
+      <div class="layout-photo" data-photo-label="The main room"><img src="pics/the-venue-full.jpg" alt="The main room" loading="lazy"></div>
       <div class="layout-text">
-        <h2>Placeholder heading</h2>
-        <p>Placeholder copy about the space — swap in your own story here. This is where a longer description of the room, its history, and what happens inside it can live.</p>
-        <p>A second paragraph of placeholder copy, for whenever there's more to say than fits in one.</p>
+        <h2>Interwoven Maker Space</h2>
+        <p>A venue created by an artist for artists, it becomes a space to make creativity blossom. It is a gallery for artists, a performance space for musicians and poets, a place to teach a class and learn new skills - a space where everyone is welcome to create and engage with local artists and their art.</p>
+        <p>Have some tea or coffee over conversation, all together it forms the culture, art, food, fabric and entertainment of the community.</p>
+        <p>This is the vision of Interwoven Caffe TM open during events, classes, and scheduled city events. </p>
       </div>
     </div>
 
-    <h2 class="gallery-heading">Silk, thread &amp; warp</h2>
+    <h2 class="gallery-heading">Various works</h2>
     <div class="photo-grid" id="photoGrid">
       <div class="grid-photo" data-photo-label="Silk, colors"><img src="pics/silk-colors.jpg" alt="Silk, colors" loading="lazy"></div>
       <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin1.jpg" alt="Silk on mannequin" loading="lazy"></div>
@@ -609,16 +621,13 @@
       <div class="grid-photo" data-photo-label="Warp, boat shuttle"><img src="pics/warp-boat.jpg" alt="Warp, boat shuttle" loading="lazy"></div>
       <div class="grid-photo" data-photo-label="Warp, colors"><img src="pics/warp-colors.jpg" alt="Warp, colors" loading="lazy"></div>
       <div class="grid-photo" data-photo-label="Warp, side view"><img src="pics/warp-side.jpg" alt="Warp, side view" loading="lazy"></div>
-      <div class="grid-photo" data-photo-label="Warp strings"><img src="pics/warp-strings.png" alt="Warp strings" loading="lazy"></div>
-      <div class="grid-photo" data-photo-label="Warp, upright"><img src="pics/warp-up.jpg" alt="Warp, upright" loading="lazy"></div>
-      <div class="grid-photo" data-photo-label="Warp"><img src="pics/warp1.jpg" alt="Warp" loading="lazy"></div>
       <div class="grid-photo" data-photo-label="Warp"><img src="pics/warp2.jpg" alt="Warp" loading="lazy"></div>
     </div>
 
     <div class="involved">
-      <h3>Get involved</h3>
-      <p>Interested in planning an event here, displaying your art on our walls, or sharing the space in some other way? We'd love to hear from you — reach out and let's talk about what's possible.</p>
-      <a href="mailto:hello@interwoven.example" class="btn-link">Contact us</a>
+      <h3>Come find us</h3>
+      <p>Located below the Portuguese Consulate and across the street from City Hall in New Bedford MA.</p>
+      <p>634 Pleasant Street, New Bedford, MA &middot; (508) 669-6835</p>
     </div>
   </main>
 

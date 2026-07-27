@@ -370,9 +370,11 @@
     align-items: center;
   }
   .layout-photo {
+    position: relative;
     flex: 1 1 50%;
     height: 420px;
     border-radius: 4px;
+    overflow: hidden;
     background: linear-gradient(155deg, var(--stone) 0%, var(--line) 100%);
     display: flex;
     align-items: flex-end;
@@ -381,6 +383,15 @@
     font-size: 12px;
     letter-spacing: 0.06em;
     text-transform: uppercase;
+  }
+
+  .layout-photo img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
   .layout-text {
     flex: 1 1 50%;
@@ -396,6 +407,11 @@
     line-height: 1.75;
     font-size: 15.5px;
     margin: 0 0 16px;
+  }
+  .layout-text p a {
+    color: var(--text);
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 
   /* Artist rows — stacked vertically, photo/text sides alternating */
@@ -534,7 +550,7 @@
     </ul>
 
     <div class="nav-right">
-      <a href="mailto:dms@gmail.com" class="nav-ticket">Contact</a>
+      <a href="mailto:interwovenmakerspace@gmail.com" class="nav-ticket">Contact</a>
       <a href="#" class="nav-lang">EN</a>
       <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
         <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" xmlns="http://www.w3.org/2000/svg">
@@ -554,7 +570,7 @@
       <a href="artists.html">The Artists</a>
       <a href="calendar.html">The Calendar</a>
       <a href="#" class="nav-lang">EN</a>
-      <a href="mailto:dms@gmail.com">Contact</a>
+      <a href="mailto:interwovenmakerspace@gmail.com">Contact</a>
     </div>
     <div class="navbar-weave" id="navbarWeave"></div>
   </nav>
@@ -564,20 +580,20 @@
 
     <div class="artist-rows">
       <div class="artist-row">
-        <div class="layout-photo" data-photo-label="Artist Name One">Photo — photo one</div>
+        <div class="layout-photo" data-photo-label="Artist Name One"><img src="pics/artist.jpg" alt="Artist Name One" loading="lazy"></div>
         <div class="layout-text">
-          <h2 class="artist-name">Artist Name One</h2>
-          <p class="artist-medium">Weaving &amp; textiles</p>
-          <p>Placeholder bio — a short introduction to this artist, what drew them to the medium, and what they're working on now. Swap in real copy when it's ready.</p>
-          <p>A second paragraph of placeholder copy, for whenever there's more to say than fits in one.</p>
+          <h2 class="artist-name">Rhonda M. Fazio</h2>
+          <p class="artist-medium">Food &amp; Fabric</p>
+          <p>Rhonda M. Fazio is the founder and designer of <a href="https://dyermakerstudio.com" target="_blank" rel="noopener">Dyer Maker Studio</a>, a traveling Maker Space specializing in natural colors and sustainable textile design.</p>
+          <p>Rhonda teaches "Dyeing to Wear It", weaving and cooking classes and is the Creative Curator of Interwoven.</p>
         </div>
       </div>
 
       <div class="artist-row reverse">
         <div class="layout-photo" data-photo-label="Artist Name Two">Photo — photo two</div>
         <div class="layout-text">
-          <h2 class="artist-name">Artist Name Two</h2>
-          <p class="artist-medium">Ceramics</p>
+          <h2 class="artist-name">Kim Gatesman</h2>
+          <p class="artist-medium">Printmaking</p>
           <p>Placeholder bio — a short introduction to this artist, what drew them to the medium, and what they're working on now. Swap in real copy when it's ready.</p>
           <p>A second paragraph of placeholder copy, for whenever there's more to say than fits in one.</p>
         </div>
@@ -586,8 +602,8 @@
       <div class="artist-row">
         <div class="layout-photo" data-photo-label="Artist Name Three">Photo — photo three</div>
         <div class="layout-text">
-          <h2 class="artist-name">Artist Name Three</h2>
-          <p class="artist-medium">Printmaking</p>
+          <h2 class="artist-name">Margaret</h2>
+          <p class="artist-medium">Reupholstery</p>
           <p>Placeholder bio — a short introduction to this artist, what drew them to the medium, and what they're working on now. Swap in real copy when it's ready.</p>
           <p>A second paragraph of placeholder copy, for whenever there's more to say than fits in one.</p>
         </div>
@@ -595,9 +611,11 @@
     </div>
 
     <div class="involved">
-      <h3>Join us</h3>
-      <p>Interested in showing your work here, taking a studio spot, or collaborating with one of our artists? We'd love to hear from you — reach out and let's talk about what's possible.</p>
-      <a href="mailto:hello@interwoven.example" class="btn-link">Contact us</a>
+      <h3>The Call to Makers and Artists</h3>
+      <p>Do you have an idea for a class? Do you need gallery space? Interwoven provides a creative space for pop ups, gallery showings, classes, and private events for small parties. </p>
+      <p>Check out the pdf to propose your idea, whatever the form, and click contact us with it attached to start the conversation.</p>
+      <p><a href="call_for_proposals_interwoven.pdf" download class="btn-link">Download the Call for Proposals (PDF)</a></p>
+      <a href="mailto:interwovenmakerspace@gmail.com" class="btn-link">Contact us</a>
     </div>
   </main>
   <footer class="site-footer">
