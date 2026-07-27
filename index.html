@@ -763,9 +763,24 @@
 
   .lightbox.open { display: flex; }
 
-  .lightbox-photo {
+  /* Fixed at the largest size any photo is allowed to render at, so the
+     arrows anchored to its edges (see .lightbox-nav) land in the same
+     spot for every photo instead of hopping around with each one's
+     actual size. The real photo still only takes up as much of this as
+     its own size needs (see .lightbox-photo-wrap) -- this box is just a
+     stable reference frame for the arrows, not the photo's own box. */
+  .lightbox-stage {
+    flex: 0 0 auto;
     width: min(80vw, 900px);
     height: min(80vh, 640px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lightbox-photo {
+    width: 100%;
+    height: 100%;
     background: linear-gradient(155deg, var(--stone) 0%, var(--line) 100%);
     display: flex;
     align-items: flex-end;
@@ -779,15 +794,15 @@
   }
 
   /* With a real photo, the box shrinks to the image's own rendered size
-     (still capped by the same max dimensions) instead of staying a fixed
-     80vw/80vh card -- that way the prev/next arrows sit right beside the
-     actual photo edge, not off in empty space around a card that's
-     smaller than its box. */
+     within the stage above, instead of staying a fixed full-stage card --
+     that way the close button (which anchors to this box's own corner)
+     sits right beside the actual photo edge, not off in empty space
+     around a card that's bigger than the photo. */
   .lightbox-photo.has-image {
     width: auto;
     height: auto;
-    max-width: min(80vw, 900px);
-    max-height: min(80vh, 640px);
+    max-width: 100%;
+    max-height: 100%;
     background: none;
     padding: 0;
     align-items: center;
@@ -801,13 +816,21 @@
     border-radius: 4px;
   }
 
+  /* Shrink-wraps to whatever size .lightbox-photo actually renders at,
+     giving the close button a corner to anchor to right at the photo's
+     own edge instead of the stage's. */
+  .lightbox-photo-wrap {
+    position: relative;
+    display: flex;
+  }
+
   .lightbox-close {
-    position: fixed;
+    position: absolute;
     z-index: 210;
-    top: 20px;
-    right: 20px;
-    width: 40px;
-    height: 40px;
+    top: -14px;
+    right: -14px;
+    width: 36px;
+    height: 36px;
     border: none;
     border-radius: 50%;
     background: rgba(10,9,8,0.55);
@@ -820,17 +843,17 @@
   }
 
   .lightbox-close:hover { background: rgba(10,9,8,0.8); }
-  .lightbox-close svg { width: 18px; height: 18px; }
+  .lightbox-close svg { width: 16px; height: 16px; }
 
-  /* Flex siblings of .lightbox-photo (see the markup) rather than fixed
-     to the viewport edge, so they hug whatever size the photo actually
-     renders at instead of sitting far off in the corners on a wide
-     screen where the photo is much narrower than the viewport. */
+  /* Flex siblings of .lightbox-stage (see the markup), not of the photo
+     itself -- the stage is a constant size, so these land in the same
+     place for every photo instead of hugging (and shifting with) each
+     photo's own actual edge. */
   .lightbox-nav {
     flex: 0 0 auto;
     z-index: 210;
-    width: 44px;
-    height: 44px;
+    width: 88px;
+    height: 88px;
     border: none;
     border-radius: 50%;
     background: rgba(10,9,8,0.55);
@@ -843,7 +866,7 @@
   }
 
   .lightbox-nav:hover { background: rgba(10,9,8,0.8); }
-  .lightbox-nav svg { width: 20px; height: 20px; }
+  .lightbox-nav svg { width: 40px; height: 40px; }
 
   /* Panning stops at the edges of the photo's own section rather than
      wrapping around into the next one, so the arrow just disappears
@@ -864,7 +887,21 @@
        screen. Moved into the fixed footer instead (see .footer-scroll-cue),
        which is visible on every panel and reads clearly at any width. */
     .scroll-cue { display: none; }
-    .footer-scroll-cue { display: flex; }
+    /* Specificity bump (not just .footer-scroll-cue) is deliberate: the
+       base rule that hides this by default is declared further down the
+       stylesheet (with .site-footer), which would otherwise win the
+       cascade over this same-specificity mobile override regardless of
+       the media query matching. On desktop this stays absolutely
+       positioned and hidden; on mobile it becomes a normal flex item so
+       it gets its own slot in the footer row (via space-between below)
+       instead of floating on top of the centered social/copyright group,
+       which is what was causing it to overlap "© Interwoven". */
+    .site-footer { justify-content: space-between; padding: 0 20px; }
+    .site-footer .footer-scroll-cue {
+      display: flex;
+      position: static;
+      transform: none;
+    }
     .nav-logo { margin-right: 12px; gap: 8px; }
     .nav-logo-img { width: 40px; height: 40px; }
     /* Only these two change on mobile -- the underline's thickness, its
@@ -1231,13 +1268,17 @@
   </footer>
 
   <div class="lightbox" id="lightbox">
-    <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Close">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
-    </button>
     <button type="button" class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous photo">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
-    <div class="lightbox-photo" id="lightboxPhoto"></div>
+    <div class="lightbox-stage">
+      <div class="lightbox-photo-wrap">
+        <div class="lightbox-photo" id="lightboxPhoto"></div>
+        <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
     <button type="button" class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next photo">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
