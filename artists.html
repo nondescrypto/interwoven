@@ -372,7 +372,8 @@
   .layout-photo {
     position: relative;
     flex: 1 1 50%;
-    height: 420px;
+    height: auto;
+    aspect-ratio: 1 / 1;
     border-radius: 4px;
     overflow: hidden;
     background: var(--bg);
@@ -390,7 +391,14 @@
     inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    /* Square, like the grid photos elsewhere on the site, which read
+       fine at any width. contain was avoiding cropping, but landscape
+       box + portrait/square photo meant most of these were shrunk down
+       to a fraction of the box with a big empty margin on the sides --
+       reading as "too small" rather than "uncropped." A square box is
+       close enough to these photos' own aspect ratios that cover now
+       only trims a modest amount off the top/bottom instead. */
+    object-fit: cover;
     display: block;
   }
   .layout-text {
@@ -544,7 +552,7 @@
   @media (max-width: 760px) {
     main { padding: 40px 24px 72px; }
     .layout { flex-direction: column; gap: 28px; }
-    .layout-photo { width: 100%; height: 280px; }
+    .layout-photo { width: 100%; }
   }
 </style>
 </head>

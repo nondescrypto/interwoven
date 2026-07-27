@@ -756,6 +756,7 @@
     display: none;
     align-items: center;
     justify-content: center;
+    gap: 16px;
     background: rgba(10,9,8,0.88);
     cursor: pointer;
   }
@@ -777,7 +778,16 @@
     cursor: default;
   }
 
+  /* With a real photo, the box shrinks to the image's own rendered size
+     (still capped by the same max dimensions) instead of staying a fixed
+     80vw/80vh card -- that way the prev/next arrows sit right beside the
+     actual photo edge, not off in empty space around a card that's
+     smaller than its box. */
   .lightbox-photo.has-image {
+    width: auto;
+    height: auto;
+    max-width: min(80vw, 900px);
+    max-height: min(80vh, 640px);
     background: none;
     padding: 0;
     align-items: center;
@@ -791,31 +801,98 @@
     border-radius: 4px;
   }
 
+  .lightbox-close {
+    position: fixed;
+    z-index: 210;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(10,9,8,0.55);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .lightbox-close:hover { background: rgba(10,9,8,0.8); }
+  .lightbox-close svg { width: 18px; height: 18px; }
+
+  /* Flex siblings of .lightbox-photo (see the markup) rather than fixed
+     to the viewport edge, so they hug whatever size the photo actually
+     renders at instead of sitting far off in the corners on a wide
+     screen where the photo is much narrower than the viewport. */
+  .lightbox-nav {
+    flex: 0 0 auto;
+    z-index: 210;
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(10,9,8,0.55);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease, opacity 0.2s ease;
+  }
+
+  .lightbox-nav:hover { background: rgba(10,9,8,0.8); }
+  .lightbox-nav svg { width: 20px; height: 20px; }
+
+  /* Panning stops at the edges of the photo's own section rather than
+     wrapping around into the next one, so the arrow just disappears
+     instead of looping back to the start. */
+  .lightbox-nav:disabled {
+    opacity: 0;
+    pointer-events: none;
+  }
+
   @media (max-width: 860px) {
     .nav-links { display: none; }
     .nav-lang { display: none; }
     .nav-ticket { display: none; }
     .nav-hamburger { display: flex; }
     .navbar, .hero-content, .scroll-cue, .section { padding-left: 24px; padding-right: 24px; }
-    /* Re-enabled and bumped up rather than hidden -- a horizontal-scroll
-       page is much less obvious on a touchscreen than with a visible
-       scrollbar/cursor on desktop, so the cue needs to read clearly here,
-       not less. */
-    .scroll-cue {
-      right: 24px;
-      bottom: 28px;
-      gap: 12px;
-      color: rgba(246,242,234,0.95);
-    }
-    .scroll-cue span { font-size: 13px; }
-    .scroll-cue .line { width: 30px; background: rgba(246,242,234,0.8); }
-    .scroll-cue .arrow svg { width: 26px; height: 26px; }
+    /* Sitting over the hero photo, this cue only makes sense while the hero
+       panel is on screen and gets lost against a busy photo on a small
+       screen. Moved into the fixed footer instead (see .footer-scroll-cue),
+       which is visible on every panel and reads clearly at any width. */
+    .scroll-cue { display: none; }
+    .footer-scroll-cue { display: flex; }
     .nav-logo { margin-right: 12px; gap: 8px; }
     .nav-logo-img { width: 40px; height: 40px; }
     /* Only these two change on mobile -- the underline's thickness, its
        position against the logo, and the footer line all recompute from
        them, so everything stays matched and touching. */
     :root { --logo-h: 34px; --nav-pad: 24px; }
+
+    /* The photo is already close to full viewport width here, so there's
+       no real gap left to hug -- flexing the arrows in next to it like on
+       desktop would just crowd them against the image or squeeze them
+       off-screen. Anchoring to the viewport edge instead keeps them
+       reachable and, since the photo already reaches nearly that far
+       itself, still reads as right next to it. */
+    .lightbox { gap: 0; }
+    .lightbox-nav {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .lightbox-prev { left: 12px; }
+    .lightbox-next { right: 12px; }
+
+    /* Panels butt together with no gap by design (see the scroll-fade
+       comment in the script below), which reads fine on desktop where the
+       hero content sits well clear of the panel edge. On a narrow phone
+       the hero title and the calendar heading both sit much closer to
+       their panel's edge, so the transition needs an explicit gap. */
+    .hero { margin-right: 24px; }
 
     /* Each panel's vertical space (100svh minus navbar/footer) is much
        tighter on a phone. Centering tall content in that space pushed the
@@ -910,9 +987,36 @@
   .footer-social svg { width: 18px; height: 18px; }
   .footer-copy { font-size: 11px; color: var(--text-muted); letter-spacing: 0.04em; }
 
+  /* Mobile-only stand-in for .scroll-cue -- hidden here on desktop, shown
+     by the mobile media query below. Sits in the fixed footer instead of
+     over the hero photo, so it's visible on every panel, not just the
+     first one, and reads clearly against the flat footer background. */
+  .footer-scroll-cue {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text);
+    opacity: 0.75;
+  }
+  .footer-scroll-cue span {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .footer-scroll-cue svg {
+    width: 18px;
+    height: 18px;
+    animation: nudge-right 1.4s ease-in-out infinite;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .scroll-cue .line { animation: none; }
     .scroll-cue .arrow svg { animation: none; }
+    .footer-scroll-cue svg { animation: none; }
     html { scroll-behavior: auto; }
   }
 </style>
@@ -1118,10 +1222,25 @@
       </a>
     </div>
     <p class="footer-copy">&copy; Interwoven</p>
+    <div class="footer-scroll-cue">
+      <span>Scroll right</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 12h15M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
   </footer>
 
   <div class="lightbox" id="lightbox">
+    <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
+    </button>
+    <button type="button" class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous photo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
     <div class="lightbox-photo" id="lightboxPhoto"></div>
+    <button type="button" class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next photo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
   </div>
 
   <script>
@@ -1179,28 +1298,63 @@
     loadUpcomingEvents();
 
     // Lightbox: click any placeholder photo to see it larger, click
-    // anywhere outside the enlarged photo to close it
+    // anywhere outside the enlarged photo (or the X) to close it. Prev/next
+    // pan through the photos in that same section only -- each section's
+    // photos are collected once up front, so the arrows stop at the first
+    // and last photo of that section rather than spilling into the next.
     const lightbox = document.getElementById('lightbox');
     const lightboxPhoto = document.getElementById('lightboxPhoto');
+    const lightboxClose = document.getElementById('lightboxClose');
+    const lightboxPrev = document.getElementById('lightboxPrev');
+    const lightboxNext = document.getElementById('lightboxNext');
+    let lightboxGroup = [];
+    let lightboxIndex = 0;
+
+    function showLightboxPhoto(photo) {
+      const img = photo.querySelector('img');
+      lightboxPhoto.innerHTML = '';
+      if (img) {
+        lightboxPhoto.classList.add('has-image');
+        const full = document.createElement('img');
+        full.src = img.src;
+        full.alt = photo.dataset.photoLabel || img.alt;
+        lightboxPhoto.appendChild(full);
+      } else {
+        lightboxPhoto.classList.remove('has-image');
+        lightboxPhoto.textContent = photo.dataset.photoLabel || photo.textContent;
+      }
+      lightboxPrev.disabled = lightboxIndex === 0;
+      lightboxNext.disabled = lightboxIndex === lightboxGroup.length - 1;
+    }
+
     document.querySelectorAll('.ph-photo').forEach(photo => {
       photo.addEventListener('click', () => {
-        const img = photo.querySelector('img');
-        lightboxPhoto.innerHTML = '';
-        if (img) {
-          lightboxPhoto.classList.add('has-image');
-          const full = document.createElement('img');
-          full.src = img.src;
-          full.alt = photo.dataset.photoLabel || img.alt;
-          lightboxPhoto.appendChild(full);
-        } else {
-          lightboxPhoto.classList.remove('has-image');
-          lightboxPhoto.textContent = photo.dataset.photoLabel || photo.textContent;
-        }
+        const section = photo.closest('.section') || document;
+        lightboxGroup = Array.from(section.querySelectorAll('.ph-photo'));
+        lightboxIndex = lightboxGroup.indexOf(photo);
+        showLightboxPhoto(photo);
         lightbox.classList.add('open');
       });
     });
+
+    function stepLightbox(delta) {
+      const next = lightboxIndex + delta;
+      if (next < 0 || next >= lightboxGroup.length) return;
+      lightboxIndex = next;
+      showLightboxPhoto(lightboxGroup[lightboxIndex]);
+    }
+    lightboxPrev.addEventListener('click', () => stepLightbox(-1));
+    lightboxNext.addEventListener('click', () => stepLightbox(1));
+    lightboxClose.addEventListener('click', () => lightbox.classList.remove('open'));
+
     lightbox.addEventListener('click', (e) => {
       if (e.target === lightbox) lightbox.classList.remove('open');
+    });
+    document.addEventListener('keydown', (e) => {
+      if (!lightbox.classList.contains('open')) return;
+      if (e.key === 'Escape') lightbox.classList.remove('open');
+      if (e.key === 'ArrowLeft') stepLightbox(-1);
+      if (e.key === 'ArrowRight') stepLightbox(1);
     });
 
     // Pan arrows on the gallery/artists photo rows — scroll roughly one
