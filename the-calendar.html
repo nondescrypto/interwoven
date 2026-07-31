@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Calendar — Interwoven</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@300;500;600&family=Work+Sans:wght@300;400;500&display=swap');
+  :root {
+    --ink: #1a1816;
+    --ivory: #f6f2ea;
+    /* ---------- PALETTE ----------
+       The three leaves in the Interwoven mark, sampled straight from the logo
+       art (the RMF mark uses the same three). These are the source of truth. */
+    --leaf-red:    #ed1a24;
+    --leaf-yellow: #fef100;
+    --leaf-blue:   #2e3093;
+
+    /* Role tokens, tuned per theme for legibility on the ivory paper. The raw
+       yellow only manages 1.06:1 against ivory, so the warm accent is that
+       same yellow carried toward the ink until it clears 4.5:1; the red needs
+       a small nudge. The blue already sits at 9.6:1, so it's used as-is. */
+    --burgundy: #da1a23;   /* leaf red,    4.53:1 on ivory */
+    --gold:     #77710d;   /* leaf yellow, 4.52:1 on ivory */
+    --indigo:   #2e3093;   /* leaf blue,   9.59:1 on ivory */
+    --stone:    #8a857c;   /* warm neutral for placeholder fills */
+    --line: rgba(26,24,22,0.12);
+    --ff-display: "Fraunces", Georgia, serif;
+    --ff-body: "Work Sans", -apple-system, sans-serif;
+    --nav-h: 84px;
+
+    /* Logo size drives the underline. The wordmark art is 400x133 with a
+       10px stroke; the weave art is 400x69 with the same 10px stroke. So
+       rendering the weave at logo-height x 69/133 (0.5188) makes the two
+       strokes land on exactly the same thickness. */
+    --logo-h: 60px;
+    --nav-pad: 48px;
+    --weave-h: calc(var(--logo-h) * 0.5188);
+    --bg: var(--ivory);
+    --text: var(--ink);
+    --text-muted: #4a4640;
+    --label-color: #000000;
+  }
+
+  body.dark {
+    --bg: #14120f;
+    --text: #ece7db;
+    --text-muted: #b8b2a4;
+    --line: rgba(236,231,220,0.12);
+    /* Same three leaves, re-tuned against the dark paper: the blue is
+       unreadable at 1.75:1 down here so it lifts toward ivory, and the raw
+       yellow is glaring at 15.8:1 so it drops back toward the background. */
+    --burgundy: #ee2d36;   /* 4.51:1 on dark */
+    --gold:     #c4b904;   /* 9.17:1 on dark */
+    --indigo:   #7878b3;   /* 4.56:1 on dark */
+    --stone:    #615d56;
+    --label-color: #ffffff;
+  }
+
+  .navbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    height: var(--nav-h);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--nav-pad);
+    background: var(--bg);
+    transition: background 0.4s ease;
+  }
+
+  /* ---------- NAVBAR UNDERLINE ----------
+     Three pieces, all cut from your one 400x69 stroke, rendered 31px tall so the
+     line's vertical weight matches the underline baked into the INterwoven
+     wordmark (both land on a ~4.5px stroke).
+
+       ::before  START CAP -- the stroke mirrored vertically, so its longer curl
+                 (the one that used to hang below on the left) now rises on top
+                 and hooks up into the wordmark's lower flare. Cropped at x=367,
+                 where the stroke is still dead flat, so it hands off cleanly.
+                 Nudged up 0.9px: flipping moves the flat run 2 source-px down,
+                 and this puts it back on the same baseline as the tiles.
+
+       ::after   THE CHAIN -- starts immediately after the cap and runs right, so
+                 nothing spills off the left edge of the screen. Two layers:
+                 the 300px flare tile (stroke pre-overlapped by 100px) on top for
+                 the hand-drawn flares, all in the original orientation; and a
+                 140px crop of the pure flat middle (source x=110..250) beneath,
+                 which fills the small pen-lift gaps at every seam so the
+                 horizontal line reads as one continuous stroke.
+
+     --weave-start slides the whole assembly sideways to meet the logo. */
+  .navbar-weave {
+    /* Every length below is derived from --weave-h, so the whole assembly
+       rescales with the logo and stays touching it at any breakpoint.
+       Ratios come straight from the source art (400x69):
+         cap   367/69 = 5.3188   flare tile 300/69 = 4.3478
+         flat  140/69 = 2.0290   flip nudge   2/69 = 0.0290
+       --weave-start puts the cap's up-tip under the wordmark's flare tip
+       (source x 7.76 of a 400x133 art), and bottom lifts it so they meet. */
+    --cap-w: calc(var(--weave-h) * 5.3188);
+    --tile-w: calc(var(--weave-h) * 4.3478);
+    --weave-start: calc(var(--nav-pad) + var(--logo-h) * 0.0584 - var(--weave-h) * 0.1159);
+    --chain-x: calc(var(--weave-start) + var(--cap-w));
+    position: absolute;
+    left: var(--weave-start);
+    right: 0;
+    bottom: calc(var(--nav-h) / 2 + 3px - var(--logo-h) * 1.0173);
+    height: var(--weave-h);
+    pointer-events: none;
+  }
+
+  .navbar-weave::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: calc(var(--weave-h) * -0.029);
+    width: var(--cap-w);
+    height: var(--weave-h);
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-size: var(--cap-w) var(--weave-h);
+    background-image: url('img/weave-cap-light.png');
+  }
+
+  .navbar-weave::after {
+    content: '';
+    position: absolute;
+    left: var(--cap-w);
+    right: 0;
+    top: 0;
+    height: var(--weave-h);
+    background-repeat: repeat-x;
+    background-position: left center;
+    background-size: var(--tile-w) var(--weave-h);
+    background-image: url('img/weave-tile-light.png');
+  }
+
+  body.dark .navbar-weave::before {
+    background-image: url('img/weave-cap-dark.png');
+  }
+
+  body.dark .navbar-weave::after {
+    background-image: url('img/weave-tile-dark.png');
+  }
+
+
+    /* No shadow or hairline under the bar any more -- the stylized stroke is
+     the only separator, top and bottom. (.scrolled is still toggled by the
+     scroll handler in case you want to hook something onto it later.) */
+
+
+  .nav-logo {
+    font-family: var(--ff-display);
+    font-size: 21px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: 24px;
+    flex-shrink: 0;
+  }
+
+  .nav-logo-text { color: inherit; display: flex; align-items: center; }
+
+  .nav-logo-wordmark { height: var(--logo-h); width: auto; display: block; }
+
+  .nav-logo-wordmark-dark { display: none; }
+  body.dark .nav-logo-wordmark-light { display: none; }
+  body.dark .nav-logo-wordmark-dark { display: block; }
+
+  .nav-logo-by { font-size: 11px; letter-spacing: 0.02em; }
+
+  .nav-logo-img { width: 58px; height: 58px; display: block; }
+
+  .nav-logo-img-dark { display: none; }
+  body.dark .nav-logo-img-light { display: none; }
+  body.dark .nav-logo-img-dark { display: block; }
+
+  .nav-links {
+    display: flex;
+    gap: 22px;
+    list-style: none;
+  }
+
+  .nav-links li a {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text);
+    position: relative;
+    padding-bottom: 4px;
+  }
+
+  .nav-links li a::after {
+    content: '';
+    position: absolute;
+    left: 0; bottom: 0;
+    width: 0%;
+    height: 1px;
+    background: currentColor;
+    transition: width 0.3s ease;
+  }
+
+  .nav-links li a:hover::after { width: 100%; }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    /* Keeps CONTACT off "THE CALENDAR" once the bar starts getting tight */
+    margin-left: 24px;
+  }
+
+  .nav-lang {
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    color: var(--text);
+    opacity: 0.7;
+  }
+
+  .nav-ticket {
+    font-size: 12.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border: 1px solid var(--text);
+    color: var(--text);
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 22px;
+    transition: all 0.3s ease;
+  }
+
+  .nav-ticket:hover {
+    background: var(--text);
+    color: var(--bg);
+  }
+
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: none;
+    cursor: pointer;
+    color: var(--text);
+    transition: border-color 0.3s ease;
+  }
+
+  .theme-toggle:hover { border-color: var(--text); }
+
+  .theme-toggle svg { width: 16px; height: 16px; }
+
+  .theme-toggle .icon-moon { display: none; }
+  body.dark .theme-toggle .icon-sun { display: none; }
+  body.dark .theme-toggle .icon-moon { display: block; }
+
+  /* Hamburger: hidden by default, only shown once the nav links no
+     longer fit (see the mobile media query below) */
+  .nav-hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+
+  .nav-hamburger span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: var(--text);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+  .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* The dropdown itself — closed by default (max-height: 0), expands
+     open when toggled. Holds the same section links plus the language
+     toggle, since both get hidden from the main bar on narrow screens. */
+  .nav-mobile-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    max-height: 0;
+    overflow: hidden;
+    background: var(--bg);
+    transition: max-height 0.35s ease;
+  }
+
+  .nav-mobile-menu.open { max-height: 400px; }
+
+  .nav-mobile-menu a {
+    padding: 16px 24px;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text);
+    border-bottom: 1px solid var(--line);
+    transition: all 0.3s ease;
+  }
+
+  /* Same invert-on-hover as the CONTACT button */
+  .nav-mobile-menu a:hover {
+    background: var(--text);
+    color: var(--bg);
+  }
+
+  .nav-mobile-menu a:last-child { border-bottom: none; }
+
+  @media (max-width: 860px) {
+    .nav-links { display: none; }
+    .nav-lang { display: none; }
+    .nav-ticket { display: none; }
+    .nav-hamburger { display: flex; }
+    .nav-logo { margin-right: 12px; gap: 8px; }
+    .nav-logo-img { width: 40px; height: 40px; }
+    /* Only these two change on mobile -- the underline's thickness, its
+       position against the logo, and the footer line all recompute from
+       them, so everything stays matched and touching. */
+    :root { --logo-h: 34px; --nav-pad: 24px; }
+  }
+
+  * { box-sizing: border-box; }
+  a { color: inherit; text-decoration: none; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    padding-top: var(--nav-h);
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Work Sans", sans-serif;
+    transition: background 0.4s ease, color 0.4s ease;
+  }
+  main { max-width: 1000px; margin: 0 auto; padding: 64px 48px 96px; }
+  .label {
+    font-size: 12.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--label-color);
+    margin-bottom: 16px;
+  }
+  h1 {
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 500;
+    font-size: clamp(32px, 4vw, 46px);
+    margin: 0 0 40px;
+  }
+  .calendar-frame {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 16px;
+    background: #f6f2ea;
+    transition: background 0.3s ease;
+  }
+  .calendar-frame iframe {
+    display: block;
+    width: 100%;
+    height: 650px;
+    border: none;
+    border-radius: 4px;
+    background: #ffffff;
+  }
+
+  /* Dark mode: invert the iframe so the calendar matches the page's dark
+     theme instead of sitting as a bright light rectangle. Light mode keeps
+     the calendar's natural styling, unfiltered. */
+  body.dark .calendar-frame { background: #1b1815; }
+  body.dark .calendar-frame iframe { filter: invert(0.92) hue-rotate(180deg) contrast(0.92); }
+
+  .site-footer {
+    position: relative;
+    margin-top: 80px;
+    padding: 40px 24px;
+    text-align: center;
+  }
+  /* Footer line: the same stroke as the navbar, mirrored vertically so its
+     hooks curl up instead of down. It carries the identical --weave-h and the
+     identical tile width, and its background-position-x is locked to the
+     navbar chain's origin (--chain-x), so every hook sits at the same x as the
+     one above it -- the two lines read as a symmetrical pair, top and bottom.
+     No start cap here: it just runs straight across from edge to edge.
+     Because all of it keys off --weave-h, any resize of the top line is
+     mirrored by this one automatically. */
+  .footer-weave {
+    --cap-w: calc(var(--weave-h) * 5.3188);
+    --tile-w: calc(var(--weave-h) * 4.3478);
+    --weave-start: calc(var(--nav-pad) + var(--logo-h) * 0.0584 - var(--weave-h) * 0.1159);
+    --chain-x: calc(var(--weave-start) + var(--cap-w));
+    position: absolute;
+    left: 0; right: 0;
+    top: calc(var(--weave-h) * -0.5072);
+    height: var(--weave-h);
+    pointer-events: none;
+    /* Same tile as the navbar, mirrored -- so the hooks curl up and
+       mirror the line above without needing a second set of images. */
+    transform: scaleY(-1);
+    background-repeat: repeat-x;
+    background-position: var(--chain-x) center;
+    background-size: var(--tile-w) var(--weave-h);
+    background-image: url('img/weave-tile-light.png');
+  }
+
+  body.dark .footer-weave {
+    background-image: url('img/weave-tile-dark.png');
+  }
+
+  .footer-social { display: flex; justify-content: center; gap: 22px; margin-bottom: 16px; }
+  .footer-social a { color: var(--text); display: flex; opacity: 0.8; transition: opacity 0.25s ease; }
+  .footer-social a:hover { opacity: 1; }
+  .footer-social svg { width: 22px; height: 22px; }
+  .footer-copy { font-size: 12px; color: var(--text-muted); letter-spacing: 0.04em; }
+
+</style>
+</head>
+<body class="dark">
+  <nav class="navbar" id="navbar">
+    <div class="nav-logo">
+      <a href="index.html" class="nav-logo-text" aria-label="Interwoven">
+        <img src="logos/interwoven-wordmark-light.png" alt="Interwoven" class="nav-logo-wordmark nav-logo-wordmark-light">
+        <img src="logos/interwoven-wordmark-dark.png" alt="Interwoven" class="nav-logo-wordmark nav-logo-wordmark-dark">
+      </a>
+      <span class="nav-logo-by">by</span>
+      <a href="https://rhondamfazio.com" target="_blank" rel="noopener" class="nav-logo-img-link" aria-label="Rhonda M. Fazio">
+        <img src="logos/rmf-mark-light.png" alt="Rhonda M. Fazio" class="nav-logo-img nav-logo-img-light">
+        <img src="logos/rmf-mark-dark.png" alt="Rhonda M. Fazio" class="nav-logo-img nav-logo-img-dark">
+      </a>
+    </div>
+
+    <ul class="nav-links">
+      <li><a href="the-gallery.html">The Gallery</a></li>
+      <li><a href="the-fabric.html">The Fabric</a></li>
+      <li><a href="the-food.html">The Food</a></li>
+      <li><a href="the-maker.html">The Maker</a></li>
+      <li><a href="the-blog.html">The Blog</a></li>
+      <li><a href="the-shop.html">The Shop</a></li>
+      <li><a href="the-calendar.html">The Calendar</a></li>
+    </ul>
+
+    <div class="nav-right">
+      <a href="mailto:interwovenmakerspace@gmail.com" class="nav-ticket">Contact</a>
+      <a href="#" class="nav-lang">EN</a>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.5V5M12 19v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2.5 12H5M19 12h2.5M4.2 19.8L6 18M18 6l1.8-1.8" stroke-linecap="round"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5z" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button class="nav-hamburger" id="navHamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="nav-mobile-menu" id="navMobileMenu">
+      <a href="the-gallery.html">The Gallery</a>
+      <a href="the-fabric.html">The Fabric</a>
+      <a href="the-food.html">The Food</a>
+      <a href="the-maker.html">The Maker</a>
+      <a href="the-blog.html">The Blog</a>
+      <a href="the-shop.html">The Shop</a>
+      <a href="the-calendar.html">The Calendar</a>
+      <a href="#" class="nav-lang">EN</a>
+      <a href="mailto:interwovenmakerspace@gmail.com">Contact</a>
+    </div>
+    <div class="navbar-weave" id="navbarWeave"></div>
+  </nav>
+  <main>
+    <div class="label">The Calendar</div>
+    <h1>Upcoming events</h1>
+
+    <div class="calendar-frame">
+      <iframe
+        src="https://calendar.google.com/calendar/embed?src=8e0275f07626c0370b20b5a0f98dbe3bf5d1145a5df759d0ee3043ee45e647bd%40group.calendar.google.com&amp;ctz=America%2FNew_York"
+        title="Upcoming events calendar">
+      </iframe>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="footer-weave" id="footerWeave"></div>
+    <div class="footer-social">
+      <a href="https://www.facebook.com/InterwovenNB/" target="_blank" rel="noopener" aria-label="Facebook">
+        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7H8v-2.9h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6v1.9H16l-.4 2.9h-2.1v7A10 10 0 0 0 22 12z"/></svg>
+      </a>
+      <a href="https://www.instagram.com/interwoven_artstudio" target="_blank" rel="noopener" aria-label="Instagram">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="3" width="18" height="18" rx="5"/>
+          <circle cx="12" cy="12" r="4"/>
+          <circle cx="17.3" cy="6.7" r="1.1" fill="currentColor" stroke="none"/>
+        </svg>
+      </a>
+    </div>
+    <p class="footer-copy">&copy; Interwoven</p>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('navbar');
+
+    // Dark mode toggle
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+    });
+
+    // Mobile hamburger menu
+    const navHamburger = document.getElementById('navHamburger');
+    const navMobileMenu = document.getElementById('navMobileMenu');
+    navHamburger.addEventListener('click', () => {
+      const isOpen = navHamburger.classList.toggle('open');
+      navMobileMenu.classList.toggle('open', isOpen);
+      navHamburger.setAttribute('aria-expanded', isOpen);
+    });
+    navMobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        navHamburger.classList.remove('open');
+        navMobileMenu.classList.remove('open');
+        navHamburger.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    // Shadow under the navbar once the page has scrolled a bit
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+  </script>
+</body>
+</html>

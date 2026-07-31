@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Fabric — Interwoven</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@300;500;600&family=Work+Sans:wght@300;400;500&display=swap');
+  :root {
+    --ink: #1a1816;
+    --ivory: #f6f2ea;
+    /* ---------- PALETTE ----------
+       The three leaves in the Interwoven mark, sampled straight from the logo
+       art (the RMF mark uses the same three). These are the source of truth. */
+    --leaf-red:    #ed1a24;
+    --leaf-yellow: #fef100;
+    --leaf-blue:   #2e3093;
+
+    /* Role tokens, tuned per theme for legibility on the ivory paper. The raw
+       yellow only manages 1.06:1 against ivory, so the warm accent is that
+       same yellow carried toward the ink until it clears 4.5:1; the red needs
+       a small nudge. The blue already sits at 9.6:1, so it's used as-is. */
+    --burgundy: #da1a23;   /* leaf red,    4.53:1 on ivory */
+    --gold:     #77710d;   /* leaf yellow, 4.52:1 on ivory */
+    --indigo:   #2e3093;   /* leaf blue,   9.59:1 on ivory */
+    --stone:    #8a857c;   /* warm neutral for placeholder fills */
+    --line: rgba(26,24,22,0.12);
+    --ff-display: "Fraunces", Georgia, serif;
+    --ff-body: "Work Sans", -apple-system, sans-serif;
+    --nav-h: 84px;
+
+    /* Logo size drives the underline. The wordmark art is 400x133 with a
+       10px stroke; the weave art is 400x69 with the same 10px stroke. So
+       rendering the weave at logo-height x 69/133 (0.5188) makes the two
+       strokes land on exactly the same thickness. */
+    --logo-h: 60px;
+    --nav-pad: 48px;
+    --weave-h: calc(var(--logo-h) * 0.5188);
+    --bg: var(--ivory);
+    --text: var(--ink);
+    --text-muted: #4a4640;
+    --label-color: #000000;
+  }
+
+  body.dark {
+    --bg: #14120f;
+    --text: #ece7db;
+    --text-muted: #b8b2a4;
+    --line: rgba(236,231,220,0.12);
+    /* Same three leaves, re-tuned against the dark paper: the blue is
+       unreadable at 1.75:1 down here so it lifts toward ivory, and the raw
+       yellow is glaring at 15.8:1 so it drops back toward the background. */
+    --burgundy: #ee2d36;   /* 4.51:1 on dark */
+    --gold:     #c4b904;   /* 9.17:1 on dark */
+    --indigo:   #7878b3;   /* 4.56:1 on dark */
+    --stone:    #615d56;
+    --label-color: #ffffff;
+  }
+
+  .navbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    height: var(--nav-h);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--nav-pad);
+    background: var(--bg);
+    transition: background 0.4s ease;
+  }
+
+  /* ---------- NAVBAR UNDERLINE ----------
+     Three pieces, all cut from your one 400x69 stroke, rendered 31px tall so the
+     line's vertical weight matches the underline baked into the INterwoven
+     wordmark (both land on a ~4.5px stroke).
+
+       ::before  START CAP -- the stroke mirrored vertically, so its longer curl
+                 (the one that used to hang below on the left) now rises on top
+                 and hooks up into the wordmark's lower flare. Cropped at x=367,
+                 where the stroke is still dead flat, so it hands off cleanly.
+                 Nudged up 0.9px: flipping moves the flat run 2 source-px down,
+                 and this puts it back on the same baseline as the tiles.
+
+       ::after   THE CHAIN -- starts immediately after the cap and runs right, so
+                 nothing spills off the left edge of the screen. Two layers:
+                 the 300px flare tile (stroke pre-overlapped by 100px) on top for
+                 the hand-drawn flares, all in the original orientation; and a
+                 140px crop of the pure flat middle (source x=110..250) beneath,
+                 which fills the small pen-lift gaps at every seam so the
+                 horizontal line reads as one continuous stroke.
+
+     --weave-start slides the whole assembly sideways to meet the logo. */
+  .navbar-weave {
+    /* Every length below is derived from --weave-h, so the whole assembly
+       rescales with the logo and stays touching it at any breakpoint.
+       Ratios come straight from the source art (400x69):
+         cap   367/69 = 5.3188   flare tile 300/69 = 4.3478
+         flat  140/69 = 2.0290   flip nudge   2/69 = 0.0290
+       --weave-start puts the cap's up-tip under the wordmark's flare tip
+       (source x 7.76 of a 400x133 art), and bottom lifts it so they meet. */
+    --cap-w: calc(var(--weave-h) * 5.3188);
+    --tile-w: calc(var(--weave-h) * 4.3478);
+    --weave-start: calc(var(--nav-pad) + var(--logo-h) * 0.0584 - var(--weave-h) * 0.1159);
+    --chain-x: calc(var(--weave-start) + var(--cap-w));
+    position: absolute;
+    left: var(--weave-start);
+    right: 0;
+    bottom: calc(var(--nav-h) / 2 + 3px - var(--logo-h) * 1.0173);
+    height: var(--weave-h);
+    pointer-events: none;
+  }
+
+  .navbar-weave::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: calc(var(--weave-h) * -0.029);
+    width: var(--cap-w);
+    height: var(--weave-h);
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-size: var(--cap-w) var(--weave-h);
+    background-image: url('img/weave-cap-light.png');
+  }
+
+  .navbar-weave::after {
+    content: '';
+    position: absolute;
+    left: var(--cap-w);
+    right: 0;
+    top: 0;
+    height: var(--weave-h);
+    background-repeat: repeat-x;
+    background-position: left center;
+    background-size: var(--tile-w) var(--weave-h);
+    background-image: url('img/weave-tile-light.png');
+  }
+
+  body.dark .navbar-weave::before {
+    background-image: url('img/weave-cap-dark.png');
+  }
+
+  body.dark .navbar-weave::after {
+    background-image: url('img/weave-tile-dark.png');
+  }
+
+  .nav-logo {
+    font-family: var(--ff-display);
+    font-size: 21px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: 24px;
+    flex-shrink: 0;
+  }
+
+  .nav-logo-text { color: inherit; display: flex; align-items: center; }
+
+  .nav-logo-wordmark { height: var(--logo-h); width: auto; display: block; }
+
+  .nav-logo-wordmark-dark { display: none; }
+  body.dark .nav-logo-wordmark-light { display: none; }
+  body.dark .nav-logo-wordmark-dark { display: block; }
+
+  .nav-logo-by { font-size: 11px; letter-spacing: 0.02em; }
+
+  .nav-logo-img { width: 58px; height: 58px; display: block; }
+
+  .nav-logo-img-dark { display: none; }
+  body.dark .nav-logo-img-light { display: none; }
+  body.dark .nav-logo-img-dark { display: block; }
+
+  .nav-links {
+    display: flex;
+    gap: 22px;
+    list-style: none;
+  }
+
+  .nav-links li a {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text);
+    position: relative;
+    padding-bottom: 4px;
+  }
+
+  .nav-links li a::after {
+    content: '';
+    position: absolute;
+    left: 0; bottom: 0;
+    width: 0%;
+    height: 1px;
+    background: currentColor;
+    transition: width 0.3s ease;
+  }
+
+  .nav-links li a:hover::after { width: 100%; }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    /* Keeps CONTACT off "THE CALENDAR" once the bar starts getting tight */
+    margin-left: 24px;
+  }
+
+  .nav-lang {
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    color: var(--text);
+    opacity: 0.7;
+  }
+
+  .nav-ticket {
+    font-size: 12.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border: 1px solid var(--text);
+    color: var(--text);
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 22px;
+    transition: all 0.3s ease;
+  }
+
+  .nav-ticket:hover {
+    background: var(--text);
+    color: var(--bg);
+  }
+
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: none;
+    cursor: pointer;
+    color: var(--text);
+    transition: border-color 0.3s ease;
+  }
+
+  .theme-toggle:hover { border-color: var(--text); }
+
+  .theme-toggle svg { width: 16px; height: 16px; }
+
+  .theme-toggle .icon-moon { display: none; }
+  body.dark .theme-toggle .icon-sun { display: none; }
+  body.dark .theme-toggle .icon-moon { display: block; }
+
+  /* Hamburger: hidden by default, only shown once the nav links no
+     longer fit (see the mobile media query below) */
+  .nav-hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+
+  .nav-hamburger span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: var(--text);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+  .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* The dropdown itself — closed by default (max-height: 0), expands
+     open when toggled. Holds the same section links plus the language
+     toggle, since both get hidden from the main bar on narrow screens. */
+  .nav-mobile-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    max-height: 0;
+    overflow: hidden;
+    background: var(--bg);
+    transition: max-height 0.35s ease;
+  }
+
+  .nav-mobile-menu.open { max-height: 400px; }
+
+  .nav-mobile-menu a {
+    padding: 16px 24px;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text);
+    border-bottom: 1px solid var(--line);
+    transition: all 0.3s ease;
+  }
+
+  /* Same invert-on-hover as the CONTACT button */
+  .nav-mobile-menu a:hover {
+    background: var(--text);
+    color: var(--bg);
+  }
+
+  .nav-mobile-menu a:last-child { border-bottom: none; }
+
+  @media (max-width: 860px) {
+    .nav-links { display: none; }
+    .nav-lang { display: none; }
+    .nav-ticket { display: none; }
+    .nav-hamburger { display: flex; }
+    .nav-logo { margin-right: 12px; gap: 8px; }
+    .nav-logo-img { width: 40px; height: 40px; }
+    /* Only these two change on mobile -- the underline's thickness, its
+       position against the logo, and the footer line all recompute from
+       them, so everything stays matched and touching. */
+    :root { --logo-h: 34px; --nav-pad: 24px; }
+  }
+
+  * { box-sizing: border-box; }
+  a { color: inherit; text-decoration: none; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    padding-top: var(--nav-h);
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Work Sans", sans-serif;
+    transition: background 0.4s ease, color 0.4s ease;
+  }
+  main { max-width: 1100px; margin: 0 auto; padding: 64px 48px 96px; }
+  .intro-link {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: opacity 0.25s ease;
+  }
+  .intro-link:hover { opacity: 0.7; }
+  .fabric-quote {
+    font-family: "Fraunces", Georgia, serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 1.6;
+    color: var(--text);
+    max-width: 640px;
+    margin: 40px auto 48px;
+    text-align: center;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--line);
+  }
+  .fabric-quote cite {
+    display: block;
+    font-family: "Work Sans", sans-serif;
+    font-style: normal;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    margin-top: 18px;
+  }
+  .label {
+    font-size: 12.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--label-color);
+    margin-bottom: 16px;
+  }
+  h1 {
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 500;
+    font-size: clamp(32px, 4vw, 46px);
+    margin: 0 0 48px;
+    max-width: 700px;
+  }
+  .layout {
+    display: flex;
+    gap: 56px;
+    align-items: center;
+  }
+  .layout-photo {
+    position: relative;
+    flex: 1 1 50%;
+    height: 420px;
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--bg);
+    display: flex;
+    align-items: flex-end;
+    padding: 20px;
+    color: var(--text-muted);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .layout-photo img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .layout-text {
+    flex: 1 1 50%;
+  }
+  .layout-text h2 {
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 500;
+    font-size: 26px;
+    margin: 0 0 18px;
+  }
+  .layout-text p {
+    color: var(--text-muted);
+    line-height: 1.75;
+    font-size: 15.5px;
+    margin: 0 0 16px;
+  }
+
+  /* Full-width banner with a centered title over it -- the darkening
+     overlay plus text-shadow keep the white title readable regardless
+     of what's directly behind it in the photo. */
+  .fabric-banner {
+    position: relative;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 40px;
+  }
+  .fabric-banner img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .fabric-banner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(10,9,8,0.35);
+  }
+  .fabric-banner-title {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0 24px;
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 500;
+    font-size: clamp(28px, 5vw, 56px);
+    color: #fff;
+    text-align: center;
+    text-shadow: 0 2px 16px rgba(0,0,0,0.7);
+    letter-spacing: 0.02em;
+  }
+
+  .gallery-heading {
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 500;
+    font-size: 26px;
+    margin: 96px 0 24px;
+  }
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 14px;
+  }
+  /* Wraps a photo-grid so left/right arrows can sit on top of it. Only
+     does anything on mobile (see the media query below) -- on desktop
+     the grid shows every photo at once, so there's nothing to page
+     through and the buttons stay hidden. */
+  .photo-panner { position: relative; }
+  .pan-btn {
+    display: none;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(10,9,8,0.55);
+    color: #fff;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  .pan-btn:hover { background: rgba(10,9,8,0.8); }
+  .pan-btn svg { width: 16px; height: 16px; }
+  .pan-prev { left: 8px; }
+  .pan-next { right: 8px; }
+  .grid-photo {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 4px;
+    cursor: pointer;
+    background: linear-gradient(155deg, var(--stone) 0%, var(--line) 100%);
+  }
+  .grid-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+  .grid-photo:hover img {
+    transform: scale(1.04);
+    opacity: 0.9;
+  }
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    background: rgba(10,9,8,0.88);
+    cursor: pointer;
+    padding: 24px;
+  }
+  .lightbox.open { display: flex; }
+
+  /* Fixed at the largest size any photo is allowed to render at, so the
+     arrows anchored to its edges (see .lightbox-nav) land in the same
+     spot for every photo instead of hopping around with each one's
+     actual size. The real photo still only takes up as much of this as
+     its own size needs (see .lightbox-photo-wrap) -- this box is just a
+     stable reference frame for the arrows, not the photo's own box. */
+  .lightbox-stage {
+    flex: 0 0 auto;
+    width: min(90vw, 1100px);
+    height: 88vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lightbox-photo {
+    max-width: 100%;
+    max-height: 100%;
+    cursor: default;
+  }
+  .lightbox-photo img {
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+    border-radius: 4px;
+  }
+
+  /* Shrink-wraps to whatever size .lightbox-photo actually renders at,
+     giving the close button a corner to anchor to right at the photo's
+     own edge instead of the stage's. */
+  .lightbox-photo-wrap {
+    position: relative;
+    display: flex;
+  }
+
+  .lightbox-close {
+    position: absolute;
+    z-index: 210;
+    top: -14px;
+    right: -14px;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(10,9,8,0.55);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .lightbox-close:hover { background: rgba(10,9,8,0.8); }
+  .lightbox-close svg { width: 16px; height: 16px; }
+
+  /* Flex siblings of .lightbox-stage (see the markup), not of the photo
+     itself -- the stage is a constant size, so these land in the same
+     place for every photo instead of hugging (and shifting with) each
+     photo's own actual edge. */
+  .lightbox-nav {
+    flex: 0 0 auto;
+    z-index: 210;
+    width: 88px;
+    height: 88px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(10,9,8,0.55);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease, opacity 0.2s ease;
+  }
+
+  .lightbox-nav:hover { background: rgba(10,9,8,0.8); }
+  .lightbox-nav svg { width: 40px; height: 40px; }
+
+  /* Panning stops at the edges of the photo grid rather than wrapping
+     into something else, so the arrow just disappears instead of
+     looping back to the start. */
+  .lightbox-nav:disabled {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .involved {
+    text-align: center;
+    max-width: 620px;
+    margin: 96px auto 0;
+    padding-top: 56px;
+    border-top: 1px solid var(--line);
+  }
+  .involved h3 {
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 500;
+    font-size: 22px;
+    margin: 0 0 16px;
+  }
+  .involved p {
+    color: var(--text-muted);
+    line-height: 1.75;
+    font-size: 15.5px;
+    margin: 0 0 28px;
+  }
+  .btn-link {
+    display: inline-block;
+    font-size: 12.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text);
+    border: 1px solid var(--text);
+    padding: 12px 22px;
+    text-decoration: none;
+    transition: background 0.25s ease, color 0.25s ease;
+  }
+  .btn-link:hover { background: var(--text); color: var(--bg); }
+  .book-class-cta { text-align: center; margin: 40px 0 0; }
+
+  .site-footer {
+    position: relative;
+    margin-top: 80px;
+    padding: 40px 24px;
+    text-align: center;
+  }
+    /* Footer line: the same stroke as the navbar, mirrored vertically so its
+     hooks curl up instead of down. It carries the identical --weave-h and the
+     identical tile width, and its background-position-x is locked to the
+     navbar chain's origin (--chain-x), so every hook sits at the same x as the
+     one above it -- the two lines read as a symmetrical pair, top and bottom.
+     No start cap here: it just runs straight across from edge to edge.
+     Because all of it keys off --weave-h, any resize of the top line is
+     mirrored by this one automatically. */
+  .footer-weave {
+    --cap-w: calc(var(--weave-h) * 5.3188);
+    --tile-w: calc(var(--weave-h) * 4.3478);
+    --weave-start: calc(var(--nav-pad) + var(--logo-h) * 0.0584 - var(--weave-h) * 0.1159);
+    --chain-x: calc(var(--weave-start) + var(--cap-w));
+    position: absolute;
+    left: 0; right: 0;
+    top: calc(var(--weave-h) * -0.5072);
+    height: var(--weave-h);
+    pointer-events: none;
+    /* Same tile as the navbar, mirrored -- so the hooks curl up and
+       mirror the line above without needing a second set of images. */
+    transform: scaleY(-1);
+    background-repeat: repeat-x;
+    background-position: var(--chain-x) center;
+    background-size: var(--tile-w) var(--weave-h);
+    background-image: url('img/weave-tile-light.png');
+  }
+
+  body.dark .footer-weave {
+    background-image: url('img/weave-tile-dark.png');
+  }
+
+  .footer-social { display: flex; justify-content: center; gap: 22px; margin-bottom: 16px; }
+  .footer-social a { color: var(--text); display: flex; opacity: 0.8; transition: opacity 0.25s ease; }
+  .footer-social a:hover { opacity: 1; }
+  .footer-social svg { width: 22px; height: 22px; }
+  .footer-copy { font-size: 12px; color: var(--text-muted); letter-spacing: 0.04em; }
+
+  @media (max-width: 760px) {
+    main { padding: 40px 24px 72px; }
+    .layout { flex-direction: column; gap: 28px; }
+    .layout-photo { width: 100%; height: auto; aspect-ratio: 1 / 1; }
+
+    /* On a phone, showing every photo at once means most of them are
+       too small to actually see. Swap the grid for one photo at a time
+       with prev/next arrows instead -- each photo still gets to be full
+       width and legible, you just page through them rather than
+       scanning a wall of tiny tiles. Scroll-snap also means a swipe
+       works the same as the buttons. */
+    .photo-grid {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      gap: 0;
+    }
+    .grid-photo {
+      flex: 0 0 100%;
+      scroll-snap-align: center;
+    }
+    .pan-btn { display: flex; }
+
+    /* The lightbox photo is already close to full viewport width here,
+       so there's no real gap left to hug -- flexing the arrows in next
+       to it like on desktop would just crowd them against the image or
+       squeeze them off-screen. Anchoring to the viewport edge instead
+       keeps them reachable and, since the photo already reaches nearly
+       that far itself, still reads as right next to it. */
+    .lightbox { gap: 0; }
+    .lightbox-nav {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .lightbox-prev { left: 12px; }
+    .lightbox-next { right: 12px; }
+  }
+</style>
+</head>
+<body class="dark">
+  <nav class="navbar" id="navbar">
+    <div class="nav-logo">
+      <a href="index.html" class="nav-logo-text" aria-label="Interwoven">
+        <img src="logos/interwoven-wordmark-light.png" alt="Interwoven" class="nav-logo-wordmark nav-logo-wordmark-light">
+        <img src="logos/interwoven-wordmark-dark.png" alt="Interwoven" class="nav-logo-wordmark nav-logo-wordmark-dark">
+      </a>
+      <span class="nav-logo-by">by</span>
+      <a href="https://rhondamfazio.com" target="_blank" rel="noopener" class="nav-logo-img-link" aria-label="Rhonda M. Fazio">
+        <img src="logos/rmf-mark-light.png" alt="Rhonda M. Fazio" class="nav-logo-img nav-logo-img-light">
+        <img src="logos/rmf-mark-dark.png" alt="Rhonda M. Fazio" class="nav-logo-img nav-logo-img-dark">
+      </a>
+    </div>
+
+    <ul class="nav-links">
+      <li><a href="the-gallery.html">The Gallery</a></li>
+      <li><a href="the-fabric.html">The Fabric</a></li>
+      <li><a href="the-food.html">The Food</a></li>
+      <li><a href="the-maker.html">The Maker</a></li>
+      <li><a href="the-blog.html">The Blog</a></li>
+      <li><a href="the-shop.html">The Shop</a></li>
+      <li><a href="the-calendar.html">The Calendar</a></li>
+    </ul>
+
+    <div class="nav-right">
+      <a href="mailto:interwovenmakerspace@gmail.com" class="nav-ticket">Contact</a>
+      <a href="#" class="nav-lang">EN</a>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.5V5M12 19v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2.5 12H5M19 12h2.5M4.2 19.8L6 18M18 6l1.8-1.8" stroke-linecap="round"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5z" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button class="nav-hamburger" id="navHamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="nav-mobile-menu" id="navMobileMenu">
+      <a href="the-gallery.html">The Gallery</a>
+      <a href="the-fabric.html">The Fabric</a>
+      <a href="the-food.html">The Food</a>
+      <a href="the-maker.html">The Maker</a>
+      <a href="the-blog.html">The Blog</a>
+      <a href="the-shop.html">The Shop</a>
+      <a href="the-calendar.html">The Calendar</a>
+      <a href="#" class="nav-lang">EN</a>
+      <a href="mailto:interwovenmakerspace@gmail.com">Contact</a>
+    </div>
+    <div class="navbar-weave" id="navbarWeave"></div>
+  </nav>
+  <main>
+    <div class="label">The Fabric</div>
+
+    <div class="fabric-banner">
+      <img src="pics/dyes.jpg" alt="Natural dye materials and process" loading="lazy">
+      <h1 class="fabric-banner-title">Dyer Maker Studio</h1>
+    </div>
+
+    <blockquote class="fabric-quote">
+      "Dyeing is an art; the moment science dominates it, it is an art no longer, and the craftsman must go back to the time before science touched it, and begin all over again."
+      <cite>&mdash; Ethel Mairet, 1916</cite>
+    </blockquote>
+
+    <p><a href="https://dyermakerstudio.com" target="_blank" rel="noopener" class="intro-link">Dyer Maker Studio</a> is a transportable, pop up maker space specializing in wearable art made from sustainable materials from the ancient world.</p>
+    <p>"My approach is minimalistic, using three colors, and only natural fabrics. I teach experiential workshops where participants create their own wearable art from the same materials that form the bedrock of making in human history."</p>
+    <p>Interwoven, the flagship venue for Dyer Maker Studio's "Dyeing to Wear It"&reg; is a place where you learn to make, take a class, or teach a class in the creative fiber arts.</p>
+
+    <h2 class="gallery-heading">"Dyeing to Wear it"</h2>
+    <div class="photo-panner">
+      <button type="button" class="pan-btn pan-prev" aria-label="Scroll photos left">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="photo-grid" id="photoGrid">
+        <div class="grid-photo" data-photo-label="Artist in dye"><img src="pics/artist3.jpg" alt="Artist in dye" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="People with silk"><img src="pics/silk-people.jpg" alt="People with silk" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="People with silk"><img src="pics/silk-people1.jpg" alt="People with silk" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="People with silk"><img src="pics/silk-people2.jpg" alt="People with silk" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="People with silk"><img src="pics/silk-people3.jpg" alt="People with silk" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Dye display"><img src="pics/dyes1.jpg" alt="Dye display" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Dye display"><img src="pics/dyes2.jpg" alt="Dye display" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Dye display"><img src="pics/dyes3.jpg" alt="Dye display" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Dye vat"><img src="pics/dyes4.jpg" alt="Dye vat" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Dye vat"><img src="pics/dyes5.jpg" alt="Dye vat" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Silk, modeled"><img src="pics/silk-model1.jpg" alt="Silk, modeled" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Silk, modeled"><img src="pics/silk-model2.jpg" alt="Silk, modeled" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Silk, modeled"><img src="pics/silk-model3.jpg" alt="Silk, modeled" loading="lazy"></div>
+      </div>
+      <button type="button" class="pan-btn pan-next" aria-label="Scroll photos right">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+
+    <div class="book-class-cta">
+      <a href="the-calendar.html" class="btn-link">Book a class</a>
+    </div>
+
+    <h2 class="gallery-heading">Fabric works</h2>
+    <p><strong>"The Wearable Lightness of Being"</strong></p>
+    <p>All Dyer Maker Studio wraps are made from 100% silk and natural pigments. Each color is handcrafted from raw materials and extracted without the use of harmful chemicals.</p>
+    <p>Reflective of ancient cultural methods and hand processes of design, each piece is unique and may be wrapped in a number of ways to complement the individuality of the wearer.</p>
+
+    <div class="photo-panner">
+      <button type="button" class="pan-btn pan-prev" aria-label="Scroll photos left">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="photo-grid" id="photoGrid">
+        <div class="grid-photo" data-photo-label="Silk, colors"><img src="pics/silk-colors.jpg" alt="Silk, colors" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin.jpg" alt="Silk on mannequin" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin1.jpg" alt="Silk on mannequin" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin2.jpg" alt="Silk on mannequin" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin3.jpg" alt="Silk on mannequin" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin4.jpg" alt="Silk on mannequin" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin5.JPG" alt="Silk on mannequin" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin6.jpg" alt="Silk on mannequin" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin7.jpg" alt="Silk on mannequin" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin8.jpg" alt="Silk on mannequin" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin9.jpg" alt="Silk on mannequin" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin10.jpg" alt="Silk on mannequin" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-scarf.jpg" alt="Silk on mannequin" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-scarf1.jpg" alt="Silk on mannequin" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequins.jpg" alt="Silk on mannequin" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Silk booth"><img src="pics/booth.jpg" alt="Silk booth" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Silk booth"><img src="pics/booth1.jpg" alt="Silk booth" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Silk booth"><img src="pics/booth2.jpg" alt="Silk booth" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Silk"><img src="pics/silk1.jpg" alt="Silk" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Silk"><img src="pics/silk2.jpg" alt="Silk" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Thread"><img src="pics/thread1.jpg" alt="Thread" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Warp, boat shuttle"><img src="pics/warp-boat.jpg" alt="Warp, boat shuttle" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Warp, colors"><img src="pics/warp-colors.jpg" alt="Warp, colors" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Warp, side view"><img src="pics/warp-side.jpg" alt="Warp, side view" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Warp"><img src="pics/warp2.jpg" alt="Warp" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Artist with loom"><img src="pics/artist2.jpg" alt="Artist with loom" loading="lazy"></div>
+      </div>
+      <button type="button" class="pan-btn pan-next" aria-label="Scroll photos right">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+
+    <div class="involved">
+      <h3>Come find us</h3>
+      <p>Located below the Portuguese Consulate and across the street from City Hall in New Bedford MA.</p>
+      <p>634 Pleasant Street, New Bedford, MA &middot; (508) 669-6835</p>
+    </div>
+  </main>
+
+  <div class="lightbox" id="lightbox">
+    <button type="button" class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous photo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="lightbox-stage">
+      <div class="lightbox-photo-wrap">
+        <div class="lightbox-photo" id="lightboxPhoto"></div>
+        <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+    <button type="button" class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next photo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-weave" id="footerWeave"></div>
+    <div class="footer-social">
+      <a href="https://www.facebook.com/InterwovenNB/" target="_blank" rel="noopener" aria-label="Facebook">
+        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7H8v-2.9h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6v1.9H16l-.4 2.9h-2.1v7A10 10 0 0 0 22 12z"/></svg>
+      </a>
+      <a href="https://www.instagram.com/interwoven_artstudio" target="_blank" rel="noopener" aria-label="Instagram">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="3" width="18" height="18" rx="5"/>
+          <circle cx="12" cy="12" r="4"/>
+          <circle cx="17.3" cy="6.7" r="1.1" fill="currentColor" stroke="none"/>
+        </svg>
+      </a>
+    </div>
+    <p class="footer-copy">&copy; Interwoven</p>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('navbar');
+
+    // Dark mode toggle
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+    });
+
+    // Mobile hamburger menu
+    const navHamburger = document.getElementById('navHamburger');
+    const navMobileMenu = document.getElementById('navMobileMenu');
+    navHamburger.addEventListener('click', () => {
+      const isOpen = navHamburger.classList.toggle('open');
+      navMobileMenu.classList.toggle('open', isOpen);
+      navHamburger.setAttribute('aria-expanded', isOpen);
+    });
+    navMobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        navHamburger.classList.remove('open');
+        navMobileMenu.classList.remove('open');
+        navHamburger.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    // Shadow under the navbar once the page has scrolled a bit
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+
+    // Lightbox: click any grid photo to see it larger, click anywhere
+    // outside the enlarged photo (or the X) to close it. Prev/next pan
+    // through the photos in that same grid, stopping at the first/last
+    // photo rather than wrapping around.
+    const lightbox = document.getElementById('lightbox');
+    const lightboxPhoto = document.getElementById('lightboxPhoto');
+    const lightboxClose = document.getElementById('lightboxClose');
+    const lightboxPrev = document.getElementById('lightboxPrev');
+    const lightboxNext = document.getElementById('lightboxNext');
+    let lightboxGroup = [];
+    let lightboxIndex = 0;
+
+    function showLightboxPhoto(photo) {
+      const img = photo.querySelector('img');
+      lightboxPhoto.innerHTML = '';
+      const full = document.createElement('img');
+      full.src = img.src;
+      full.alt = photo.dataset.photoLabel || img.alt;
+      lightboxPhoto.appendChild(full);
+      lightboxPrev.disabled = lightboxIndex === 0;
+      lightboxNext.disabled = lightboxIndex === lightboxGroup.length - 1;
+    }
+
+    document.querySelectorAll('.grid-photo').forEach(photo => {
+      photo.addEventListener('click', () => {
+        const grid = photo.closest('.photo-grid') || document;
+        lightboxGroup = Array.from(grid.querySelectorAll('.grid-photo'));
+        lightboxIndex = lightboxGroup.indexOf(photo);
+        showLightboxPhoto(photo);
+        lightbox.classList.add('open');
+      });
+    });
+
+    function stepLightbox(delta) {
+      const next = lightboxIndex + delta;
+      if (next < 0 || next >= lightboxGroup.length) return;
+      lightboxIndex = next;
+      showLightboxPhoto(lightboxGroup[lightboxIndex]);
+    }
+    lightboxPrev.addEventListener('click', () => stepLightbox(-1));
+    lightboxNext.addEventListener('click', () => stepLightbox(1));
+    lightboxClose.addEventListener('click', () => lightbox.classList.remove('open'));
+
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) lightbox.classList.remove('open');
+    });
+    document.addEventListener('keydown', (e) => {
+      if (!lightbox.classList.contains('open')) return;
+      if (e.key === 'Escape') lightbox.classList.remove('open');
+      if (e.key === 'ArrowLeft') stepLightbox(-1);
+      if (e.key === 'ArrowRight') stepLightbox(1);
+    });
+
+    // Pan arrows on the mobile photo-grid carousel -- scroll exactly one
+    // photo per click, in whichever direction was clicked. No-op on
+    // desktop since the buttons are hidden there and the grid isn't
+    // scrollable.
+    document.querySelectorAll('.photo-panner').forEach(panner => {
+      const track = panner.querySelector('.photo-grid');
+      const prevBtn = panner.querySelector('.pan-prev');
+      const nextBtn = panner.querySelector('.pan-next');
+      if (!track || !prevBtn || !nextBtn) return;
+      prevBtn.addEventListener('click', () => {
+        track.scrollBy({ left: -track.clientWidth, behavior: 'smooth' });
+      });
+      nextBtn.addEventListener('click', () => {
+        track.scrollBy({ left: track.clientWidth, behavior: 'smooth' });
+      });
+    });
+  </script>
+</body>
+</html>

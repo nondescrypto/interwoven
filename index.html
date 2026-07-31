@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Interwoven — A Museum of Light and Object</title>
+<title>Interwoven — Made to tell a story</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600&family=Work+Sans:wght@300;400;500&family=Tangerine:wght@400;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@300;500;600&family=Work+Sans:wght@300;400;500&family=Tangerine:wght@400;700&display=swap');
 
   :root {
     --ink: #1a1816;
@@ -229,12 +229,12 @@
 
   .nav-links {
     display: flex;
-    gap: 40px;
+    gap: 22px;
     list-style: none;
   }
 
   .nav-links li a {
-    font-size: 13px;
+    font-size: 12px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--text);
@@ -257,9 +257,9 @@
   .nav-right {
     display: flex;
     align-items: center;
-    gap: 22px;
+    gap: 18px;
     /* Keeps CONTACT off "THE CALENDAR" once the bar starts getting tight */
-    margin-left: 40px;
+    margin-left: 24px;
   }
 
   .nav-lang {
@@ -535,6 +535,69 @@
     margin-bottom: 20px;
   }
 
+  /* Text, not an image -- the hero title above is a custom hand-drawn
+     logotype, and there's no matching artwork for "The Heart" to reuse.
+     This is the same small-caps Fraunces treatment as #gallery-tagline
+     ("Made to tell a story") instead, just much larger. A normal in-flow
+     element, top-anchored by #calendar's own flex settings below rather
+     than centered along with the rest of the panel's content (see
+     .calendar-body) -- that's what makes it hug the top edge instead of
+     drifting to the vertical middle with everything else. */
+  .heart-title {
+    /* cqw (container query width, see #calendar) instead of vw: sized
+       off the panel's own width, which is what it actually has to fit
+       inside, not the viewport's -- see the #calendar comment below for
+       why those two aren't the same thing here. white-space: nowrap is
+       just a safety net now rather than something this size depends on;
+       a container-relative size can't outgrow its own container. */
+    white-space: nowrap;
+    font-family: var(--ff-display);
+    font-weight: 500;
+    font-size: clamp(20px, 6.5cqw, 38px);
+    line-height: 1;
+    font-variant: small-caps;
+    letter-spacing: 0.03em;
+    margin-bottom: 72px;
+  }
+
+  /* #calendar overrides the generic .section centering: the title hugs
+     the top, and everything else centers within whatever vertical space
+     is left over, rather than the two competing for the same centered
+     middle of the whole panel. padding-top matches .hero's own
+     padding-top exactly, so the top of the title lines up with the top
+     of the hero photo instead of sitting right under the navbar.
+     container-type turns this into a query container so .heart-title
+     can size itself off the panel's own actual width (see below) rather
+     than the viewport's -- the panel's width is capped at 720px by
+     .section's own max-width on every desktop size, so a vw-based font
+     size keeps growing on a wider screen while the panel it has to fit
+     inside does not, eventually overflowing it. Sizing from the
+     container instead makes that impossible: there's no wider "cqw" to
+     grow into than the container's own width. */
+  #calendar {
+    justify-content: flex-start;
+    padding-top: 84px;
+    container-type: inline-size;
+  }
+
+  .calendar-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    /* flex-start, not center: on a shorter browser window the remaining
+       space after the title can be less than this content actually
+       needs, and centering an overflow means it spills both up and
+       down -- the "up" half lands right on top of the title. This way
+       any real overflow only ever spills downward, into the panel's
+       existing scroll (.panel already has overflow-y: auto). */
+    justify-content: flex-start;
+    min-height: 0;
+  }
+
+  .heart-title::first-letter {
+    font-size: 1.4em;
+  }
+
   .section h2 {
     font-family: var(--ff-display);
     font-weight: 500;
@@ -690,6 +753,23 @@
 
   .ph-photo-large { height: 260px; border-radius: 4px; }
 
+  /* Fabric's photo follows text directly (no .space-gallery wrapper to
+     supply its own gap the way the Gallery panel's does), so it needs
+     its own margin-top -- matching .section-body's, the standard rhythm
+     used between stacked elements in these panels. */
+  #fabric .ph-photo-large { margin-top: 24px; }
+
+  /* Same size as Fabric's photo (the shared default), with its own
+     margin-top since -- like Fabric -- it has no .space-gallery wrapper
+     to supply the usual title-to-photo gap the way the Gallery panel's
+     own photo gets from .space-gallery's margin-top. */
+  #food .ph-photo-large { margin-top: 28px; }
+
+  /* Shop's photo follows its h2 directly too (no .space-gallery wrapper),
+     so it needs the same standard gap as Fabric/Food instead of hugging
+     the title. */
+  #shop .ph-photo-large { margin-top: 24px; }
+
   .ph-photo-strip {
     display: flex;
     gap: 12px;
@@ -718,6 +798,25 @@
     height: 210px;
     border-radius: 4px;
   }
+
+  .maker-layout {
+    margin-top: 24px;
+    display: flex;
+    gap: 28px;
+    align-items: center;
+  }
+
+  .maker-layout .ph-photo-large {
+    flex: 1 1 45%;
+    height: 390px;
+    margin-top: 0;
+  }
+
+  .maker-text { flex: 1 1 55%; }
+
+  .maker-text p:first-child { margin-top: 0; }
+
+  .maker-heart { font-weight: 700; }
 
   /* Wraps a photo strip/row so left/right pan arrows can sit on top of it */
   .photo-panner {
@@ -944,7 +1043,18 @@
       padding-bottom: 20px;
     }
 
+    /* #calendar's own padding-top (an ID selector) would otherwise beat
+       .section's padding-top above regardless of media query order --
+       this puts mobile back to the same 20px as every other panel
+       instead of inheriting the desktop hero-alignment value. */
+    #calendar { padding-top: 20px; }
+
     .section-label { margin-bottom: 10px; }
+
+    /* Recalculated for this narrower container so it lands back around
+       the same ~48px this already read well at, rather than drifting
+       larger just because cqw is now relative to a smaller container. */
+    .heart-title { font-size: clamp(18px, 7.5cqw, 28px); margin-bottom: 28px; }
 
     .section h2 { font-size: clamp(22px, 6vw, 28px); }
 
@@ -958,7 +1068,11 @@
 
     .event-list { margin-top: 18px; gap: 12px; }
 
-    .info-note { margin-top: 16px; padding: 14px 16px; }
+    /* Hidden on mobile to make room for .heart-title above the events --
+       between the big title and the shrunk-to-fit content already going
+       on here (see the section comment above), there isn't space left
+       for this too without things getting cut off again. */
+    .info-note { display: none; }
 
     .space-gallery { margin-top: 16px; gap: 10px; }
 
@@ -967,6 +1081,15 @@
     .ph-photo-strip .ph-photo { flex: 0 0 130px; height: 85px; }
 
     .photo-row { margin-top: 16px; }
+
+    .maker-layout { flex-direction: column; align-items: stretch; gap: 16px; margin-top: 16px; }
+    /* Resets the desktop rule's flex-basis (45%, meant for the row layout's
+       width share) -- left as-is, that stale 45% would get reinterpreted
+       against the column's main axis (now vertical) once flex-direction
+       flips, and since flex-basis wins over the height property below,
+       the photo would collapse to the height of its own label text
+       instead of actually being 225px tall. */
+    .maker-layout .ph-photo-large { flex: 0 0 auto; height: 225px; }
 
     .photo-row .ph-photo { flex: 0 0 190px; height: 140px; }
   }
@@ -1089,9 +1212,13 @@
     </div>
 
     <ul class="nav-links">
-      <li><a href="gallery.html">The Gallery</a></li>
-      <li><a href="artists.html">The Artists</a></li>
-      <li><a href="calendar.html">The Calendar</a></li>
+      <li><a href="the-gallery.html">The Gallery</a></li>
+      <li><a href="the-fabric.html">The Fabric</a></li>
+      <li><a href="the-food.html">The Food</a></li>
+      <li><a href="the-maker.html">The Maker</a></li>
+      <li><a href="the-blog.html">The Blog</a></li>
+      <li><a href="the-shop.html">The Shop</a></li>
+      <li><a href="the-calendar.html">The Calendar</a></li>
     </ul>
 
     <div class="nav-right">
@@ -1111,9 +1238,13 @@
       </button>
     </div>
     <div class="nav-mobile-menu" id="navMobileMenu">
-      <a href="gallery.html">The Gallery</a>
-      <a href="artists.html">The Artists</a>
-      <a href="calendar.html">The Calendar</a>
+      <a href="the-gallery.html">The Gallery</a>
+      <a href="the-fabric.html">The Fabric</a>
+      <a href="the-food.html">The Food</a>
+      <a href="the-maker.html">The Maker</a>
+      <a href="the-blog.html">The Blog</a>
+      <a href="the-shop.html">The Shop</a>
+      <a href="the-calendar.html">The Calendar</a>
       <a href="#" class="nav-lang">EN</a>
       <a href="mailto:interwovenmakerspace@gmail.com">Contact</a>
     </div>
@@ -1161,10 +1292,12 @@
 
 
     <section class="section panel panel-wide" id="calendar">
+      <div class="heart-title">Made to tell a story...</div>
+      <div class="calendar-body">
       <div class="section-label">The Calendar</div>
       <div class="section-top-row">
         <h2>Upcoming Events</h2>
-        <a href="calendar.html" class="btn-link">See all events</a>
+        <a href="the-calendar.html" class="btn-link">See all events</a>
       </div>
       <div class="event-list" id="eventList">
         <div class="event-card">
@@ -1194,12 +1327,24 @@
         <div class="info-note-label">Pay attention to the location</div>
         <p>Most events are at Interwoven, but La Rhonda's Sea Food at Sunset or events by other artists might be somewhere else. Thank you for your attention :)</p>
       </div>
+      </div>
+    </section>
+
+
+    <section class="section panel panel-wide" id="blog">
+      <div class="section-label">The Blog</div>
+      <h2>Notes from the space</h2>
+      <div class="space-gallery">
+        <div class="ph-photo ph-photo-large" data-photo-label="Still writing this one"><img src="pics/blue.jpg" alt="Still writing this one" loading="lazy"></div>
+        <p class="section-body">Stories from the makers, the kitchen, and the loom -- still finding its voice. Check back soon, or read the first few posts already up.</p>
+      </div>
+      <a href="the-blog.html" class="btn-link btn-link-block">Read the blog</a>
     </section>
 
 
     <section class="section panel panel-wide" id="gallery">
       <div class="section-label">The Gallery</div>
-      <h2 id="gallery-tagline">Made to tell a story</h2>
+      <h2 id="gallery-tagline">Created by artists</h2>
       <div class="space-gallery">
         <div class="ph-photo ph-photo-large" data-photo-label="The main room"><img src="pics/the-venue.jpg" alt="The main room" loading="lazy"></div>
         <p class="section-body">A venue created by an artist for artists, it becomes a space to make creativity blossom. It is a gallery for artists, a performance space for musicians and poets, a place to teach a class and learn new skills - a space where everyone is welcome to create and engage with local artists and their art.</p>
@@ -1218,28 +1363,51 @@
           </button>
         </div>
       </div>
-      <a href="gallery.html" class="btn-link btn-link-block">Learn more about the space</a>
+      <a href="the-gallery.html" class="btn-link btn-link-block">Learn more about the space</a>
     </section>
 
 
-    <section class="section panel panel-wide" id="artists">
-      <div class="section-label">The Artists</div>
-      <h2 id="artists-tagline">The makers at work</h2>
-      <div class="photo-panner">
-        <button type="button" class="pan-btn pan-prev" aria-label="Scroll photos left">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <div class="photo-row">
-          <div class="ph-photo" data-photo-label="Rhonda Fazio"><img src="pics/artist.jpg" alt="Rhonda Fazio" loading="lazy"></div>
-          <div class="ph-photo" data-photo-label="Kim Gatesman"><img src="pics/artist-kim.png" alt="Kim Gatesman" loading="lazy"></div>
-          <div class="ph-photo" data-photo-label="Margaret"><img src="pics/angel.jpg" alt="Margaret" loading="lazy"></div>
+    <section class="section panel panel-wide" id="fabric">
+      <div class="section-label">The Fabric</div>
+      <h2>"Dyeing to Wear It"&reg;</h2>
+      <p class="section-body">Be an artist for a day and create your own wearable art! Experience the design process with the art of pure color.</p>
+      <p class="section-body">All dyes are natural and extracted without the use of harmful chemicals. Pure, vivid color you can feel and wear anytime of the year.</p>
+      <div class="ph-photo ph-photo-large" data-photo-label="Dye process"><img src="pics/dyes1.jpg" alt="Dye process" loading="lazy"></div>
+      <a href="the-fabric.html" class="btn-link btn-link-block">Discover your pattern</a>
+    </section>
+
+
+    <section class="section panel panel-wide" id="food">
+      <div class="section-label">The Food</div>
+      <h2>"The Art and Language of Food"</h2>
+      <div class="ph-photo ph-photo-large" data-photo-label="Fresh produce"><img src="pics/food.jpg" alt="Fresh produce" loading="lazy"></div>
+      <p class="section-body">Every Thursday at the New Bedford Farmers Market in Buttonwood Park, La Rhonda will cook up seasonal dishes to sample featuring locally sourced foods from South Coast farms. 2-6 pm.</p>
+      <p class="section-body">In addition, food preservation classes take place at the Coastal Food Shed's Farmers Hub at the Kilburn Mill.</p>
+      <a href="the-food.html" class="btn-link btn-link-block">See what's cooking</a>
+    </section>
+
+
+    <section class="section panel panel-wide" id="maker">
+      <div class="section-label">The Maker</div>
+      <h2 id="artists-tagline">The maker at work</h2>
+      <div class="maker-layout">
+        <div class="ph-photo ph-photo-large" data-photo-label="Rhonda Fazio"><img src="pics/artist1.jpg" alt="Rhonda Fazio" loading="lazy"></div>
+        <div class="maker-text">
+          <p class="maker-heart">The Heart</p>
+          <p>The Child has grown, the dream remains...</p>
+          <p>My journey as an Artist and a Mother is the inspiration I draw from as I continue my travels in this life. It was during the most trying times, that I became the most creative. I shuffled my inherent skills around and developed creative ways to support my son without giving up on my dreams. It became a part of life that continues to be relevant as we adapt to living in an everchanging world.</p>
         </div>
-        <button type="button" class="pan-btn pan-next" aria-label="Scroll photos right">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
       </div>
-      <p class="section-body">Interwoven is home to a core group of Artists who make food, art, music, and conversation.  Take any of our scheduled classes to experience the art of making or experience live music in a small listening space. </p>
-      <a href="artists.html" class="btn-link btn-link-block">Meet the makers</a>
+      <a href="the-maker.html" class="btn-link btn-link-block">Meet the Maker</a>
+    </section>
+
+
+    <section class="section panel panel-wide" id="shop">
+      <div class="section-label">The Shop</div>
+      <h2>Bring a piece home</h2>
+      <div class="ph-photo ph-photo-large" data-photo-label="The Shop"><img src="pics/booth2.jpg" alt="The Shop" loading="lazy"></div>
+      <p class="section-body">Hand crafted goods, gifts, classes and events.</p>
+      <a href="the-shop.html" class="btn-link btn-link-block">Visit the shop</a>
     </section>
 
   </div>
