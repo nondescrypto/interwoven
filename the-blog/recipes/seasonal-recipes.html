@@ -325,6 +325,32 @@
     margin: 0 0 24px;
   }
 
+  .gallery-heading-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .gallery-heading-row .gallery-heading { margin-bottom: 24px; }
+
+  .storage-tips-btn {
+    display: inline-block;
+    font-size: 12.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text);
+    background: none;
+    border: 1px solid var(--text);
+    padding: 10px 18px;
+    margin-bottom: 24px;
+    cursor: pointer;
+    white-space: nowrap;
+    font-family: inherit;
+    transition: background 0.25s ease, color 0.25s ease;
+  }
+  .storage-tips-btn:hover { background: var(--text); color: var(--bg); }
+
   /* Recipe picker: 4 cards, click one to swap the picker out for that
      recipe's full detail (see .recipe-detail below and the script at
      the bottom) -- no separate page per recipe, just one shown at a
@@ -513,15 +539,15 @@
   }
 
   .season-card[data-season="spring"] { --season-color: var(--green); }
-  .season-card[data-season="summer"] { --season-color: var(--burgundy); }
-  .season-card[data-season="fall"]   { --season-color: var(--gold); }
+  .season-card[data-season="summer"] { --season-color: var(--gold); }
+  .season-card[data-season="fall"]   { --season-color: var(--burgundy); }
   .season-card[data-season="winter"] { --season-color: var(--indigo); }
   .season-card:hover, .season-card.active { border-color: var(--season-color); }
   .season-card:hover .season-name, .season-card.active .season-name { color: var(--season-color); }
 
   .season-view[data-season="spring"] { --season-color: var(--green); }
-  .season-view[data-season="summer"] { --season-color: var(--burgundy); }
-  .season-view[data-season="fall"]   { --season-color: var(--gold); }
+  .season-view[data-season="summer"] { --season-color: var(--gold); }
+  .season-view[data-season="fall"]   { --season-color: var(--burgundy); }
   .season-view[data-season="winter"] { --season-color: var(--indigo); }
   .season-view .season-intro-title,
   .season-view .recipe h3,
@@ -534,7 +560,8 @@
   }
 </style>
 </head>
-<body class="dark">
+<body>
+  <script>if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');</script>
   <nav class="navbar" id="navbar">
     <div class="nav-logo">
       <a href="../../index.html" class="nav-logo-text" aria-label="Interwoven">
@@ -620,7 +647,10 @@
       <p class="season-signature">&mdash; Rhonda</p>
     </div>
 
-    <h2 class="gallery-heading">Choose a Recipe</h2>
+    <div class="gallery-heading-row">
+      <h2 class="gallery-heading">Choose a Recipe</h2>
+      <button type="button" class="storage-tips-btn">See Storage Tips</button>
+    </div>
     <div class="recipe-picker">
       <button type="button" class="recipe-card" data-recipe="green-omelet">
         <span class="recipe-card-name">Green Omelet</span>
@@ -771,7 +801,10 @@
       <p class="season-signature">&mdash; Rhonda</p>
     </div>
 
-    <h2 class="gallery-heading">Choose a Recipe</h2>
+    <div class="gallery-heading-row">
+      <h2 class="gallery-heading">Choose a Recipe</h2>
+      <button type="button" class="storage-tips-btn">See Storage Tips</button>
+    </div>
     <div class="recipe-picker">
       <button type="button" class="recipe-card" data-recipe="sicilian-saute">
         <span class="recipe-card-name">The Sicilian Saut&eacute;</span>
@@ -926,7 +959,10 @@
       <p class="season-signature">&mdash; Rhonda</p>
     </div>
 
-    <h2 class="gallery-heading">Choose a Recipe</h2>
+    <div class="gallery-heading-row">
+      <h2 class="gallery-heading">Choose a Recipe</h2>
+      <button type="button" class="storage-tips-btn">See Storage Tips</button>
+    </div>
     <div class="recipe-picker">
       <button type="button" class="recipe-card" data-recipe="autumn-soup">
         <span class="recipe-card-name">Bittersweet Autumn Soup</span>
@@ -1075,7 +1111,10 @@
       <p class="season-signature">&mdash; Rhonda</p>
     </div>
 
-    <h2 class="gallery-heading">Choose a Recipe</h2>
+    <div class="gallery-heading-row">
+      <h2 class="gallery-heading">Choose a Recipe</h2>
+      <button type="button" class="storage-tips-btn">See Storage Tips</button>
+    </div>
     <div class="recipe-picker">
       <button type="button" class="recipe-card" data-recipe="pumpkin-bread">
         <span class="recipe-card-name">American Pumpkin Bread <em>AKA</em> Pan Americano de Calabaza</span>
@@ -1245,6 +1284,64 @@
     </div>
     </section>
 
+    <div class="storage-tips-panel" id="storageTipsPanel" hidden>
+      <button type="button" class="recipe-back" id="storageTipsBack">&larr; Back to recipes</button>
+
+      <article class="recipe" id="storage-tips-content">
+        <h2>Keeping Local Food Year-Round</h2>
+        <p class="recipe-desc">Saving seasonal foods helps you enjoy local produce from the Southcoast of Massachusetts all year long. These simple preservation methods make winter cooking easier, especially when fresh local produce is harder to find. Small, ready-to-use portions help reduce waste and make everyday meals faster and more enjoyable.</p>
+
+        <h3>Freezing Vegetables</h3>
+        <p>Freezing is one of the easiest ways to preserve vegetables like corn, peppers, squash, and green beans.</p>
+        <p><strong>Basic steps:</strong></p>
+        <ol>
+          <li>Cut vegetables into small, even pieces (about 1 cup portions works well for single servings).</li>
+          <li>Bring a pot of water to a boil.</li>
+          <li>Place vegetables in the boiling water for 1&ndash;2 minutes (this is called blanching).</li>
+          <li>Drain immediately and place in a bowl of ice water to stop cooking.</li>
+          <li>Drain well and pat dry.</li>
+          <li>Store in labeled freezer bags or containers. Include the date.</li>
+        </ol>
+        <p><strong>Tip:</strong> Freeze in small portions so you can use just what you need for soups, saut&eacute;s, or side dishes.</p>
+
+        <h3>Freezing Fruit</h3>
+        <p>Freezing fruit is an easy way to save the taste of summer for later in the year. It works well for berries, peaches, apples, and rhubarb.</p>
+        <p><strong>Simple method:</strong></p>
+        <ol>
+          <li>Wash fruit and remove any stems, pits, or cores.</li>
+          <li>Cut larger fruit into bite-sized pieces.</li>
+          <li>Spread fruit in a single layer on a baking sheet so it does not stick together.</li>
+          <li>Freeze until solid (a few hours or overnight).</li>
+          <li>Transfer frozen fruit to labeled freezer bags or containers. Include the date.</li>
+        </ol>
+        <p><strong>Tip:</strong> Frozen fruit can be used directly in baking, smoothies, oatmeal, or cooked into sauces without thawing first.</p>
+
+        <h3>Drying Herbs</h3>
+        <p>Drying herbs helps you keep summer flavors for months.</p>
+        <p><strong>Simple method:</strong></p>
+        <ol>
+          <li>Tie herbs (such as parsley, thyme, oregano, or rosemary) into small bundles.</li>
+          <li>Place in a paper bag or hang in a dry, well-ventilated place away from sunlight.</li>
+          <li>Let herbs dry completely until they feel crisp.</li>
+          <li>Crumble into a clean jar and store tightly sealed.</li>
+          <li>Keep in a cool, dark cabinet.</li>
+        </ol>
+        <p><strong>Tip:</strong> Dried herbs are stronger than fresh&mdash;use a smaller amount when cooking.</p>
+
+        <h3>Freezing Herb Cubes (Easy Cooking Shortcut)</h3>
+        <p>This is a great way to save herbs like basil, parsley, cilantro, or celery tops.</p>
+        <p><strong>Steps:</strong></p>
+        <ol>
+          <li>Chop herbs finely in a food processor.</li>
+          <li>Add a small amount of olive oil (and a splash of water if needed) to form a thick paste.</li>
+          <li>Spoon into ice cube trays and freeze overnight.</li>
+          <li>Once frozen, transfer cubes to labeled freezer bags.</li>
+          <li>Return to freezer.</li>
+        </ol>
+        <p><strong>How to use:</strong> Drop a cube directly into soups, sauces, or saut&eacute;s while cooking.</p>
+      </article>
+    </div>
+
   </main>
 
   <footer class="site-footer">
@@ -1270,6 +1367,7 @@
     const themeToggle = document.getElementById('themeToggle');
     themeToggle.addEventListener('click', () => {
       document.body.classList.toggle('dark');
+      localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
     });
 
     const navHamburger = document.getElementById('navHamburger');
@@ -1298,6 +1396,7 @@
     const seasonGrid = document.getElementById('seasonGrid');
     const seasonViews = document.querySelectorAll('.season-view');
     const validSeasons = ['spring', 'summer', 'fall', 'winter'];
+    const storagePanel = document.getElementById('storageTipsPanel');
 
     function showSeason(season) {
       seasonViews.forEach(view => {
@@ -1315,6 +1414,7 @@
         if (picker) picker.hidden = false;
         if (detail) detail.hidden = true;
       }
+      storagePanel.hidden = true;
     }
 
     seasonGrid.querySelectorAll('.season-card').forEach(card => {
@@ -1356,6 +1456,35 @@
         picker.hidden = false;
         picker.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
+    });
+
+    // Storage tips: one shared panel (content is the same regardless of
+    // season) that gets moved into whichever season is currently open,
+    // swapping out that season's picker the same way a recipe detail
+    // does. "Back to recipes" restores whichever picker opened it.
+    const storageTipsBack = document.getElementById('storageTipsBack');
+    let storageOpenedFrom = null;
+
+    document.querySelectorAll('.storage-tips-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const view = btn.closest('.season-view');
+        const picker = view.querySelector('.recipe-picker');
+        const detail = view.querySelector('.recipe-detail');
+        storageOpenedFrom = picker;
+        picker.hidden = true;
+        if (detail) detail.hidden = true;
+        view.appendChild(storagePanel);
+        storagePanel.hidden = false;
+        storagePanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    storageTipsBack.addEventListener('click', () => {
+      storagePanel.hidden = true;
+      if (storageOpenedFrom) {
+        storageOpenedFrom.hidden = false;
+        storageOpenedFrom.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     });
   </script>
 </body>

@@ -102,6 +102,29 @@
     width: 105vw;
   }
 
+  /* Auto-fit wrapper (see fitPanelContent in the script below): holds
+     everything a panel would otherwise render directly, so it can be
+     measured and, if taller than the panel actually has room for,
+     shrunk with a plain transform:scale instead of leaving it to
+     overflow into .panel's own scrollbar. transform doesn't touch
+     layout, so scaling alone doesn't reposition anything -- centering
+     math (justify-content:center) is computed off the wrap's real
+     (unscaled) height, so a shrunk-but-still-centered box would land
+     half off the top and half off the bottom. fitPanelContent forces
+     justify-content:flex-start on the panel whenever it applies a scale
+     (leaving it alone otherwise, so panels that already fit keep their
+     normal centered look), which pins the wrap's un-scaled top at 0 --
+     combined with transform-origin:top here, scaling then shrinks
+     exactly onto that same top-left corner, so the visible content
+     still starts flush at the panel's top edge with zero extra offset
+     math needed. */
+  .panel-scale-wrap {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    transform-origin: top center;
+  }
+
   a { color: inherit; text-decoration: none; }
 
   /* ---------- NAVBAR ---------- */
@@ -147,10 +170,16 @@
          cap   367/69 = 5.3188   flare tile 300/69 = 4.3478
          flat  140/69 = 2.0290   flip nudge   2/69 = 0.0290
        --weave-start puts the cap's up-tip under the wordmark's flare tip
-       (source x 7.76 of a 400x133 art), and bottom lifts it so they meet. */
+       (source x 7.76 of a 400x133 art), and bottom lifts it so they meet.
+       --logo-shift is new: the RMF mark and "is" now sit in front of the
+       wordmark instead of after it, so this formula alone would land the
+       stroke under the RMF mark. --logo-shift is measured in JS (how far
+       the wordmark's own left edge now sits from the navbar's original
+       start) and added on top, sliding the whole assembly over without
+       touching the formula itself. */
     --cap-w: calc(var(--weave-h) * 5.3188);
     --tile-w: calc(var(--weave-h) * 4.3478);
-    --weave-start: calc(var(--nav-pad) + var(--logo-h) * 0.0584 - var(--weave-h) * 0.1159);
+    --weave-start: calc(var(--nav-pad) + var(--logo-h) * 0.0584 - var(--weave-h) * 0.1159 + var(--logo-shift, 0px));
     --chain-x: calc(var(--weave-start) + var(--cap-w));
     position: absolute;
     left: var(--weave-start);
@@ -219,9 +248,20 @@
   body.dark .nav-logo-wordmark-light { display: none; }
   body.dark .nav-logo-wordmark-dark { display: block; }
 
-  .nav-logo-by { font-size: 11px; letter-spacing: 0.02em; }
+  .nav-logo-is { font-size: 11px; font-style: italic; letter-spacing: 0.02em; }
 
-  .nav-logo-img { width: 58px; height: 58px; display: block; }
+  /* Actual size/position is set in JS (see updateNavLogoLayout): it needs
+     to span from the top of "Interwoven" down to the bottom of the
+     underline stroke beneath it, flush with both, which isn't a fixed
+     ratio of any single existing variable. --nav-h here is just a
+     reasonable fallback in case JS hasn't run yet. */
+  /* position:relative + top (set in JS) instead of margin-top: a margin
+     would count toward .nav-logo's own intrinsic height (it's a flex
+     item), feeding back into where .navbar centers it and shifting the
+     target on every correction pass. A relative offset is purely visual
+     and doesn't feed back into anything. */
+  .nav-logo-img-link { align-self: flex-start; position: relative; }
+  .nav-logo-img { width: var(--nav-h); height: var(--nav-h); display: block; }
 
   .nav-logo-img-dark { display: none; }
   body.dark .nav-logo-img-light { display: none; }
@@ -632,6 +672,14 @@
 
   .btn-link-block { margin-top: 28px; align-self: flex-start; }
 
+  .btn-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 28px;
+  }
+  .btn-row .btn-link { margin-top: 0; }
+
   .section-body {
     margin-top: 24px;
     max-width: 60ch;
@@ -975,7 +1023,7 @@
     pointer-events: none;
   }
 
-  @media (max-width: 860px) {
+  @media (max-width: 1100px) {
     .nav-links { display: none; }
     .nav-lang { display: none; }
     .nav-ticket { display: none; }
@@ -1002,7 +1050,6 @@
       transform: none;
     }
     .nav-logo { margin-right: 12px; gap: 8px; }
-    .nav-logo-img { width: 40px; height: 40px; }
     /* Only these two change on mobile -- the underline's thickness, its
        position against the logo, and the footer line all recompute from
        them, so everything stays matched and touching. */
@@ -1031,23 +1078,35 @@
     .hero { margin-right: 24px; }
 
     /* Each panel's vertical space (100svh minus navbar/footer) is much
-       tighter on a phone. Centering tall content in that space pushed the
-       top out of view before you'd scrolled at all and the bottom out
-       after -- reading as "cut off" on both ends. Anchoring to the top
-       with real breathing-room padding keeps the heading visible
-       immediately; everything below is also shrunk so each section's
-       content actually fits without needing that scroll. */
+       tighter on a phone, so the padding shrinks to match -- but
+       justify-content stays centered by default now. fitPanelContent
+       (see the script below) already switches a panel to flex-start
+       itself, dynamically, only on the ones whose actual content doesn't
+       fit at the current height; forcing it here unconditionally left
+       tall-but-narrow screens with a top-hugged panel and a slab of
+       empty space below it even when nothing needed shrinking. */
     .section {
-      justify-content: flex-start;
       padding-top: 20px;
       padding-bottom: 20px;
     }
 
-    /* #calendar's own padding-top (an ID selector) would otherwise beat
-       .section's padding-top above regardless of media query order --
-       this puts mobile back to the same 20px as every other panel
-       instead of inheriting the desktop hero-alignment value. */
-    #calendar { padding-top: 20px; }
+    /* #calendar keeps its desktop padding-top (84px, same as .hero's own
+       -- unchanged on mobile too) rather than falling back to .section's
+       20px here: that's what actually keeps .heart-title level with the
+       hero image's own top edge on a phone, not just on desktop. If that
+       leaves less room than the panel's content needs at a given height,
+       fitPanelContent (below) already scales the whole thing down to
+       fit rather than letting it overflow. */
+
+    /* .heart-title stays pinned to the top (that's the whole point of
+       #calendar's own permanent justify-content:flex-start, so it lines
+       up with the hero image's top edge) -- but .calendar-body is a
+       separate flex item below it with its own flex:1 share of
+       whatever's left, so centering *its* content within that leftover
+       space doesn't move the title at all. Matches every other panel
+       now centering by default instead of leaving the event list
+       stranded at the very top with a slab of empty space under it. */
+    .calendar-body { justify-content: center; }
 
     .section-label { margin-bottom: 10px; }
 
@@ -1121,7 +1180,7 @@
   .footer-weave {
     --cap-w: calc(var(--weave-h) * 5.3188);
     --tile-w: calc(var(--weave-h) * 4.3478);
-    --weave-start: calc(var(--nav-pad) + var(--logo-h) * 0.0584 - var(--weave-h) * 0.1159);
+    --weave-start: calc(var(--nav-pad) + var(--logo-h) * 0.0584 - var(--weave-h) * 0.1159 + var(--logo-shift, 0px));
     --chain-x: calc(var(--weave-start) + var(--cap-w));
     position: absolute;
     left: 0; right: 0;
@@ -1181,10 +1240,23 @@
   }
 </style>
 </head>
-<body class="dark">
+<body>
+  <script>if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');</script>
 
   <nav class="navbar" id="navbar">
     <div class="nav-logo">
+      <!-- ==========================================================================
+           RHONDA M. FAZIO MARK (navbar, now left of the wordmark)
+           ---------------------------------------------------------------------
+           2 files, one per theme. Both live on disk now.
+           LIGHT MODE : logo-rmf-light.png
+           DARK  MODE : logo-rmf-dark.png
+           ========================================================================== -->
+      <a href="https://rhondamfazio.com" target="_blank" rel="noopener" class="nav-logo-img-link" aria-label="Rhonda M. Fazio">
+        <img src="logos/rmf-mark-light.png" alt="Rhonda M. Fazio" class="nav-logo-img nav-logo-img-light">
+        <img src="logos/rmf-mark-dark.png" alt="Rhonda M. Fazio" class="nav-logo-img nav-logo-img-dark">
+      </a>
+      <span class="nav-logo-is">is</span>
       <!-- ==========================================================================
            NAVBAR WORDMARK  ("Interwoven")
            ---------------------------------------------------------------------
@@ -1196,18 +1268,6 @@
       <a href="index.html" class="nav-logo-text" aria-label="Interwoven — home">
         <img src="logos/interwoven-wordmark-light.png" alt="Interwoven" class="nav-logo-wordmark nav-logo-wordmark-light">
         <img src="logos/interwoven-wordmark-dark.png" alt="Interwoven" class="nav-logo-wordmark nav-logo-wordmark-dark">
-      </a>
-      <span class="nav-logo-by">by</span>
-      <!-- ==========================================================================
-           RHONDA M. FAZIO MARK (navbar, right of wordmark)
-           ---------------------------------------------------------------------
-           2 files, one per theme. Both live on disk now.
-           LIGHT MODE : logo-rmf-light.png
-           DARK  MODE : logo-rmf-dark.png
-           ========================================================================== -->
-      <a href="https://rhondamfazio.com" target="_blank" rel="noopener" class="nav-logo-img-link" aria-label="Rhonda M. Fazio">
-        <img src="logos/rmf-mark-light.png" alt="Rhonda M. Fazio" class="nav-logo-img nav-logo-img-light">
-        <img src="logos/rmf-mark-dark.png" alt="Rhonda M. Fazio" class="nav-logo-img nav-logo-img-dark">
       </a>
     </div>
 
@@ -1333,12 +1393,15 @@
 
     <section class="section panel panel-wide" id="blog">
       <div class="section-label">The Blog</div>
-      <h2>Notes from the space</h2>
+      <h2>Words and recipes</h2>
       <div class="space-gallery">
-        <div class="ph-photo ph-photo-large" data-photo-label="Still writing this one"><img src="pics/blue.jpg" alt="Still writing this one" loading="lazy"></div>
-        <p class="section-body">Stories from the makers, the kitchen, and the loom -- still finding its voice. Check back soon, or read the first few posts already up.</p>
+        <div class="ph-photo ph-photo-large" data-photo-label="Still writing this one"><img src="pics/thread1.jpg" alt="Still writing this one" loading="lazy"></div>
+        <p class="section-body">See La Rhonda's recipes and thoughts on how to get creative with what you have. This transcends the kitchen and goes further than just a gallery. These are thoughts and stories from an unsung perspective, an artist at work.</p>
       </div>
-      <a href="the-blog.html" class="btn-link btn-link-block">Read the blog</a>
+      <div class="btn-row btn-link-block">
+        <a href="the-blog.html" class="btn-link">Read the blog</a>
+        <a href="the-blog/recipes/seasonal-recipes.html" class="btn-link">See the recipes</a>
+      </div>
     </section>
 
 
@@ -1404,9 +1467,9 @@
 
     <section class="section panel panel-wide" id="shop">
       <div class="section-label">The Shop</div>
-      <h2>Bring a piece home</h2>
+      <h2>Take a piece home with you</h2>
       <div class="ph-photo ph-photo-large" data-photo-label="The Shop"><img src="pics/booth2.jpg" alt="The Shop" loading="lazy"></div>
-      <p class="section-body">Hand crafted goods, gifts, classes and events.</p>
+      <p class="section-body">Goods and services are available from all participants in the gallery space. Get an idea of what we have here and stop by the space when we are open to get a taste.</p>
       <a href="the-shop.html" class="btn-link btn-link-block">Visit the shop</a>
     </section>
 
@@ -1599,10 +1662,97 @@
     }
     const container = document.getElementById('scrollContainer');
 
+    // Shrinks a panel's content to fit its own height instead of letting
+    // it overflow into .panel's scrollbar -- moves everything a panel
+    // would normally render directly into one wrapper (.panel-scale-wrap,
+    // created here on first run) so it can be measured as a whole and
+    // scaled down just enough to fit, if it doesn't already. Skips the
+    // hero: its own children size themselves off .hero's height:100%
+    // chain directly (see liftHeroFrame above), and wrapping them would
+    // hand that percentage math to a wrapper with no definite height of
+    // its own to resolve against, breaking the hero image's sizing.
+    function fitPanelContent() {
+      document.querySelectorAll('.panel:not(.hero)').forEach(panel => {
+        let wrap = panel.querySelector(':scope > .panel-scale-wrap');
+        if (!wrap) {
+          wrap = document.createElement('div');
+          wrap.className = 'panel-scale-wrap';
+          while (panel.firstChild) wrap.appendChild(panel.firstChild);
+          panel.appendChild(wrap);
+        }
+        wrap.style.transform = '';
+        panel.style.justifyContent = '';
+        const available = panel.clientHeight;
+        const natural = wrap.scrollHeight;
+        if (natural > available) {
+          wrap.style.transform = `scale(${available / natural})`;
+          // Pins the wrap's own (unscaled) top at 0 -- without this,
+          // justify-content:center would center based on the real
+          // (pre-scale) height, landing the visible, shrunk-down content
+          // half above the panel's top edge and half below its bottom.
+          panel.style.justifyContent = 'flex-start';
+        }
+      });
+    }
+    fitPanelContent();
+    window.addEventListener('resize', fitPanelContent);
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(fitPanelContent);
+    }
+
+    // Sizes and positions the RMF mark so it's flush with the top of
+    // "Interwoven" and flush with the bottom of the underline beneath it
+    // -- not a fixed ratio of any single CSS variable, so measured
+    // directly instead of derived algebraically. Also shifts the
+    // navbar/footer underline right by however far the wordmark itself
+    // ends up sitting from the navbar's own left edge, since the RMF mark
+    // and "is" now sit in front of it and would otherwise leave the
+    // underline's cap under RMF instead of under the wordmark.
+    function updateNavLogoLayout() {
+      const wordmarkLink = document.querySelector('.nav-logo-text');
+      const rmfLink = document.querySelector('.nav-logo-img-link');
+      const navLogoEl = document.querySelector('.nav-logo');
+      const weave = document.getElementById('navbarWeave');
+      if (!wordmarkLink || !rmfLink || !navLogoEl || !weave) return;
+
+      // Clear previous inline sizing first so these measurements reflect
+      // the underlying layout, not a stale prior computation.
+      rmfLink.style.height = '';
+      rmfLink.style.top = '';
+      document.querySelectorAll('.nav-logo-img').forEach(img => {
+        img.style.width = '';
+        img.style.height = '';
+      });
+
+      const wordmarkRect = wordmarkLink.getBoundingClientRect();
+      const weaveRect = weave.getBoundingClientRect();
+      const height = weaveRect.bottom - wordmarkRect.top;
+      rmfLink.style.height = height + 'px';
+      document.querySelectorAll('.nav-logo-img').forEach(img => {
+        img.style.width = height + 'px';
+        img.style.height = height + 'px';
+      });
+
+      // A relative top offset (not margin) so this doesn't feed back into
+      // .nav-logo's own intrinsic height -- one pass is enough since
+      // there's nothing left for it to disturb.
+      const top = wordmarkLink.getBoundingClientRect().top - rmfLink.getBoundingClientRect().top;
+      rmfLink.style.top = top + 'px';
+
+      // RMF just changed width (it's square), which moves the wordmark
+      // horizontally -- recompute the underline shift against its new
+      // position rather than the one measured before resizing RMF.
+      const shift = wordmarkLink.getBoundingClientRect().left - navLogoEl.getBoundingClientRect().left;
+      document.documentElement.style.setProperty('--logo-shift', shift + 'px');
+    }
+    updateNavLogoLayout();
+    window.addEventListener('resize', updateNavLogoLayout);
+
     // Dark mode toggle
     const themeToggle = document.getElementById('themeToggle');
     themeToggle.addEventListener('click', () => {
       document.body.classList.toggle('dark');
+      localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
     });
 
     // Mobile hamburger menu
