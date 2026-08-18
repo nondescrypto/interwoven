@@ -6,6 +6,16 @@
 <title>The Fabric — Interwoven</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@300;500;600&family=Work+Sans:wght@300;400;500&display=swap');
+  @font-face {
+    font-family: "Papyrus Local";
+    src: url('img/Papyrus-Font.ttf') format('truetype');
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "Goudos";
+    src: url('img/Goudos.ttf') format('truetype');
+    font-display: swap;
+  }
   :root {
     --ink: #1a1816;
     --ivory: #f6f2ea;
@@ -25,8 +35,8 @@
     --indigo:   #2e3093;   /* leaf blue,   9.59:1 on ivory */
     --stone:    #8a857c;   /* warm neutral for placeholder fills */
     --line: rgba(26,24,22,0.12);
-    --ff-display: "Fraunces", Georgia, serif;
-    --ff-body: "Work Sans", -apple-system, sans-serif;
+    --ff-display: "Papyrus Local", "Papyrus", fantasy;
+    --ff-body: "Goudos", "Fraunces", Georgia, serif;
     --nav-h: 84px;
 
     /* Logo size drives the underline. The wordmark art is 400x133 with a
@@ -147,8 +157,8 @@
 
   .nav-logo {
     font-family: var(--ff-display);
-    font-size: 21px;
-    font-weight: 500;
+    font-size: 25px;
+    font-weight: bold;
     letter-spacing: 0.02em;
     color: var(--text);
     display: flex;
@@ -350,7 +360,7 @@
     padding-top: var(--nav-h);
     background: var(--bg);
     color: var(--text);
-    font-family: "Work Sans", sans-serif;
+    font-family: "Goudos", "Fraunces", Georgia, serif;
     transition: background 0.4s ease, color 0.4s ease;
   }
   main { max-width: 1100px; margin: 0 auto; padding: 64px 48px 96px; }
@@ -361,10 +371,10 @@
   }
   .intro-link:hover { opacity: 0.7; }
   .fabric-quote {
-    font-family: "Fraunces", Georgia, serif;
+    font-family: "Papyrus Local", "Papyrus", fantasy;
     font-style: italic;
-    font-weight: 500;
-    font-size: 20px;
+    font-weight: bold;
+    font-size: 24px;
     line-height: 1.6;
     color: var(--text);
     max-width: 640px;
@@ -375,7 +385,7 @@
   }
   .fabric-quote cite {
     display: block;
-    font-family: "Work Sans", sans-serif;
+    font-family: "Goudos", "Fraunces", Georgia, serif;
     font-style: normal;
     font-size: 13px;
     letter-spacing: 0.04em;
@@ -389,10 +399,20 @@
     color: var(--label-color);
     margin-bottom: 16px;
   }
+  /* Intro copy and the "Fabric works" blurb sit as bare <p> tags directly
+     in main (not inside .layout-text/.involved), so they need the same
+     paragraph treatment spelled out explicitly to match the rest of the
+     site's body copy. */
+  main > p {
+    color: var(--text-muted);
+    line-height: 1.75;
+    font-size: 19px;
+    margin: 0 0 16px;
+  }
   h1 {
-    font-family: "Fraunces", Georgia, serif;
-    font-weight: 500;
-    font-size: clamp(32px, 4vw, 46px);
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: clamp(38px, 4vw, 55px);
     margin: 0 0 48px;
     max-width: 700px;
   }
@@ -429,21 +449,42 @@
     flex: 1 1 50%;
   }
   .layout-text h2 {
-    font-family: "Fraunces", Georgia, serif;
-    font-weight: 500;
-    font-size: 26px;
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: 31px;
     margin: 0 0 18px;
   }
   .layout-text p {
     color: var(--text-muted);
     line-height: 1.75;
-    font-size: 15.5px;
+    font-size: 19px;
     margin: 0 0 16px;
   }
 
   /* Full-width banner with a centered title over it -- the darkening
      overlay plus text-shadow keep the white title readable regardless
      of what's directly behind it in the photo. */
+  .fabric-title {
+    font-family: "Goudos", "Fraunces", Georgia, serif;
+    font-weight: bold;
+    font-size: clamp(34px, 5vw, 67px);
+    text-align: center;
+    max-width: none;
+    letter-spacing: 0.02em;
+    margin: 0 0 12px;
+  }
+  .fabric-title .title-mark {
+    font-size: 0.35em;
+    vertical-align: super;
+    margin-left: 6px;
+  }
+  .fabric-subtitle {
+    font-style: italic;
+    font-size: 22px;
+    text-align: center;
+    color: var(--text-muted);
+    margin: 0 0 32px;
+  }
   .fabric-banner {
     position: relative;
     border-radius: 4px;
@@ -455,35 +496,42 @@
     width: 100%;
     height: auto;
   }
-  .fabric-banner::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(10,9,8,0.35);
-  }
-  .fabric-banner-title {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0;
-    padding: 0 24px;
-    font-family: "Fraunces", Georgia, serif;
-    font-weight: 500;
-    font-size: clamp(28px, 5vw, 56px);
-    color: #fff;
-    text-align: center;
-    text-shadow: 0 2px 16px rgba(0,0,0,0.7);
-    letter-spacing: 0.02em;
-  }
 
   .gallery-heading {
-    font-family: "Fraunces", Georgia, serif;
-    font-weight: 500;
-    font-size: 26px;
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: 31px;
     margin: 96px 0 24px;
+  }
+  /* The heading right under the banner doesn't need the same big
+     breathing room used to separate the deeper sections further down
+     the page, and reads better centered over the three cards below it. */
+  .fabric-banner + .gallery-heading {
+    margin-top: 40px;
+    text-align: center;
+  }
+
+  /* Three photos with a caption above and description below -- same
+     shape as .food-trio on the-food.html, just renamed for context. */
+  .origin-trio {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    margin-top: 48px;
+  }
+  .origin-trio-item h3 {
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: 24px;
+    text-align: center;
+    margin: 0 0 16px;
+  }
+  .origin-trio-item p {
+    margin-top: 14px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 19px;
+    line-height: 1.6;
   }
   .photo-grid {
     display: grid;
@@ -644,15 +692,15 @@
     border-top: 1px solid var(--line);
   }
   .involved h3 {
-    font-family: "Fraunces", Georgia, serif;
-    font-weight: 500;
-    font-size: 22px;
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: 26px;
     margin: 0 0 16px;
   }
   .involved p {
     color: var(--text-muted);
     line-height: 1.75;
-    font-size: 15.5px;
+    font-size: 19px;
     margin: 0 0 28px;
   }
   .btn-link {
@@ -710,12 +758,13 @@
   .footer-social a { color: var(--text); display: flex; opacity: 0.8; transition: opacity 0.25s ease; }
   .footer-social a:hover { opacity: 1; }
   .footer-social svg { width: 22px; height: 22px; }
-  .footer-copy { font-size: 12px; color: var(--text-muted); letter-spacing: 0.04em; }
+  .footer-copy { font-size: 15px; color: var(--text-muted); letter-spacing: 0.04em; }
 
   @media (max-width: 760px) {
     main { padding: 40px 24px 72px; }
     .layout { flex-direction: column; gap: 28px; }
     .layout-photo { width: 100%; height: auto; aspect-ratio: 1 / 1; }
+    .origin-trio { grid-template-columns: 1fr; gap: 40px; margin-top: 32px; }
 
     /* On a phone, showing every photo at once means most of them are
        too small to actually see. Swap the grid for one photo at a time
@@ -810,9 +859,30 @@
   <main>
     <div class="label">The Fabric</div>
 
+    <h1 class="fabric-title">Dyer Maker Studio<span class="title-mark">&copy;</span></h1>
+    <p class="fabric-subtitle"><em>The Art and Craft of Sustainable Textile Design</em></p>
+
     <div class="fabric-banner">
       <img src="pics/dyes.jpg" alt="Natural dye materials and process" loading="lazy">
-      <h1 class="fabric-banner-title">Dyer Maker Studio</h1>
+    </div>
+
+    <h2 class="gallery-heading">The origin of the maker begins with the hands&hellip;</h2>
+    <div class="origin-trio">
+      <div class="origin-trio-item">
+        <h3>Dyeing to Wear It &trade;</h3>
+        <div class="grid-photo" data-photo-label="Dyeing to Wear It"><img src="pics/dyes1.jpg" alt="Dyeing to Wear It" loading="lazy"></div>
+        <p>I teach experiential workshops where participants create their own wearable art. A social event for any occasion. Now booking.</p>
+      </div>
+      <div class="origin-trio-item">
+        <h3>Artist in Residence</h3>
+        <div class="grid-photo" data-photo-label="Artist in Residence"><img src="pics/weaving-kids.jpg" alt="Artist in Residence" loading="lazy"></div>
+        <p>I teach the art, craft and history of sustainable textile design for children and adults, locally and abroad.</p>
+      </div>
+      <div class="origin-trio-item">
+        <h3>Weaving</h3>
+        <div class="grid-photo" data-photo-label="Weaving"><img src="pics/thread1.jpg" alt="Weaving" loading="lazy"></div>
+        <p>I teach weaving and restore looms that I find or are given to me, for use in my weaving instruction.</p>
+      </div>
     </div>
 
     <blockquote class="fabric-quote">
@@ -831,11 +901,15 @@
       </button>
       <div class="photo-grid" id="photoGrid">
         <div class="grid-photo" data-photo-label="Artist in dye"><img src="pics/artist3.jpg" alt="Artist in dye" loading="lazy"></div>
-        <div class="grid-photo" data-photo-label="People with silk"><img src="pics/silk-people.jpg" alt="People with silk" loading="lazy"></div>
-        <div class="grid-photo" data-photo-label="People with silk"><img src="pics/silk-people1.jpg" alt="People with silk" loading="lazy"></div>
-        <div class="grid-photo" data-photo-label="People with silk"><img src="pics/silk-people2.jpg" alt="People with silk" loading="lazy"></div>
-        <div class="grid-photo" data-photo-label="People with silk"><img src="pics/silk-people3.jpg" alt="People with silk" loading="lazy"></div>
-        <div class="grid-photo" data-photo-label="Dye display"><img src="pics/dyes1.jpg" alt="Dye display" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Dyeing to Wear It"><img src="pics/dtwi.jpg" alt="Dyeing to Wear It" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Dyeing to Wear It"><img src="pics/dtwi1.jpg" alt="Dyeing to Wear It" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Dyeing to Wear It"><img src="pics/dtwi2.jpg" alt="Dyeing to Wear It" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Dyeing to Wear It"><img src="pics/dtwi3.jpg" alt="Dyeing to Wear It" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Dyeing to Wear It"><img src="pics/dtwi4.jpg" alt="Dyeing to Wear It" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Dyeing to Wear It"><img src="pics/dtwi5.jpg" alt="Dyeing to Wear It" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Dyeing to Wear It"><img src="pics/dtwi6.jpg" alt="Dyeing to Wear It" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Dyeing to Wear It"><img src="pics/dtwi7.jpg" alt="Dyeing to Wear It" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Dyeing to Wear It"><img src="pics/dtwi8.jpg" alt="Dyeing to Wear It" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Dye display"><img src="pics/dyes2.jpg" alt="Dye display" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Dye display"><img src="pics/dyes3.jpg" alt="Dye display" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Dye vat"><img src="pics/dyes4.jpg" alt="Dye vat" loading="lazy"></div>
@@ -843,6 +917,7 @@
         <div class="grid-photo" data-photo-label="Silk, modeled"><img src="pics/silk-model1.jpg" alt="Silk, modeled" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Silk, modeled"><img src="pics/silk-model2.jpg" alt="Silk, modeled" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Silk, modeled"><img src="pics/silk-model3.jpg" alt="Silk, modeled" loading="lazy"></div>
+
       </div>
       <button type="button" class="pan-btn pan-next" aria-label="Scroll photos right">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -875,19 +950,27 @@
         <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin8.jpg" alt="Silk on mannequin" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin9.jpg" alt="Silk on mannequin" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin10.jpg" alt="Silk on mannequin" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin11.jpg" alt="Silk on mannequin" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin12.jpg" alt="Silk on mannequin" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-scarf.jpg" alt="Silk on mannequin" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-scarf1.jpg" alt="Silk on mannequin" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequins.jpg" alt="Silk on mannequin" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Silk"><img src="pics/silk_waves.jpg" alt="Silk" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Silk"><img src="pics/silk_waves1.jpg" alt="Silk" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Silk"><img src="pics/silk_waves2.jpg" alt="Silk" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Silk"><img src="pics/silk_waves3.jpg" alt="Silk" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Silk"><img src="pics/silk_waves_warm.jpg" alt="Silk" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Silk booth"><img src="pics/booth.jpg" alt="Silk booth" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Silk booth"><img src="pics/booth1.jpg" alt="Silk booth" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Silk booth"><img src="pics/booth2.jpg" alt="Silk booth" loading="lazy"></div>
-        <div class="grid-photo" data-photo-label="Silk"><img src="pics/silk1.jpg" alt="Silk" loading="lazy"></div>
-        <div class="grid-photo" data-photo-label="Silk"><img src="pics/silk2.jpg" alt="Silk" loading="lazy"></div>
-        <div class="grid-photo" data-photo-label="Thread"><img src="pics/thread1.jpg" alt="Thread" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Warp, boat shuttle"><img src="pics/warp-boat.jpg" alt="Warp, boat shuttle" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Warp, colors"><img src="pics/warp-colors.jpg" alt="Warp, colors" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Warp, side view"><img src="pics/warp-side.jpg" alt="Warp, side view" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Warp"><img src="pics/warp2.jpg" alt="Warp" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Weaving child"><img src="pics/weaving-kid.jpg" alt="Weaving child" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Weaving child"><img src="pics/weaving-kid1.jpg" alt="Weaving child" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Weaving child"><img src="pics/weaving-kid2.jpg" alt="Weaving child" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Weaving child"><img src="pics/weaving-kid3.jpg" alt="Weaving child" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Artist with loom"><img src="pics/artist2.jpg" alt="Artist with loom" loading="lazy"></div>
       </div>
       <button type="button" class="pan-btn pan-next" aria-label="Scroll photos right">
@@ -899,6 +982,7 @@
       <h3>Come find us</h3>
       <p>Located below the Portuguese Consulate and across the street from City Hall in New Bedford MA.</p>
       <p>634 Pleasant Street, New Bedford, MA &middot; (508) 669-6835</p>
+      <a href="the-shop.html#donate" class="btn-link">Donate</a>
     </div>
   </main>
 
@@ -933,7 +1017,7 @@
         </svg>
       </a>
     </div>
-    <p class="footer-copy">&copy; Interwoven</p>
+    <p class="footer-copy">Rhonda M. Fazio DBA Dyer Maker Studio &copy; 1998-<span id="copyYear">2026</span></p>
   </footer>
 
   <script>
@@ -986,6 +1070,10 @@
     }
     updateNavLogoLayout();
     window.addEventListener('resize', updateNavLogoLayout);
+
+    // Keep the footer copyright year current automatically
+    const copyYear = document.getElementById('copyYear');
+    if (copyYear) copyYear.textContent = new Date().getFullYear();
 
     // Dark mode toggle
     const themeToggle = document.getElementById('themeToggle');
@@ -1040,7 +1128,7 @@
 
     document.querySelectorAll('.grid-photo').forEach(photo => {
       photo.addEventListener('click', () => {
-        const grid = photo.closest('.photo-grid') || document;
+        const grid = photo.closest('.photo-grid, .origin-trio') || document;
         lightboxGroup = Array.from(grid.querySelectorAll('.grid-photo'));
         lightboxIndex = lightboxGroup.indexOf(photo);
         showLightboxPhoto(photo);

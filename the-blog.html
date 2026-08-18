@@ -6,6 +6,16 @@
 <title>The Blog — Interwoven</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@300;500;600&family=Work+Sans:wght@300;400;500&display=swap');
+  @font-face {
+    font-family: "Papyrus Local";
+    src: url('img/Papyrus-Font.ttf') format('truetype');
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "Goudos";
+    src: url('img/Goudos.ttf') format('truetype');
+    font-display: swap;
+  }
   :root {
     --ink: #1a1816;
     --ivory: #f6f2ea;
@@ -343,6 +353,13 @@
   }
 
   * { box-sizing: border-box; }
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--nav-h) + 24px);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
   a { color: inherit; text-decoration: none; }
   body {
     margin: 0;
@@ -355,6 +372,7 @@
   }
   main { max-width: 1100px; margin: 0 auto; padding: 64px 48px 96px; }
   .label {
+    font-family: "Goudos", "Fraunces", Georgia, serif;
     font-size: 12.5px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -362,12 +380,54 @@
     margin-bottom: 16px;
   }
   h1 {
-    font-family: "Fraunces", Georgia, serif;
-    font-weight: 500;
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
     font-size: clamp(32px, 4vw, 46px);
     margin: 0 0 48px;
     max-width: 700px;
   }
+  /* Posts on the left, Categories/Archives on the right -- the sidebar
+     stays put while the post list scrolls past it. */
+  .blog-layout {
+    display: grid;
+    grid-template-columns: 1fr 220px;
+    gap: 64px;
+    align-items: start;
+  }
+  .blog-sidebar {
+    position: sticky;
+    top: calc(var(--nav-h) + 32px);
+  }
+  .sidebar-block:not(:last-child) {
+    margin-bottom: 40px;
+  }
+  .sidebar-block h3 {
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: 23px;
+    letter-spacing: 0.04em;
+    margin: 0 0 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line);
+  }
+  .sidebar-block ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+  }
+  .sidebar-block a {
+    font-family: "Goudos", "Fraunces", Georgia, serif;
+    font-size: 19px;
+    color: var(--text-muted);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color 0.2s ease;
+  }
+  .sidebar-block a:hover { color: var(--text); }
+
   /* Newest post first, each one photo + title + date + body -- a simple
      shape today, but the same shape the Sheets-backed version of this
      page will render into later, one row per submitted post. */
@@ -394,23 +454,70 @@
     display: block;
   }
   .blog-post-date {
-    font-size: 12.5px;
+    font-family: "Goudos", "Fraunces", Georgia, serif;
+    font-weight: bold;
+    font-size: 15px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--text-muted);
     margin-bottom: 10px;
   }
   .blog-post h2 {
-    font-family: "Fraunces", Georgia, serif;
-    font-weight: 500;
-    font-size: 28px;
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: 34px;
     margin: 0 0 18px;
   }
   .blog-post p {
+    font-family: "Goudos", "Fraunces", Georgia, serif;
     color: var(--text-muted);
     line-height: 1.75;
-    font-size: 15.5px;
+    font-size: 19px;
     margin: 0 0 16px;
+  }
+  .blog-post p strong { color: var(--text); }
+  .post-link {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  /* Posts with more than one photo (September's harvest + salsa, March's
+     album + game night, June's strawberry prep) get a side-by-side
+     gallery instead of the single full-width hero photo. */
+  .blog-post-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .blog-post-gallery figure {
+    margin: 0;
+  }
+  .blog-post-gallery img {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+    border-radius: 4px;
+    display: block;
+  }
+  /* Floats the gallery to the right of the post's paragraphs instead of
+     stacking above them -- used by October's single photo and March's
+     two stacked photos. */
+  .blog-post-gallery.float-right {
+    float: right;
+    width: 320px;
+    max-width: 40%;
+    margin: 0 0 16px 24px;
+  }
+  .blog-post::after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+  .photo-caption {
+    font-size: 12.5px;
+    font-style: italic;
+    color: var(--text-muted);
+    margin-top: 8px;
   }
   .blog-post:not(:last-child) {
     padding-bottom: 72px;
@@ -519,13 +626,23 @@
   .footer-social a { color: var(--text); display: flex; opacity: 0.8; transition: opacity 0.25s ease; }
   .footer-social a:hover { opacity: 1; }
   .footer-social svg { width: 22px; height: 22px; }
-  .footer-copy { font-size: 12px; color: var(--text-muted); letter-spacing: 0.04em; }
+  .footer-copy { font-size: 15px; color: var(--text-muted); letter-spacing: 0.04em; }
+
+  @media (max-width: 900px) {
+    .blog-layout { grid-template-columns: 1fr; }
+    .blog-sidebar { position: static; margin-top: 56px; }
+    .sidebar-block { display: inline-block; vertical-align: top; width: 45%; }
+  }
 
   @media (max-width: 760px) {
     main { padding: 40px 24px 72px; }
     .blog-posts { gap: 48px; }
     .blog-post:not(:last-child) { padding-bottom: 48px; }
     .blog-post-photo { height: 220px; margin-bottom: 16px; }
+    .blog-post-gallery { grid-template-columns: 1fr; }
+    .blog-post-gallery img { height: 220px; }
+    .blog-post-gallery.float-right { float: none; width: 100%; max-width: 100%; margin: 0 0 16px; }
+    .sidebar-block { display: block; width: 100%; }
   }
 </style>
 </head>
@@ -585,10 +702,11 @@
   </nav>
   <main>
     <div class="label">The Blog</div>
-    <h1>Notes from the space</h1>
+    <h1>Writings</h1>
 
+    <div class="blog-layout">
     <div class="blog-posts">
-      <article class="blog-post featured">
+      <article class="blog-post featured" id="post-recipes">
         <div class="featured-tag">Featured</div>
         <div class="blog-post-photo"><img src="pics/food1.jpg" alt="Seasonal Recipes" loading="lazy"></div>
         <h2>Seasonal Recipes</h2>
@@ -596,15 +714,134 @@
         <a href="the-blog/recipes/seasonal-recipes.html" class="btn-link">Explore the recipes</a>
       </article>
 
-      <article class="blog-post">
-        <div class="blog-post-photo"><img src="pics/canning.jpg" alt="A dye day at the studio" loading="lazy"></div>
+      <article class="blog-post" id="post-2026-06">
+        <div class="blog-post-date">June 15th 2026</div>
+        <h2>It's been a long time since I wrote something here&hellip;</h2>
+        <p>New posts coming for the summer months. See you soon.</p>
+      </article>
+
+      <article class="blog-post" id="post-2022-10">
+        <div class="blog-post-gallery float-right">
+          <figure>
+            <img src="the-blog/blog-pics/october-road.jpg" alt="A group scrapbooking around a table at Interwoven" loading="lazy">
+            <figcaption class="photo-caption">Busy little bees&hellip;hard at work with Rayn's Revolver Vintage Scrap Booking Class.</figcaption>
+          </figure>
+        </div>
+        <div class="blog-post-date">October 5th 2022</div>
+        <h2>&ldquo;October Road&rdquo; &mdash; still standing and open wide&hellip;</h2>
+        <p>The <a href="https://www.youtube.com/watch?v=mFkUrVIJY18" target="_blank" rel="noopener" class="post-link">October Road</a> begins at Interwoven, opening it's doors more frequently in the cooler weather, we are launching new workshops all month led my an array of Artists thoughout the creative community.</p>
+        <p>Interwoven's "Game Unplugged" with music on a Monday night featuring local musicians and board games, hence the "unplugged" version of things, is beginning to wrap up for the 2022 season.</p>
+        <p>Be sure to check out <a href="https://www.rootsrunwild.com/" target="_blank" rel="noopener" class="post-link">Roots Run Wild</a> on October 19th! There will be a brief hiatus in November and then back in December and we are done.</p>
+        <p>Check out what's going on the first Tuesday of each month on our <a href="the-calendar.html" class="post-link">new calendar</a>.</p>
+        <p><a href="https://www.etsy.com/ca/people/VerukaDollsLand?ref=shop_home_header" target="_blank" rel="noopener" class="post-link">Gwen LeBlanc</a> and <a href="https://www.instagram.com/rayns_revolver/" target="_blank" rel="noopener" class="post-link">Amber Vaughn</a> join the core group of Artists at Interwoven teaching various ways to collage with fabric and what Amber describes as "garbage" but Gwen and I like to call it re-purposed, or re-claimed goods. You will find many personalites, identities, as well as skills during our events. So if you need something to do, or would like a change of pace, discover the local creatives that make music, fabric, craft and interesting conversation! This is Interwoven &mdash; a venue created by an Artist for Artists with more events on the way.</p>
+        <p>This is where the story gets told.</p>
+        <p>If you have an idea for a workshop or event, email Rhonda at <a href="mailto:interwovenmakerspace@gmail.com" class="post-link">interwovenmakerspace@gmail.com</a>.</p>
+      </article>
+
+      <article class="blog-post" id="post-2022-06">
+        <div class="blog-post-gallery">
+          <figure><img src="the-blog/blog-pics/strawberry-prep.jpg" alt="Strawberries and herbs being prepped on a cutting board" loading="lazy"></figure>
+          <figure><img src="the-blog/blog-pics/strawberry.jpg" alt="A plate of sliced strawberries and greens" loading="lazy"></figure>
+          <figure><img src="the-blog/blog-pics/strwberry-eating.jpg" alt="Market visitors tasting the strawberry salad" loading="lazy"></figure>
+        </div>
+        <div class="blog-post-date">June 8th 2022</div>
+        <h2>Strawberry Fields 4-evah!</h2>
+        <p>Did you know that strawberries are social plants? They require a male and female plant to produce the fruit which is in fact, an ovary covered in seeds&hellip;hmm. Sweet, succulent, juicy, red berries. They are the perfect fruit for Pride month. The strawberry is steeped in sexual orientation.</p>
+        <p>I am not joking. This is real. Read the article for yourself <a href="https://www.thespruceeats.com/history-of-strawberry-1807668" target="_blank" rel="noopener" class="post-link">here</a>. For more details in the scientific realm of the strawberry's sexuality you can read the original article <a href="https://www.nature.com/articles/hdy2008100.pdf" target="_blank" rel="noopener" class="post-link">here</a>.</p>
+        <p>All this talk of strawberries and sexuality makes me want to watch the movie "Chocolat" with Juliet Binoche. Truth be known, in the spirit of Pride month, she is the only woman I would jump the fence for&hellip;wait, there is also Lena Olin in "The Unbearable Lightness of Being." Both women were in both films. I highly reccomend that you indulge yourself by watching these two beauties own the screen with their spectacular performances. And I double dare you not to fall in love with them. I've said enough on the subject, but there is this really great scene when Lena Olin's character is eating fondue&hellip;watch it! Good films, good books of cinematic and literary excellence.</p>
+        <p>Back to strawberries&hellip; if you would like to learn how to make delicious food with strawberries and their plant friends, then come visit me at the New Bedford Farmers Markets where I perform cooking demos and teach "The Art and Language of Food". I cook what is in season and readily available at each market and mobile food stand throughout the city. Check out <a href="https://www.google.com/maps/d/u/0/edit?mid=1RkZ17k0A2B5DylvAETxhEgQ5UBNDtiiv&ll=41.66068763900368%2C-71.04474864999999&z=12" target="_blank" rel="noopener" class="post-link">My Maps</a> to see where I will be each week from June through October. Follow <a href="https://www.instagram.com/environmental_alchemy/" target="_blank" rel="noopener" class="post-link">environmental alchemy</a> on Instagram where I post the images of what I make each week. Come on over for a visit and taste what is fresh at the market and learn some healthful tips as I highlight my "SNAP to the MAX" philosophy:</p>
+        <p>"Use what you have and learn how to make the most of it."</p>
+        <p>See you soon.</p>
+      </article>
+
+      <article class="blog-post" id="post-2022-03">
+        <div class="blog-post-gallery float-right">
+          <figure>
+            <img src="the-blog/blog-pics/its-your-move-sig.jpg" alt="A YES vinyl record album signed by Jon Anderson" loading="lazy">
+            <figcaption class="photo-caption">YES! Signed by Jon Anderson.</figcaption>
+          </figure>
+          <figure><img src="the-blog/blog-pics/scrabble.jpg" alt="Two people playing Scrabble on a Monday night at Interwoven" loading="lazy"></figure>
+        </div>
+        <div class="blog-post-date">March 14th 2022</div>
+        <h2>It's "Your Move"&hellip;</h2>
+        <p>I love song lyrics that reference a move on a chess board. "<a href="https://www.youtube.com/watch?v=2FFxqdhqb9c" target="_blank" rel="noopener" class="post-link">Your Move</a>" by YES, is one of those great, now classic tunes that I never get tired of hearing. It has everything I love in a vinyl recording: instruments, clear sound without any technology, loaded lyrics that tell a story within the story and let's not forget the magnificent art work of an album cover, back in the day this was the access to art that my young eyes adored.</p>
+        <p>I would spend hours looking at some of them, laying on the floor, hands under my chin, seeing the little things without glasses&hellip; and then the song explodes into the rock and roll stratosphere, lifting you up and out of this world. That's the magic of a well made album.</p>
+        <p>Yes! to listening to the entire compilation of songs. This is the art of compostion in sounds. Listening to one song is like tearing a page from a book, it becomes isolated from the rest of the story. This is what is lost in today's digital discography of downloads. Besides, you cannot get your albums signed by recording Artists who wander into your studio before the show starts at the Narrows Center for the Arts to buy gifts for their wives&hellip;or themselves.</p>
+        <p>If you love board games and music as much as I do, then I invite you to "Game Unplugged with Music on a Monday Night" at <a href="https://www.facebook.com/events/270250341950669" target="_blank" rel="noopener" class="post-link">Interwoven</a>. Thanks to a grant from the New Bedford Cultural Council there is a budget for musicians, new and seasoned, who would like to jam out for a couple of hours while we play our games "unplugged."</p>
+        <p>On quiet Monday nights in downtown,<br>Turn off, Take a seat, and Let's play.</p>
+        <p>First Mondays of each month, unless otherwise noted, for however long the funds last.<br>
+        July 4th (closed) &amp; 18th &mdash; musical guest &mdash; tbd<br>
+        August 1st &amp; 15th &mdash; musical guest tbd<br>
+        September<br>
+        October</p>
+        <p>Learn to Play 6-7&emsp;&emsp;Live Music 7-9&emsp;&emsp;Limit Time 10ish</p>
+        <p>Coffee, tea and goodies will be available. Donations only. This is an alcohol free event. Space is limited.</p>
+      </article>
+
+      <article class="blog-post" id="post-2022-02">
+        <div class="blog-post-photo"><img src="the-blog/blog-pics/the-road-new-hampshire_orig.jpg" alt="A New Hampshire highway under a cloud-filled sky" loading="lazy"></div>
+        <div class="blog-post-date">February 22nd 2022</div>
+        <h2>&ldquo;Back on the Highway yeah, yeah, yeah&hellip;&rdquo;</h2>
+        <p><a href="https://www.jamestaylor.com/discography/mud-slide-slim-and-the-blue-horizon/" target="_blank" rel="noopener" class="post-link">James Taylor</a>'s lyrical journey nearest and dearest to my heart, the "Highway Song," speaks of the road and a longing for the soul to ramble. A place of solitude in motion, to think, to reflect, to form new ideas or resurrect old ones. The road is a place that brings tremendous joy and creativity into the heart of me. After a grueling two years of limitations that were killing my soul slowly (who else is with me on this one?), not to mention several health scares that had almost killed me for real, it becomes a safe space where I put myself back together with a renewed spirit for life, time after time. It is the place where I spritually survive and thrive.</p>
+        <p>Thanks to the many Local Cultural Councils throughout the Commonwealth with the support of the Massachusetts Cultural Council, <a href="the-fabric.html" class="post-link">Dyer Maker Studio</a>&reg; will be "back on the road again" this spring and summer. &ldquo;<a href="the-fabric.html" class="post-link">Dyeing to Wear It: Creating Community with Color</a>&rdquo; will partner with libraries all around the Commonwealth. Follow my social media pages as I prepare to journey around this beautiful state of Massachusetts, along with a dip into the neighboring state of New Hampshire, with more announcements and more places to come, just there, on the "blue horizon"&hellip;</p>
+      </article>
+
+      <article class="blog-post" id="post-2021-12">
+        <div class="blog-post-date">December 2nd 2021</div>
+        <h2>December: "Out of the darkness, into the light&hellip;"</h2>
+        <p>And where there is light, there is color and hand crafted gifts you can make yourself! Sign up for my "<a href="the-fabric.html" class="post-link">Dyeing to Wear It</a>"&trade; class, The Art of the Gift, click on the <span class="post-link">Book now</span> button and choose the date.</p>
+        <p>On Saturday, December 18th 10-2, I will be decorating cookies with the New Bedford Farmers Market at Buttonwood Park Zoo. Bring your kids/grandkids &mdash; special treats if you come dressed as an elf!</p>
+      </article>
+
+      <article class="blog-post" id="post-2021-11">
+        <div class="blog-post-date">November 16th 2021</div>
+        <h2>&ldquo;Sweetest November, the world renewed its color&hellip;&rdquo;</h2>
+        <p>In my world, all color is beautiful so how can it not be renewed &mdash; It's my birthday month! The quote comes from a song by <a href="https://www.sarahblasko.com/" target="_blank" rel="noopener" class="post-link">Sarah Brasko</a> and is such a well written lyric, filled with life and strength. Like the city of New Bedford.</p>
+        <p>It's a hectic time of year to be sure but take time for a stroll downtown, so much is happening. Interwoven will be open for small business Saturday on the 27th. Click on the "BOOK NOW" button and follow the prompts, to sign up for "<a href="the-fabric.html" class="post-link">Dyeing to Wear It</a>" &mdash; coming in December. I will post pop up musical performances on my social media pages.</p>
+        <p>Interwoven will have a booth at the <span class="post-link">Buzzard's Bay Brewery Holiday Stroll</span> event.</p>
+        <p>La Rhonda is cooking up the freshest, sweetest, and the most savory dishes from ingredients found at the <span class="post-link">New Bedford Farmer's Market</span> each week at <span class="post-link">Buttonwood Park's Senior Center.</span> Saturdays 10-2pm.</p>
+        <h2>La Rhonda's Sweet Tart Applecrisp</h2>
+        <div class="blog-post-gallery float-right">
+          <figure><img src="the-blog/blog-pics/sweet-tart.jpg" alt="La Rhonda's Sweet Tart Applecrisp on a plaid napkin" loading="lazy"></figure>
+        </div>
+        <p>A sweet little portion of dessert with a set of my handwoven placemats and napkins. Interwoven offers classes in weaving and natural dye wearables.</p>
+        <p>Visit the gallery/makerspace to shop local. Gift certificates available for the Holidays and anytime of the year.</p>
+        <p>Contact me if you have any special requests. Private classes are available.</p>
+        <p><strong>2-3 apples</strong> &mdash; I use the spotty kind for my jam and desserts &mdash; peeled and diced or sliced. I eat the pristine looking apples of course.<br>
+        <strong>1 handful of cranberries</strong><br>
+        <strong>Generous pinches of cinnamon, nutmeg and cloves</strong> or to taste</p>
+        <p>Saute pan on medium heat<br>
+        &nbsp;&nbsp;&mdash;melt <strong>1 Tbs of butter</strong>, add fruit, saute for 2 minutes<br>
+        &nbsp;&nbsp;&mdash;add <strong>1/4-1/2 cup of water</strong><br>
+        &nbsp;&nbsp;&mdash;drizzle <strong>maple syrup</strong> to taste<br>
+        &nbsp;&nbsp;&mdash;1 Tbs <strong>sugar</strong> is optional</p>
+        <p>Cook until the fruit is tender and the cranberries "bleed" their color. Cook down the liquid until it begins to create a bit of syrup. In a different pan, use the same ingredients (omit fruit and water) to toast the oats. Toast until light brown, adding the syrup just before it is done. Serve with whipped cream or a drizzle of farm fresh heavy cream. So good! The best part is that there isn't a big pan hanging around.</p>
+        <p>Just a serving or two. Simple and fresh. I enjoy the tart flavor however, sweeten more if desired.</p>
+      </article>
+
+      <article class="blog-post" id="post-2021-09">
+        <div class="blog-post-gallery">
+          <figure><img src="the-blog/blog-pics/eggplant.jpg" alt="A harvest of tomatoes, peppers, eggplant, and garlic" loading="lazy"></figure>
+          <figure><img src="the-blog/blog-pics/garden-salsa.jpg" alt="A bowl of fresh garden salsa with bread" loading="lazy"></figure>
+        </div>
+        <div class="blog-post-date">September 2nd 2021</div>
+        <h2>September: Chacing the clouds away&hellip;</h2>
+        <p><span class="post-link">Cooking with La Rhonda, the South Coast Sicilian!</span></p>
+        <p>What do you do with the vegetable overload during havest season? More important than that &mdash; how do you cook eggplant? Let me show you how easy cooking can be as you watch me prepare simple and fresh foods at the New Bedford Farmer's Market and Coastal Foodshed pop-up markets ever week through September.</p>
+        <p>New Bedford Farmers Market at Brooklawn Park is each Monday (except Labor Day) 2-6. Cooking demo 2-4.</p>
+        <p>The Coastal Foodshed pop up market will be at Clasky Common every Friday from 2-6. Cooking demo is 2-4.</p>
+      </article>
+
+      <article class="blog-post" id="post-2021-08">
         <div class="blog-post-date">August 15th 2021</div>
         <h2>Canning Demonstration</h2>
+        <div class="blog-post-gallery float-right">
+          <figure><img src="pics/canning.jpg" alt="A dye day at the studio" loading="lazy"></figure>
+        </div>
         <p>Walk in and Learn: An Introductory Demonstration to Canning...</p>
         <p>August 30th, at DoCo restaraunt.  Details in the link.</p>
-        <p>To register: fb.me/e/2wHwrniWi</p>
+        <p>To register: <a href="https://fb.me/e/2wHwrniWi" target="_blank" rel="noopener" class="post-link">fb.me/e/2wHwrniWi</a></p>
       </article>
-    </div>
 
       <article class="blog-post">
         <div class="blog-post-photo"><img src="pics/interwoven-outside.jpg" alt="Interwoven" loading="lazy"></div>
@@ -612,7 +849,31 @@
         <h2>Interwoven is opening!</h2>
         <p>Where the street has a name...634 Pleasant Street! We will be open Friday August 6th from 5-8pm. Stop by and see what Interwoven is all about.</p>
       </article>
+    </div>
 
+    <aside class="blog-sidebar">
+      <div class="sidebar-block">
+        <h3>Categories</h3>
+        <ul>
+          <li><a href="#post-recipes">Recipes</a></li>
+          <li><a href="#post-2026-06">Blog</a></li>
+        </ul>
+      </div>
+      <div class="sidebar-block">
+        <h3>Archives</h3>
+        <ul>
+          <li><a href="#post-2022-10">October 2022</a></li>
+          <li><a href="#post-2022-06">June 2022</a></li>
+          <li><a href="#post-2022-03">March 2022</a></li>
+          <li><a href="#post-2022-02">February 2022</a></li>
+          <li><a href="#post-2021-12">December 2021</a></li>
+          <li><a href="#post-2021-11">November 2021</a></li>
+          <li><a href="#post-2021-09">September 2021</a></li>
+          <li><a href="#post-2021-08">August 2021</a></li>
+        </ul>
+      </div>
+    </aside>
+    </div>
   </main>
 
   <footer class="site-footer">
@@ -629,7 +890,7 @@
         </svg>
       </a>
     </div>
-    <p class="footer-copy">&copy; Interwoven</p>
+    <p class="footer-copy">Rhonda M. Fazio DBA Dyer Maker Studio &copy; 1998-<span id="copyYear">2026</span></p>
   </footer>
 
   <script>
@@ -682,6 +943,10 @@
     }
     updateNavLogoLayout();
     window.addEventListener('resize', updateNavLogoLayout);
+
+    // Keep the footer copyright year current automatically
+    const copyYear = document.getElementById('copyYear');
+    if (copyYear) copyYear.textContent = new Date().getFullYear();
 
     // Dark mode toggle
     const themeToggle = document.getElementById('themeToggle');

@@ -6,6 +6,16 @@
 <title>The Shop — Interwoven</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@300;500;600&family=Work+Sans:wght@300;400;500&display=swap');
+  @font-face {
+    font-family: "Papyrus Local";
+    src: url('img/Papyrus-Font.ttf') format('truetype');
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "Goudos";
+    src: url('img/Goudos.ttf') format('truetype');
+    font-display: swap;
+  }
   :root {
     --ink: #1a1816;
     --ivory: #f6f2ea;
@@ -25,8 +35,8 @@
     --indigo:   #2e3093;   /* leaf blue,   9.59:1 on ivory */
     --stone:    #8a857c;   /* warm neutral for placeholder fills */
     --line: rgba(26,24,22,0.12);
-    --ff-display: "Fraunces", Georgia, serif;
-    --ff-body: "Work Sans", -apple-system, sans-serif;
+    --ff-display: "Papyrus Local", "Papyrus", fantasy;
+    --ff-body: "Goudos", "Fraunces", Georgia, serif;
     --nav-h: 84px;
 
     /* Logo size drives the underline. The wordmark art is 400x133 with a
@@ -119,8 +129,8 @@
 
   .nav-logo {
     font-family: var(--ff-display);
-    font-size: 21px;
-    font-weight: 500;
+    font-size: 25px;
+    font-weight: bold;
     letter-spacing: 0.02em;
     color: var(--text);
     display: flex;
@@ -305,6 +315,13 @@
   }
 
   * { box-sizing: border-box; }
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--nav-h) + 24px);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
   a { color: inherit; text-decoration: none; }
   body {
     margin: 0;
@@ -312,7 +329,7 @@
     padding-top: var(--nav-h);
     background: var(--bg);
     color: var(--text);
-    font-family: "Work Sans", sans-serif;
+    font-family: "Goudos", "Fraunces", Georgia, serif;
     transition: background 0.4s ease, color 0.4s ease;
   }
   main { max-width: 1100px; margin: 0 auto; padding: 64px 48px 96px; }
@@ -324,9 +341,9 @@
     margin-bottom: 16px;
   }
   h1 {
-    font-family: "Fraunces", Georgia, serif;
-    font-weight: 500;
-    font-size: clamp(32px, 4vw, 46px);
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: clamp(38px, 4vw, 55px);
     margin: 0 0 48px;
     max-width: 700px;
   }
@@ -367,15 +384,15 @@
     flex: 1 1 50%;
   }
   .layout-text h2 {
-    font-family: "Fraunces", Georgia, serif;
-    font-weight: 500;
-    font-size: 26px;
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: 31px;
     margin: 0 0 18px;
   }
   .layout-text p {
     color: var(--text-muted);
     line-height: 1.75;
-    font-size: 15.5px;
+    font-size: 19px;
     margin: 0 0 16px;
   }
   /* Product list (left) + sticky shop hours (right). Kept as a row at
@@ -389,30 +406,27 @@
   }
   .shop-main { flex: 1 1 auto; min-width: 0; }
 
+  /* 21px = .shop-hours' 1px border + 20px padding, so this lines up
+     with the top of the "Shop Hours" text in the aside beside it. */
+  .shop-goods-heading {
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: 36px;
+    margin: 21px 0 10px;
+  }
   .shop-donation-note {
     font-style: italic;
-    font-size: 36px;
+    font-size: 26px;
     color: var(--text-muted);
     margin: 0 0 8px;
   }
   .shop-category {
-    font-family: "Fraunces", Georgia, serif;
-    font-weight: 500;
-    font-size: 24px;
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: 29px;
     margin: 56px 0 20px;
   }
   .shop-category:first-child { margin-top: 0; }
-  .shop-subheader {
-    font-family: "Fraunces", Georgia, serif;
-    font-weight: 500;
-    font-size: 17px;
-    margin: 32px 0 6px;
-  }
-  .shop-contact-note {
-    color: var(--text-muted);
-    font-size: 14px;
-    margin: 0 0 16px;
-  }
   .shop-item {
     display: flex;
     align-items: center;
@@ -458,14 +472,14 @@
     display: block;
   }
   .shop-item-info h3 {
-    font-family: "Fraunces", Georgia, serif;
-    font-weight: 500;
-    font-size: 17px;
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: 20px;
     margin: 0 0 6px;
   }
   .shop-price {
     color: var(--text-muted);
-    font-size: 14px;
+    font-size: 17px;
     margin: 0;
   }
   .shop-price-list {
@@ -473,15 +487,49 @@
     padding: 0;
     margin: 0;
     color: var(--text-muted);
-    font-size: 14px;
+    font-size: 17px;
   }
   .shop-price-list li { margin-bottom: 2px; }
 
   .shop-other-note {
     color: var(--text-muted);
     line-height: 1.7;
-    font-size: 15px;
+    font-size: 18px;
     margin: 0;
+  }
+
+  /* Services table -- same paper/line/Papyrus language as the rest of
+     the site instead of the plain gray Weebly table it's replacing. */
+  .shop-services-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    margin-top: 8px;
+  }
+  .shop-services-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .shop-services-table th {
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: 17px;
+    text-align: left;
+    white-space: nowrap;
+    padding: 16px 20px;
+    background: var(--line);
+    color: var(--text);
+  }
+  .shop-services-table td {
+    padding: 16px 20px;
+    color: var(--text-muted);
+    font-size: 16px;
+    line-height: 1.5;
+    border-top: 1px solid var(--line);
+    vertical-align: top;
+  }
+  .shop-services-table tbody tr:last-child td {
+    border-bottom: none;
   }
 
   .shop-hours {
@@ -493,14 +541,14 @@
     border-radius: 6px;
   }
   .shop-hours h3 {
-    font-family: "Fraunces", Georgia, serif;
-    font-weight: 500;
-    font-size: 17px;
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: 20px;
     margin: 0 0 12px;
   }
   .shop-hours p {
     color: var(--text-muted);
-    font-size: 13.5px;
+    font-size: 16px;
     line-height: 1.6;
     margin: 0 0 10px;
   }
@@ -514,15 +562,15 @@
     border-top: 1px solid var(--line);
   }
   .involved h3 {
-    font-family: "Fraunces", Georgia, serif;
-    font-weight: 500;
-    font-size: 22px;
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: 26px;
     margin: 0 0 16px;
   }
   .involved p {
     color: var(--text-muted);
     line-height: 1.75;
-    font-size: 15.5px;
+    font-size: 19px;
     margin: 0 0 28px;
   }
   .btn-link {
@@ -599,7 +647,7 @@
   .footer-social a { color: var(--text); display: flex; opacity: 0.8; transition: opacity 0.25s ease; }
   .footer-social a:hover { opacity: 1; }
   .footer-social svg { width: 22px; height: 22px; }
-  .footer-copy { font-size: 12px; color: var(--text-muted); letter-spacing: 0.04em; }
+  .footer-copy { font-size: 15px; color: var(--text-muted); letter-spacing: 0.04em; }
 
   @media (max-width: 760px) {
     main { padding: 40px 24px 72px; }
@@ -628,9 +676,11 @@
       aspect-ratio: auto;
     }
     .shop-category { font-size: 20px; margin: 40px 0 16px; }
+    .shop-goods-heading { font-size: 26px; margin-top: 13px; }
     .shop-hours { flex-basis: 112px; padding: 12px; }
     .shop-hours h3 { font-size: 14px; }
     .shop-hours p { font-size: 12px; }
+    .shop-services-table th, .shop-services-table td { padding: 10px 12px; font-size: 13px; }
   }
 </style>
 </head>
@@ -695,14 +745,14 @@
     <div class="layout">
       <div class="layout-photo" data-photo-label="The Shop"><img src="pics/silk-mannequins.jpg" alt="The Shop" loading="lazy"></div>
       <div class="layout-text">
-        <h2>Hand crafted goods, gifts, and meals.</h2>
+        <h2>Hand crafted goods<br>Big hearted services</h2>
         <p>Pick up/delivery on request (fees will apply on shipping and delivery).</p>
-        <h2>Pop up dye kitchens and a caterer for hire</h2>
       </div>
     </div>
 
     <div class="shop-layout">
       <div class="shop-main">
+        <h2 class="shop-goods-heading">The Goods</h2>
         <h1 class="shop-donation-note">Everything is suggested donation.</h1>
 
         <h2 class="shop-category">Fabric</h2>
@@ -736,10 +786,6 @@
             </div>
           </div>
         </div>
-
-        <h3 class="shop-subheader">Book "Dyeing to Wear It"</h3>
-        <p class="shop-contact-note">Contact me about price.</p>
-        <a href="mailto:interwovenmakerspace@gmail.com" class="btn-link">Book a class</a>
 
         <h2 class="shop-category">Food</h2>
         <div class="shop-grid">
@@ -778,12 +824,48 @@
           </div>
         </div>
 
-        <h3 class="shop-subheader">Book La Rhonda's Catering</h3>
-        <p class="shop-contact-note">Contact me about price.</p>
-        <a href="mailto:interwovenmakerspace@gmail.com" class="btn-link">Book a caterer</a>
-
         <h2 class="shop-category">Other Work</h2>
         <p class="shop-other-note">Work from other artists might be available -- soaps, frames, furniture, glassware, fabric... you name it. These goods will need to be seen at the gallery and price discussed with an artist in residence.</p>
+
+        <h2 class="shop-category">The Services</h2>
+        <div class="shop-services-wrap">
+          <table class="shop-services-table">
+            <thead>
+              <tr>
+                <th>Service</th>
+                <th>Time</th>
+                <th>Register</th>
+                <th>Age</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>La Rhonda's Catering</td>
+                <td>By arrangement</td>
+                <td>Contact the Artist</td>
+                <td>&mdash;</td>
+              </tr>
+              <tr>
+                <td>&ldquo;Dyeing to Wear It&rdquo; &mdash; Creating Community through Color</td>
+                <td>3 hours</td>
+                <td>Contact the Artist</td>
+                <td>Teens &ndash; Adults</td>
+              </tr>
+              <tr>
+                <td>The Art of Weaving</td>
+                <td>TBD</td>
+                <td>Contact the Artist</td>
+                <td>All ages</td>
+              </tr>
+              <tr>
+                <td>The Art of Spinning Wool</td>
+                <td>TBD</td>
+                <td>Contact the Artist</td>
+                <td>All ages</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <aside class="shop-hours">
@@ -793,7 +875,7 @@
       </aside>
     </div>
 
-    <div class="involved">
+    <div class="involved" id="donate">
       <h3>Support the Space</h3>
       <p>Dyer Maker Studio's home base is located at Interwoven, a venue created by the Artist Rhonda M. Fazio for Artists. A safe haven for Artists in gentrified cities to afford a space while surviving to thrive as we continue the struggle to support ourselves through a "gig" economy. Interwoven is an independent entity grateful for any contributions that assist the venue's mission to remain open in an ever changing landscape of former industrial economies, always in support of the independent Artists' pursuit and determination to succeed.</p>
       <div class="crypto-options">
@@ -810,6 +892,7 @@
       <h3>Come find us</h3>
       <p>Located below the Portuguese Consulate and across the street from City Hall in New Bedford MA.</p>
       <p>634 Pleasant Street, New Bedford, MA &middot; (508) 669-6835</p>
+      <a href="#donate" class="btn-link">Donate</a>
     </div>
   </main>
 
@@ -827,7 +910,7 @@
         </svg>
       </a>
     </div>
-    <p class="footer-copy">&copy; Interwoven</p>
+    <p class="footer-copy">Rhonda M. Fazio DBA Dyer Maker Studio &copy; 1998-<span id="copyYear">2026</span></p>
   </footer>
 
   <script>
@@ -880,6 +963,10 @@
     }
     updateNavLogoLayout();
     window.addEventListener('resize', updateNavLogoLayout);
+
+    // Keep the footer copyright year current automatically
+    const copyYear = document.getElementById('copyYear');
+    if (copyYear) copyYear.textContent = new Date().getFullYear();
 
     // Dark mode toggle
     const themeToggle = document.getElementById('themeToggle');

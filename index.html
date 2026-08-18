@@ -6,6 +6,16 @@
 <title>Interwoven — Made to tell a story</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@300;500;600&family=Work+Sans:wght@300;400;500&family=Tangerine:wght@400;700&display=swap');
+  @font-face {
+    font-family: "Papyrus Local";
+    src: url('img/Papyrus-Font.ttf') format('truetype');
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "Goudos";
+    src: url('img/Goudos.ttf') format('truetype');
+    font-display: swap;
+  }
 
   :root {
     --ink: #1a1816;
@@ -26,8 +36,8 @@
     --indigo:   #2e3093;   /* leaf blue,   9.59:1 on ivory */
     --stone:    #8a857c;   /* warm neutral for placeholder fills */
     --line: rgba(26,24,22,0.12);
-    --ff-display: "Fraunces", Georgia, serif;
-    --ff-body: "Work Sans", -apple-system, sans-serif;
+    --ff-display: "Papyrus Local", "Papyrus", fantasy;
+    --ff-body: "Goudos", "Fraunces", Georgia, serif;
     --ff-script: "Tangerine", "Allura", cursive;
     --nav-h: 84px;
     --footer-h: 56px;
@@ -229,8 +239,8 @@
 
   .nav-logo {
     font-family: var(--ff-display);
-    font-size: 21px;
-    font-weight: 500;
+    font-size: 25px;
+    font-weight: bold;
     letter-spacing: 0.02em;
     color: var(--text);
     display: flex;
@@ -476,15 +486,6 @@
   body.dark .hero-title-img-light { display: none; }
   body.dark .hero-title-img-dark { display: block; }
 
-  #gallery-tagline {
-    font-variant: small-caps;
-    letter-spacing: 0.03em;
-  }
-
-  #gallery-tagline::first-letter {
-    font-size: 1.4em;
-  }
-
   .hero-sub {
     margin-top: 20px;
     font-size: 16px;
@@ -577,10 +578,11 @@
 
   /* Text, not an image -- the hero title above is a custom hand-drawn
      logotype, and there's no matching artwork for "The Heart" to reuse.
-     This is the same small-caps Fraunces treatment as #gallery-tagline
-     ("Made to tell a story") instead, just much larger. A normal in-flow
-     element, top-anchored by #calendar's own flex settings below rather
-     than centered along with the rest of the panel's content (see
+     Small-caps Fraunces treatment instead ("Made to tell a story"),
+     kept as this panel's own distinct look now that the other panel
+     titles (including Gallery's) are plain like .section h2. A normal
+     in-flow element, top-anchored by #calendar's own flex settings below
+     rather than centered along with the rest of the panel's content (see
      .calendar-body) -- that's what makes it hug the top edge instead of
      drifting to the vertical middle with everything else. */
   .heart-title {
@@ -592,8 +594,8 @@
        a container-relative size can't outgrow its own container. */
     white-space: nowrap;
     font-family: var(--ff-display);
-    font-weight: 500;
-    font-size: clamp(20px, 6.5cqw, 38px);
+    font-weight: bold;
+    font-size: clamp(24px, 6.5cqw, 46px);
     line-height: 1;
     font-variant: small-caps;
     letter-spacing: 0.03em;
@@ -639,9 +641,9 @@
   }
 
   .section h2 {
-    font-family: var(--ff-display);
-    font-weight: 500;
-    font-size: clamp(28px, 4vw, 40px);
+    font-family: "Goudos", "Fraunces", Georgia, serif;
+    font-weight: bold;
+    font-size: clamp(34px, 4vw, 48px);
     max-width: 640px;
     line-height: 1.2;
   }
@@ -651,7 +653,7 @@
     max-width: 560px;
     line-height: 1.7;
     color: var(--text-muted);
-    font-size: 15.5px;
+    font-size: 19px;
   }
 
   /* ---------- BUTTON ---------- */
@@ -730,18 +732,18 @@
   }
 
   .event-month { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; }
-  .event-day { font-size: 20px; font-family: var(--ff-display); line-height: 1.2; }
+  .event-day { font-size: 24px; font-family: var(--ff-display); line-height: 1.2; }
 
   .event-info h3 {
-    font-family: var(--ff-display);
-    font-weight: 500;
-    font-size: 18px;
+    font-family: "Goudos", "Fraunces", Georgia, serif;
+    font-weight: bold;
+    font-size: 22px;
   }
 
   .event-info p {
     margin-top: 4px;
     color: var(--text-muted);
-    font-size: 14px;
+    font-size: 16px;
   }
 
   /* Notice for details still to be confirmed */
@@ -755,7 +757,7 @@
   }
 
   .info-note-label {
-    font-size: 11.5px;
+    font-size: 13px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--label-color);
@@ -765,7 +767,7 @@
   .info-note p {
     margin: 0;
     color: var(--text-muted);
-    font-size: 14.5px;
+    font-size: 17px;
     line-height: 1.65;
   }
 
@@ -863,8 +865,6 @@
   .maker-text { flex: 1 1 55%; }
 
   .maker-text p:first-child { margin-top: 0; }
-
-  .maker-heart { font-weight: 700; }
 
   /* Wraps a photo strip/row so left/right pan arrows can sit on top of it */
   .photo-panner {
@@ -1204,7 +1204,7 @@
   .footer-social a { color: var(--text); display: flex; opacity: 0.8; transition: opacity 0.25s ease; }
   .footer-social a:hover { opacity: 1; }
   .footer-social svg { width: 18px; height: 18px; }
-  .footer-copy { font-size: 11px; color: var(--text-muted); letter-spacing: 0.04em; }
+  .footer-copy { font-size: 15px; color: var(--text-muted); letter-spacing: 0.04em; }
 
   /* Mobile-only stand-in for .scroll-cue -- hidden here on desktop, shown
      by the mobile media query below. Sits in the fixed footer instead of
@@ -1395,7 +1395,7 @@
       <div class="section-label">The Blog</div>
       <h2>Words and recipes</h2>
       <div class="space-gallery">
-        <div class="ph-photo ph-photo-large" data-photo-label="Still writing this one"><img src="pics/thread1.jpg" alt="Still writing this one" loading="lazy"></div>
+        <div class="ph-photo ph-photo-large" data-photo-label="Still writing this one"><img src="pics/words.jpg" alt="Still writing this one" loading="lazy"></div>
         <p class="section-body">See La Rhonda's recipes and thoughts on how to get creative with what you have. This transcends the kitchen and goes further than just a gallery. These are thoughts and stories from an unsung perspective, an artist at work.</p>
       </div>
       <div class="btn-row btn-link-block">
@@ -1407,7 +1407,7 @@
 
     <section class="section panel panel-wide" id="gallery">
       <div class="section-label">The Gallery</div>
-      <h2 id="gallery-tagline">Created by artists</h2>
+      <h2 id="gallery-tagline">Created by an artist, for artists</h2>
       <div class="space-gallery">
         <div class="ph-photo ph-photo-large" data-photo-label="The main room"><img src="pics/the-venue.jpg" alt="The main room" loading="lazy"></div>
         <p class="section-body">A venue created by an artist for artists, it becomes a space to make creativity blossom. It is a gallery for artists, a performance space for musicians and poets, a place to teach a class and learn new skills - a space where everyone is welcome to create and engage with local artists and their art.</p>
@@ -1416,10 +1416,11 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
           <div class="ph-photo-strip">
-            <div class="ph-photo" data-photo-label="Artist at work"><img src="pics/event.jpg" alt="Artist at work" loading="lazy"></div>
-            <div class="ph-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin.jpg" alt="Silk on mannequin" loading="lazy"></div>
-            <div class="ph-photo" data-photo-label="People with silk"><img src="pics/silk-people.jpg" alt="Silk, worn" loading="lazy"></div>
-            <div class="ph-photo" data-photo-label="Loom"><img src="pics/loom.jpg" alt="Loom" loading="lazy"></div>
+            <div class="ph-photo" data-photo-label="Music Event"><img src="pics/event.jpg" alt="Music Event" loading="lazy"></div>
+            <div class="ph-photo" data-photo-label="Music Event"><img src="pics/event1.jpg" alt="Music Event" loading="lazy"></div>
+            <div class="ph-photo" data-photo-label="Event"><img src="pics/event2.jpg" alt="Event" loading="lazy"></div>
+            <div class="ph-photo" data-photo-label="Music Event"><img src="pics/event3.jpg" alt="Music Event" loading="lazy"></div>
+            <div class="ph-photo" data-photo-label="Event"><img src="pics/event5.jpg" alt="Event" loading="lazy"></div>
           </div>
           <button type="button" class="pan-btn pan-next" aria-label="Scroll photos right">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -1452,11 +1453,10 @@
 
     <section class="section panel panel-wide" id="maker">
       <div class="section-label">The Maker</div>
-      <h2 id="artists-tagline">The maker at work</h2>
+      <h2 id="artists-tagline">The Heart...</h2>
       <div class="maker-layout">
         <div class="ph-photo ph-photo-large" data-photo-label="Rhonda Fazio"><img src="pics/artist1.jpg" alt="Rhonda Fazio" loading="lazy"></div>
         <div class="maker-text">
-          <p class="maker-heart">The Heart</p>
           <p>The Child has grown, the dream remains...</p>
           <p>My journey as an Artist and a Mother is the inspiration I draw from as I continue my travels in this life. It was during the most trying times, that I became the most creative. I shuffled my inherent skills around and developed creative ways to support my son without giving up on my dreams. It became a part of life that continues to be relevant as we adapt to living in an everchanging world.</p>
         </div>
@@ -1489,7 +1489,7 @@
         </svg>
       </a>
     </div>
-    <p class="footer-copy">&copy; Interwoven</p>
+    <p class="footer-copy">Rhonda M. Fazio DBA Dyer Maker Studio &copy; 1998-<span id="copyYear">2026</span></p>
     <div class="footer-scroll-cue">
       <span>Scroll right</span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" xmlns="http://www.w3.org/2000/svg">
@@ -1747,6 +1747,10 @@
     }
     updateNavLogoLayout();
     window.addEventListener('resize', updateNavLogoLayout);
+
+    // Keep the footer copyright year current automatically
+    const copyYear = document.getElementById('copyYear');
+    if (copyYear) copyYear.textContent = new Date().getFullYear();
 
     // Dark mode toggle
     const themeToggle = document.getElementById('themeToggle');

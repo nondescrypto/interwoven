@@ -6,6 +6,16 @@
 <title>The Food — Interwoven</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@300;500;600&family=Work+Sans:wght@300;400;500&display=swap');
+  @font-face {
+    font-family: "Papyrus Local";
+    src: url('img/Papyrus-Font.ttf') format('truetype');
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "Goudos";
+    src: url('img/Goudos.ttf') format('truetype');
+    font-display: swap;
+  }
   :root {
     --ink: #1a1816;
     --ivory: #f6f2ea;
@@ -25,8 +35,8 @@
     --indigo:   #2e3093;   /* leaf blue,   9.59:1 on ivory */
     --stone:    #8a857c;   /* warm neutral for placeholder fills */
     --line: rgba(26,24,22,0.12);
-    --ff-display: "Fraunces", Georgia, serif;
-    --ff-body: "Work Sans", -apple-system, sans-serif;
+    --ff-display: "Papyrus Local", "Papyrus", fantasy;
+    --ff-body: "Goudos", "Fraunces", Georgia, serif;
     --nav-h: 84px;
 
     /* Logo size drives the underline. The wordmark art is 400x133 with a
@@ -147,8 +157,8 @@
 
   .nav-logo {
     font-family: var(--ff-display);
-    font-size: 21px;
-    font-weight: 500;
+    font-size: 25px;
+    font-weight: bold;
     letter-spacing: 0.02em;
     color: var(--text);
     display: flex;
@@ -350,7 +360,7 @@
     padding-top: var(--nav-h);
     background: var(--bg);
     color: var(--text);
-    font-family: "Work Sans", sans-serif;
+    font-family: "Goudos", "Fraunces", Georgia, serif;
     transition: background 0.4s ease, color 0.4s ease;
   }
   main { max-width: 1100px; margin: 0 auto; padding: 64px 48px 96px; }
@@ -362,9 +372,9 @@
     margin-bottom: 16px;
   }
   h1 {
-    font-family: "Fraunces", Georgia, serif;
-    font-weight: 500;
-    font-size: clamp(32px, 4vw, 46px);
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: clamp(38px, 4vw, 55px);
     margin: 0 0 48px;
     max-width: 700px;
   }
@@ -374,13 +384,16 @@
     align-items: center;
   }
 
-  /* The Button Flower block isn't preceded by its own heading (unlike
-     every other section on this page, which gets a heading's 96px
-     top margin PLUS the heading's own text and 24px bottom margin as
-     breathing room). With no heading to break it up, a plain 96px gap
-     here reads as tight by comparison, so it gets extra room. */
-  .layout-gap-top {
-    margin-top: 160px;
+  /* Small centered title for the Button Flower block -- gives it the
+     same 96px-top/24px-bottom breathing room every other section on
+     this page gets from its own heading, just at a lighter weight
+     since it's a single aside rather than a full section. */
+  .button-flower-heading {
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: 24px;
+    text-align: center;
+    margin: 96px 0 24px;
   }
   .layout-photo {
     position: relative;
@@ -426,7 +439,7 @@
   .catering-text p {
     color: var(--text-muted);
     line-height: 1.75;
-    font-size: 15.5px;
+    font-size: 19px;
     margin: 0 0 16px;
   }
 
@@ -434,15 +447,15 @@
     flex: 1 1 50%;
   }
   .layout-text h2 {
-    font-family: "Fraunces", Georgia, serif;
-    font-weight: 500;
-    font-size: 26px;
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: 31px;
     margin: 0 0 18px;
   }
   .layout-text p {
     color: var(--text-muted);
     line-height: 1.75;
-    font-size: 15.5px;
+    font-size: 19px;
     margin: 0 0 16px;
   }
   .layout-text p.made-with-love {
@@ -469,9 +482,9 @@
     margin-top: 48px;
   }
   .food-trio-item h3 {
-    font-family: "Fraunces", Georgia, serif;
-    font-weight: 500;
-    font-size: 20px;
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: 24px;
     text-align: center;
     margin: 0 0 16px;
   }
@@ -479,7 +492,7 @@
     margin-top: 14px;
     text-align: center;
     color: var(--text-muted);
-    font-size: 14px;
+    font-size: 19px;
     line-height: 1.6;
   }
 
@@ -506,9 +519,9 @@
   }
 
   .gallery-heading {
-    font-family: "Fraunces", Georgia, serif;
-    font-weight: 500;
-    font-size: 26px;
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: 31px;
     margin: 96px 0 24px;
     text-align: center;
   }
@@ -535,7 +548,7 @@
   .section-note {
     color: var(--text-muted);
     line-height: 1.75;
-    font-size: 15.5px;
+    font-size: 19px;
     margin: 0 0 24px;
   }
   .section-note a {
@@ -703,15 +716,15 @@
     border-top: 1px solid var(--line);
   }
   .involved h3 {
-    font-family: "Fraunces", Georgia, serif;
-    font-weight: 500;
-    font-size: 22px;
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: 26px;
     margin: 0 0 16px;
   }
   .involved p {
     color: var(--text-muted);
     line-height: 1.75;
-    font-size: 15.5px;
+    font-size: 19px;
     margin: 0 0 28px;
   }
   .btn-link {
@@ -769,7 +782,7 @@
   .footer-social a { color: var(--text); display: flex; opacity: 0.8; transition: opacity 0.25s ease; }
   .footer-social a:hover { opacity: 1; }
   .footer-social svg { width: 22px; height: 22px; }
-  .footer-copy { font-size: 12px; color: var(--text-muted); letter-spacing: 0.04em; }
+  .footer-copy { font-size: 15px; color: var(--text-muted); letter-spacing: 0.04em; }
 
   @media (max-width: 760px) {
     main { padding: 40px 24px 72px; }
@@ -874,7 +887,7 @@
     <div class="label">The Food</div>
     <h1>"Call me La Rhonda..."</h1>
 
-    <p class="section-note">As someone of Sicilian heritage, making food is a process Rhonda feels deeply connected to. Like many of the cultures that live in the United States, we all come from somewhere. The way we make our food and the ingredients we use reflect the origins of our cultural heritage -- in the Art and Language of Food, Rhonda teaches cooking and food preservation, and gives the grandmothers all the credit.</p>
+    <p class="section-note">"As someone of Sicilian heritage, making food is a process I feel deeply connected to. Like many of the cultures that live in the United States, we all come from somewhere. The way we make our food and the ingredients we use reflect the origins of our cultural heritage -- in the Art and Language of Food, I teach cooking and food preservation, and give the grandmothers all the credit."</p>
 
     <div class="food-trio">
       <div class="food-trio-item">
@@ -973,7 +986,8 @@
       </div>
     </div>
 
-    <div class="layout layout-gap-top">
+    <h2 class="button-flower-heading">The Button Flower</h2>
+    <div class="layout">
       <div class="layout-photo" data-photo-label="Button Flower"><img src="pics/jam-flowers.jpg" alt="Button Flower" loading="lazy"></div>
       <div class="layout-text">
         <p>The "Button Flower" is designed as a keepsake to pay tribute to the women, children and men who worked in the textile making industries and mills for centuries. With no name to their faces, and no way to ever sign their work, some paid the ultimate price with their lives, their dignity, and the skills never to be recognized and compensated for their worth - discarded and forgotten - like a button.</p>
@@ -985,6 +999,7 @@
       <h3>Come find us</h3>
       <p>Located below the Portuguese Consulate and across the street from City Hall in New Bedford MA.</p>
       <p>634 Pleasant Street, New Bedford, MA &middot; (508) 669-6835</p>
+      <a href="the-shop.html#donate" class="btn-link">Donate</a>
     </div>
   </main>
 
@@ -1019,7 +1034,7 @@
         </svg>
       </a>
     </div>
-    <p class="footer-copy">&copy; Interwoven</p>
+    <p class="footer-copy">Rhonda M. Fazio DBA Dyer Maker Studio &copy; 1998-<span id="copyYear">2026</span></p>
   </footer>
 
   <script>
@@ -1072,6 +1087,10 @@
     }
     updateNavLogoLayout();
     window.addEventListener('resize', updateNavLogoLayout);
+
+    // Keep the footer copyright year current automatically
+    const copyYear = document.getElementById('copyYear');
+    if (copyYear) copyYear.textContent = new Date().getFullYear();
 
     // Dark mode toggle
     const themeToggle = document.getElementById('themeToggle');

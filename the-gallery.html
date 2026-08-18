@@ -6,6 +6,16 @@
 <title>The Gallery — Interwoven</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@300;500;600&family=Work+Sans:wght@300;400;500&display=swap');
+  @font-face {
+    font-family: "Papyrus Local";
+    src: url('img/Papyrus-Font.ttf') format('truetype');
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "Goudos";
+    src: url('img/Goudos.ttf') format('truetype');
+    font-display: swap;
+  }
   :root {
     --ink: #1a1816;
     --ivory: #f6f2ea;
@@ -25,8 +35,8 @@
     --indigo:   #2e3093;   /* leaf blue,   9.59:1 on ivory */
     --stone:    #8a857c;   /* warm neutral for placeholder fills */
     --line: rgba(26,24,22,0.12);
-    --ff-display: "Fraunces", Georgia, serif;
-    --ff-body: "Work Sans", -apple-system, sans-serif;
+    --ff-display: "Papyrus Local", "Papyrus", fantasy;
+    --ff-body: "Goudos", "Fraunces", Georgia, serif;
     --nav-h: 84px;
 
     /* Logo size drives the underline. The wordmark art is 400x133 with a
@@ -153,8 +163,8 @@
 
   .nav-logo {
     font-family: var(--ff-display);
-    font-size: 21px;
-    font-weight: 500;
+    font-size: 25px;
+    font-weight: bold;
     letter-spacing: 0.02em;
     color: var(--text);
     display: flex;
@@ -356,7 +366,7 @@
     padding-top: var(--nav-h);
     background: var(--bg);
     color: var(--text);
-    font-family: "Work Sans", sans-serif;
+    font-family: "Goudos", "Fraunces", Georgia, serif;
     transition: background 0.4s ease, color 0.4s ease;
   }
   main { max-width: 1100px; margin: 0 auto; padding: 64px 48px 96px; }
@@ -368,9 +378,9 @@
     margin-bottom: 16px;
   }
   h1 {
-    font-family: "Fraunces", Georgia, serif;
-    font-weight: 500;
-    font-size: clamp(32px, 4vw, 46px);
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: clamp(38px, 4vw, 55px);
     margin: 0 0 48px;
     max-width: 700px;
   }
@@ -411,28 +421,28 @@
     flex: 1 1 50%;
   }
   .layout-text h2 {
-    font-family: "Fraunces", Georgia, serif;
-    font-weight: 500;
-    font-size: 26px;
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: 31px;
     margin: 0 0 18px;
   }
   .layout-text p {
     color: var(--text-muted);
     line-height: 1.75;
-    font-size: 15.5px;
+    font-size: 19px;
     margin: 0 0 16px;
   }
   .gallery-heading {
-    font-family: "Fraunces", Georgia, serif;
-    font-weight: 500;
-    font-size: 26px;
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: 31px;
     margin: 96px 0 24px;
   }
   .gallery-heading + .section-note { margin-top: -12px; }
   .section-note {
     color: var(--text-muted);
     line-height: 1.75;
-    font-size: 15.5px;
+    font-size: 19px;
     margin: 0 0 24px;
   }
   .section-note a {
@@ -600,15 +610,15 @@
     border-top: 1px solid var(--line);
   }
   .involved h3 {
-    font-family: "Fraunces", Georgia, serif;
-    font-weight: 500;
-    font-size: 22px;
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: 26px;
     margin: 0 0 16px;
   }
   .involved p {
     color: var(--text-muted);
     line-height: 1.75;
-    font-size: 15.5px;
+    font-size: 19px;
     margin: 0 0 28px;
   }
   .btn-link {
@@ -665,7 +675,7 @@
   .footer-social a { color: var(--text); display: flex; opacity: 0.8; transition: opacity 0.25s ease; }
   .footer-social a:hover { opacity: 1; }
   .footer-social svg { width: 22px; height: 22px; }
-  .footer-copy { font-size: 12px; color: var(--text-muted); letter-spacing: 0.04em; }
+  .footer-copy { font-size: 15px; color: var(--text-muted); letter-spacing: 0.04em; }
 
   @media (max-width: 760px) {
     main { padding: 40px 24px 72px; }
@@ -794,6 +804,8 @@
         <div class="grid-photo" data-photo-label="Event"><img src="pics/event2.jpg" alt="Event" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Music Event"><img src="pics/event3.jpg" alt="Music Event" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Event"><img src="pics/event4.jpg" alt="Event" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Event"><img src="pics/event5.jpg" alt="Event" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Event"><img src="pics/event6.jpg" alt="Event" loading="lazy"></div>
       </div>
       <button type="button" class="pan-btn pan-next" aria-label="Scroll photos right">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -812,6 +824,7 @@
       <h3>Come find us</h3>
       <p>Located below the Portuguese Consulate and across the street from City Hall in New Bedford MA.</p>
       <p>634 Pleasant Street, New Bedford, MA &middot; (508) 669-6835</p>
+      <a href="the-shop.html#donate" class="btn-link">Donate</a>
     </div>
   </main>
 
@@ -845,7 +858,7 @@
         </svg>
       </a>
     </div>
-    <p class="footer-copy">&copy; Interwoven</p>
+    <p class="footer-copy">Rhonda M. Fazio DBA Dyer Maker Studio &copy; 1998-<span id="copyYear">2026</span></p>
   </footer>
 
   <script>
@@ -898,6 +911,10 @@
     }
     updateNavLogoLayout();
     window.addEventListener('resize', updateNavLogoLayout);
+
+    // Keep the footer copyright year current automatically
+    const copyYear = document.getElementById('copyYear');
+    if (copyYear) copyYear.textContent = new Date().getFullYear();
 
     // Dark mode toggle
     const themeToggle = document.getElementById('themeToggle');
