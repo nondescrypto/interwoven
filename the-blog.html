@@ -33,6 +33,7 @@
     --burgundy: #da1a23;   /* leaf red,    4.53:1 on ivory */
     --gold:     #77710d;   /* leaf yellow, 4.52:1 on ivory */
     --indigo:   #2e3093;   /* leaf blue,   9.59:1 on ivory */
+    --green:    #2f7d32;   /* spring accent -- not one of the mark's three leaves, added for the season color system */
     --stone:    #8a857c;   /* warm neutral for placeholder fills */
     --line: rgba(26,24,22,0.12);
     --ff-display: "Fraunces", Georgia, serif;
@@ -63,6 +64,7 @@
     --burgundy: #ee2d36;   /* 4.51:1 on dark */
     --gold:     #c4b904;   /* 9.17:1 on dark */
     --indigo:   #7878b3;   /* 4.56:1 on dark */
+    --green:    #6fcf73;
     --stone:    #615d56;
     --label-color: #ffffff;
   }
@@ -418,6 +420,15 @@
     flex-direction: column;
     gap: 11px;
   }
+  /* Same [hidden]-vs-display trap as .blog-posts above -- this class's
+     own display:flex otherwise beats the browser's default
+     [hidden] { display: none }, so the two Archive lists never actually
+     hid despite the JS setting .hidden correctly. */
+  .sidebar-block ul[hidden] { display: none; }
+  /* Same trap again -- the mobile display:inline-block/block rules below
+     would otherwise beat [hidden] for the whole block (Browse vs
+     Archives), not just its list. */
+  .sidebar-block[hidden] { display: none; }
   .sidebar-block a {
     font-family: "Goudos", "Fraunces", Georgia, serif;
     font-size: 19px;
@@ -427,6 +438,79 @@
     transition: color 0.2s ease;
   }
   .sidebar-block a:hover { color: var(--text); }
+  .sidebar-block a.active { color: var(--burgundy); font-weight: bold; }
+  /* Archive entries hover in their own calendar season's color -- same
+     four accents as the recipes panel's season system (spring green,
+     summer gold, fall burgundy, winter indigo). */
+  .sidebar-block a[data-season="spring"]:hover { color: var(--green); }
+  .sidebar-block a[data-season="summer"]:hover { color: var(--gold); }
+  .sidebar-block a[data-season="fall"]:hover   { color: var(--burgundy); }
+  .sidebar-block a[data-season="winter"]:hover { color: var(--indigo); }
+
+  /* Category picker: the first thing you see on the page, one big card
+     per section -- same shape as .season-card/.recipe-card in the
+     recipes panel below, just with the three leaf colors from the
+     Interwoven mark instead of the four season colors. Wired to the
+     same data-filter click handler as the sidebar's Categories links. */
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 56px;
+  }
+  .category-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 28px 20px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: none;
+    color: var(--text);
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.25s ease;
+  }
+  .category-name {
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: 24px;
+  }
+  .category-teaser {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+  .category-card[data-filter="recipes"] { --category-color: var(--indigo); }
+  .category-card[data-filter="edible"]  { --category-color: var(--gold); }
+  .category-card[data-filter="blog"]    { --category-color: var(--burgundy); }
+  .category-card:hover, .category-card.active { border-color: var(--category-color); }
+  .category-card:hover .category-name, .category-card.active .category-name { color: var(--category-color); }
+
+  /* Sidebar's own mini version of the same category cards -- same
+     border, hover/active highlight color and data-filter wiring, just
+     scaled down to fit the narrow sidebar column instead of the wide
+     3-up grid up top. */
+  .sidebar-category-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .category-card-sm {
+    padding: 14px 16px;
+    gap: 0;
+    width: 100%;
+  }
+  .category-card-sm .category-name {
+    font-size: 14.5px;
+    line-height: 1.4;
+  }
+
+  @media (max-width: 760px) {
+    .category-grid { grid-template-columns: 1fr; gap: 12px; }
+  }
 
   /* Newest post first, each one photo + title + date + body -- a simple
      shape today, but the same shape the Sheets-backed version of this
@@ -436,6 +520,11 @@
     flex-direction: column;
     gap: 72px;
   }
+  /* This class's own display:flex above otherwise beats the browser's
+     default [hidden] { display: none }, since author rules always win
+     over the UA stylesheet at equal specificity -- without this, toggling
+     the hidden attribute via JS silently does nothing. */
+  .blog-posts[hidden] { display: none; }
   .blog-post-photo {
     position: relative;
     width: 100%;
@@ -452,6 +541,30 @@
     height: 100%;
     object-fit: cover;
     display: block;
+  }
+  /* Stand-in for edible posts whose photos haven't been added yet --
+     same box as a real .blog-post-photo, just a gradient + label
+     instead of an <img>, so swapping in the real photo later is a
+     one-line change. */
+  .blog-post-photo.placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(155deg, var(--stone) 0%, var(--line) 100%);
+  }
+  .blog-post-photo.placeholder span {
+    font-size: 12.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .edible-byline {
+    font-family: "Goudos", "Fraunces", Georgia, serif;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    font-style: italic;
+    color: var(--text-muted);
+    margin: -10px 0 20px;
   }
   .blog-post-date {
     font-family: "Goudos", "Fraunces", Georgia, serif;
@@ -476,6 +589,15 @@
     margin: 0 0 16px;
   }
   .blog-post p strong { color: var(--text); }
+  .blog-post ul, .blog-post ol {
+    font-family: "Goudos", "Fraunces", Georgia, serif;
+    color: var(--text-muted);
+    line-height: 1.75;
+    font-size: 19px;
+    margin: 0 0 16px;
+    padding-left: 22px;
+  }
+  .blog-post li { margin-bottom: 6px; }
   .post-link {
     text-decoration: underline;
     text-underline-offset: 2px;
@@ -524,16 +646,21 @@
     border-bottom: 1px solid var(--line);
   }
 
-  /* Featured post: the seasonal recipes hub gets a boxed, called-out
-     treatment instead of blending in as just another post in the list --
-     it's a standing hub page, not a dated entry, so it reads differently
-     on purpose. */
+  /* Featured posts: the three top picks (Recipes, October Road, Deep
+     Purple) get a boxed, called-out treatment instead of blending in as
+     just another post in the list -- each outlined in its own category's
+     color (blue/recipes, red/blog, yellow/edible), matching the category
+     cards up top. An outline rather than a fill keeps the body text as
+     readable as any other post. Recipes has no data-category, so it's
+     the default. */
   .blog-post.featured {
     padding: 32px;
-    border: 1px solid var(--line);
+    border: 2px solid var(--indigo);
     border-radius: 8px;
-    background: var(--line);
+    background: var(--bg);
   }
+  .blog-post.featured[data-category="blog"]   { border-color: var(--burgundy); }
+  .blog-post.featured[data-category="edible"] { border-color: var(--gold); }
   /* Its own box already separates it from what follows, so the standard
      divider (meant for undecorated posts butting up against each other)
      would just double up as a stray line cutting across the rounded box. */
@@ -546,11 +673,280 @@
     font-size: 11px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--burgundy);
-    border: 1px solid var(--burgundy);
+    color: var(--indigo);
+    border: 1px solid var(--indigo);
     border-radius: 20px;
     padding: 4px 14px;
     margin-bottom: 14px;
+  }
+  .blog-post.featured[data-category="blog"] .featured-tag {
+    color: var(--burgundy);
+    border-color: var(--burgundy);
+  }
+  .blog-post.featured[data-category="edible"] .featured-tag {
+    color: var(--gold);
+    border-color: var(--gold);
+  }
+
+  /* ---------- RECIPES PANEL ----------
+     The seasonal recipe browser, ported in from seasonal-recipes.html so
+     "Recipes" can filter in place like Blog/Edible instead of navigating
+     away. Same class names, same structure -- just living inside
+     .blog-layout now, toggled by the Categories filter in the script
+     below instead of by its own <main>. Spans both grid columns (the
+     sidebar hides itself while this is open, see the script) so it
+     takes over the exact same full-width space .blog-posts normally
+     fills, instead of being boxed into the narrow column next to a
+     still-visible sidebar. */
+  .recipes-panel {
+    grid-column: 1 / -1;
+    max-width: 900px;
+  }
+  .recipes-panel-title {
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: clamp(30px, 4vw, 42px);
+    margin: 0 0 40px;
+  }
+
+  .season-intro {
+    background: var(--line);
+    border: 2px solid var(--season-color, var(--line));
+    border-radius: 6px;
+    padding: 48px 40px;
+    margin-bottom: 64px;
+  }
+  .season-intro-title {
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-style: italic;
+    font-weight: bold;
+    font-size: 44px;
+    text-align: center;
+    margin: 0 0 28px;
+  }
+  .season-quote {
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-style: italic;
+    font-size: 24px;
+    line-height: 1.6;
+    margin: 0 0 18px;
+  }
+  /* This whole block is one continuous Rhonda quote (opening line,
+     body, signature) -- it needs to stay in the same italic Papyrus
+     voice all the way through instead of the body paragraphs falling
+     back to the plain Goudos body font partway in. */
+  .season-intro p {
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-style: italic;
+    color: var(--text-muted);
+    line-height: 1.6;
+    font-size: 24px;
+    margin: 0 0 18px;
+  }
+  .season-signature {
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-style: italic;
+    font-size: 24px;
+    text-align: center;
+    color: var(--text) !important;
+    margin: 24px 0 0 !important;
+  }
+
+  .recipes-panel .gallery-heading {
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: 29px;
+    margin: 0 0 24px;
+  }
+  .gallery-heading-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .gallery-heading-row .gallery-heading { margin-bottom: 24px; }
+
+  .storage-tips-btn {
+    display: inline-block;
+    font-size: 12.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text);
+    background: none;
+    border: 1px solid var(--text);
+    padding: 10px 18px;
+    margin-bottom: 24px;
+    cursor: pointer;
+    white-space: nowrap;
+    font-family: inherit;
+    transition: background 0.25s ease, color 0.25s ease;
+  }
+  .storage-tips-btn:hover { background: var(--text); color: var(--bg); }
+
+  .recipe-picker[hidden], .recipe-detail[hidden], .storage-tips-panel[hidden] { display: none; }
+
+  .recipe-picker {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .recipe-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    text-align: left;
+    padding: 24px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: none;
+    color: var(--text);
+    font-family: inherit;
+    cursor: pointer;
+    transition: border-color 0.25s ease, background 0.25s ease;
+  }
+  .recipe-card:hover { border-color: var(--text); }
+  .recipe-card-name {
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: 21px;
+    line-height: 1.3;
+  }
+  .recipe-card-serves {
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .recipe-back {
+    display: inline-block;
+    font-size: 12.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text);
+    background: none;
+    border: 1px solid var(--text);
+    padding: 10px 18px;
+    cursor: pointer;
+    margin-bottom: 40px;
+    transition: background 0.25s ease, color 0.25s ease;
+    font-family: inherit;
+  }
+  .recipe-back:hover { background: var(--text); color: var(--bg); }
+
+  .recipe:not(:last-child) {
+    padding-bottom: 56px;
+    margin-bottom: 56px;
+    border-bottom: 1px solid var(--line);
+  }
+  .recipe h2 {
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: 32px;
+    margin: 0 0 12px;
+  }
+  .recipe-desc {
+    color: var(--text-muted);
+    line-height: 1.7;
+    font-size: 19px;
+    margin: 0 0 18px;
+  }
+  .recipe-serves {
+    display: inline-block;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--burgundy);
+    background: var(--line);
+    border-radius: 4px;
+    padding: 6px 12px;
+    margin-bottom: 28px;
+  }
+  .recipe h3 {
+    font-family: "Goudos", "Fraunces", Georgia, serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--burgundy);
+    margin: 28px 0 14px;
+  }
+  .recipe ul, .recipe ol {
+    color: var(--text-muted);
+    line-height: 1.75;
+    font-size: 15px;
+    margin: 0;
+    padding-left: 22px;
+  }
+  .recipe li { margin-bottom: 8px; }
+  .recipe > p {
+    color: var(--text-muted);
+    line-height: 1.75;
+    font-size: 15px;
+  }
+
+  /* ---------- season selector + per-season color ----------
+     Each season borrows one of the three leaf colors from the Interwoven
+     mark (spring gets --green since the mark only has three), set once
+     as --season-color on that season's card/view and referenced
+     generically wherever an accent is needed. */
+  .season-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 64px;
+  }
+  .season-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 28px 20px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: none;
+    color: var(--text);
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.25s ease;
+  }
+  .season-name {
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: 24px;
+  }
+  .season-teaser {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+
+  .season-card[data-season="spring"] { --season-color: var(--green); }
+  .season-card[data-season="summer"] { --season-color: var(--gold); }
+  .season-card[data-season="fall"]   { --season-color: var(--burgundy); }
+  .season-card[data-season="winter"] { --season-color: var(--indigo); }
+  .season-card:hover, .season-card.active { border-color: var(--season-color); }
+  .season-card:hover .season-name, .season-card.active .season-name { color: var(--season-color); }
+
+  .season-view[data-season="spring"] { --season-color: var(--green); }
+  .season-view[data-season="summer"] { --season-color: var(--gold); }
+  .season-view[data-season="fall"]   { --season-color: var(--burgundy); }
+  .season-view[data-season="winter"] { --season-color: var(--indigo); }
+  .season-view .season-intro-title,
+  .season-view .recipe h3,
+  .season-view .recipe-serves { color: var(--season-color); }
+  .season-view .recipe-card:hover { border-color: var(--season-color); }
+  .season-view .recipe-card:hover .recipe-card-name { color: var(--season-color); }
+
+  @media (max-width: 760px) {
+    .recipe-picker { grid-template-columns: 1fr; }
+    .season-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .season-intro { padding: 32px 24px; }
+    .season-intro-title { font-size: 30px; }
+    .season-quote, .season-intro p, .season-signature { font-size: 18px; }
   }
 
   .involved {
@@ -704,6 +1100,21 @@
     <div class="label">The Blog</div>
     <h1>Writings</h1>
 
+    <div class="category-grid" id="categoryGrid">
+      <button type="button" class="category-card" data-filter="recipes">
+        <span class="category-name">Recipes</span>
+        <span class="category-teaser">Seasonal recipes from La Rhonda's kitchen.</span>
+      </button>
+      <button type="button" class="category-card" data-filter="blog">
+        <span class="category-name">Blog</span>
+        <span class="category-teaser">Notes and stories from the space.</span>
+      </button>
+      <button type="button" class="category-card" data-filter="edible">
+        <span class="category-name">Edible</span>
+        <span class="category-teaser">Features from edible Southeastern Massachusetts.</span>
+      </button>
+    </div>
+
     <div class="blog-layout">
     <div class="blog-posts">
       <article class="blog-post featured" id="post-recipes">
@@ -711,16 +1122,11 @@
         <div class="blog-post-photo"><img src="pics/food1.jpg" alt="Seasonal Recipes" loading="lazy"></div>
         <h2>Seasonal Recipes</h2>
         <p>Recipes from La Rhonda's kitchen, organized by season -- pick one to see what's cooking.</p>
-        <a href="the-blog/recipes/seasonal-recipes.html" class="btn-link">Explore the recipes</a>
+        <a href="#" data-filter="recipes" class="btn-link">Explore the recipes</a>
       </article>
 
-      <article class="blog-post" id="post-2026-06">
-        <div class="blog-post-date">June 15th 2026</div>
-        <h2>It's been a long time since I wrote something here&hellip;</h2>
-        <p>New posts coming for the summer months. See you soon.</p>
-      </article>
-
-      <article class="blog-post" id="post-2022-10">
+      <article class="blog-post featured" id="post-2022-10" data-category="blog">
+        <div class="featured-tag">Featured</div>
         <div class="blog-post-gallery float-right">
           <figure>
             <img src="the-blog/blog-pics/october-road.jpg" alt="A group scrapbooking around a table at Interwoven" loading="lazy">
@@ -738,7 +1144,218 @@
         <p>If you have an idea for a workshop or event, email Rhonda at <a href="mailto:interwovenmakerspace@gmail.com" class="post-link">interwovenmakerspace@gmail.com</a>.</p>
       </article>
 
-      <article class="blog-post" id="post-2022-06">
+      <article class="blog-post featured" id="post-2025-06" data-category="edible">
+        <div class="featured-tag">Featured</div>
+        <div class="blog-post-photo placeholder"><span>Photo coming soon</span></div>
+        <div class="blog-post-date">Summer 2025</div>
+        <h2>Deep Purple</h2>
+        <p class="edible-byline">by Rhonda M. Fazio &middot; <em>originally published in edible Southeastern Massachusetts</em></p>
+        <p>Have you ever looked at the inside of a clam shell in its entirety? A littleneck or cherrystone, top-neck, or the mighty Quahog, all come from the same Mollusca class known as bivalves&mdash;a hinged, two-part shell. Clams lack a central nervous system and therefore have no brain. They live in tidal pools of mud where they are dug or raked over easily by seagulls and humans alike. Clams can live up to five hundred years, which we can tell by counting the lines on their outer shell, like the rings of a tree.</p>
+        <h2>Local Primer</h2>
+        <p><em>Mollusca</em> are beautiful creatures, with unique characteristics of shape and form&mdash;think of the nautilus, scallop, and mussels with a range of color from the soft iridescent hues of abalone to the vibrant intensity of the "blue ringed octopus." Stunning. Are there any colors more mysterious and soothing than the deep purple and lavender of the inside surface of a hard-shell clam? Known for their use in currency and ceremony in early colonial history, in the scientific realm they are known as <em>Mercenaria mercenaria</em>. The insides are just as intriguing; the body of a clam is delectably delicious. Commonly known today as "stuffies," stuffed quahogs, baked clams, clams oreganata, or clams casino. All these variations involve surrounding a clam with breadcrumbs, but it truly depends on which state you are in to understand the differences.</p>
+        <ul>
+          <li>Add some onion, herbs, and spices, mix in chopped clams, you are in Rhode Island.</li>
+          <li>If you use chouri&ccedil;o, onions, peppers, and spices, you are standing in two states: Rhode Island and Massachusetts.</li>
+          <li>If you keep the clam whole and top it with breadcrumbs seasoned with oregano, garlic, and olive oil with a squeeze of lemon&mdash;you are in New York.</li>
+          <li>If you top it with bacon and chopped peppers, you are at a casino in Narragansett, Rhode Island, and eating a dish favored by the wealthy in the era of the Gilded Age.</li>
+        </ul>
+        <p>"Stuffies" became a thing in the early 20th century in Rhode Island. The origin is credited to Italians and Portuguese reinventing dishes from their homelands on a new shore. If you say "stuffie" you are from Rhode Island, if you say "stuffed quahog" you are from Massachusetts. Quahogs in cuisine moved around the Northeast quicker than they ever could in the sand, which is a little over an inch in fifteen minutes.</p>
+        <h2>Searching for Treasure</h2>
+        <p>The deep purple of the shell is iconic. I have been combing the beach for quahogs since childhood. I've amassed quite a collection of shells during my years. The pounding of the surf produces the most beautiful bits of smooth shells with purple and white stripes. One day, I found an entire shell that, in my eyes, looked like a "crazy quilt" pattern. Tinted with the deepest strips of purple, stripes of lavender, and white parenthetically placed like it was nestling the fleshy body that was once inside, made me realize I could never use this shell to hold my baked clam filling. It is too beautiful.</p>
+        <p>Why is this clam shell so purple when so many others are not? It has to do with minerals in the sandy mud. Aragonite, another form of calcium carbonate that makes up the shell of a quahog, interacts with the surrounding impurities and the diet of the clam to create these colors. Who knew? The same ocean, along the same coastline, different beaches with an array of minerals, all reacting with the alkaline base of a clam shell. Its position on the pH scale creates the color purple. Looking back, what was once a mystery now makes so much sense and reminds me of my first steps becoming an artist who works with color. Looking at the assemblage of shells strewn about my living and workspaces brings me right back to when I discovered them, sometimes to the exact place.</p>
+        <p>The fondest memories I have of my childhood are going to the beach with my Sicilian family to dig for clams. We would pack up and pile into the wood-paneled station wagon every Sunday morning (church was on Saturdays in the summer), making our way to the beach. Once there, we would follow my dad into the water to search for quahogs. Summer after summer we would eat, not like kings and queens, but like the peasants we were (and some of us still are). Years later, I would teach my son and his friends how to dig for clams, passing down the family tradition that began in the waters of the Mediterranean so long ago. The following recipe is inspired by that lineage.</p>
+        <h2>Deep Purple "Stuffies" &mdash; Baked Clams on the Half Shell</h2>
+        <p><strong>12 raw top neck quahog clams</strong> (be sure all the clams are closed&mdash;if the shells are open, they are not safe for consumption, though you may want to save the shell for its color. Scrub the excess mud off and rinse.)<br>
+        <strong>2 teaspoons salt</strong> &middot; <strong>2 quarts water</strong> &middot; <strong>2 tablespoons corn meal</strong> &mdash; for the soak<br>
+        <strong>1 tablespoon butter</strong> &middot; <strong>1 tablespoon olive oil</strong> &middot; <strong>1 shallot, minced</strong> &middot; <strong>1 whole garlic clove</strong><br>
+        <strong>1 cup breadcrumbs</strong> (Italian seasoning or plain), or Ritz crackers if preferred<br>
+        <strong>1 teaspoon fresh flat-leaf parsley</strong>, chopped, plus a sprig or two more for garnish<br>
+        Salt, pepper, and hot pepper flakes, to taste<br>
+        <strong>1 lemon</strong> &mdash; 1 teaspoon juice for the filling, the rest cut into 6 wedges</p>
+        <p>Soak the clams in a saltwater solution of the salt, water, and corn meal for 30 to 60 minutes, then rinse under fresh running water. Place the clams in a skillet with an inch or two of water, cover, and simmer until they open, 5 to 10 minutes. Remove and let cool, saving the clam juice in a jar and letting the sediment settle.</p>
+        <p>In a skillet on medium heat, melt the butter and olive oil gently&mdash;don't let it burn or smoke. Add the shallot and garlic clove, saut&eacute; to translucent, then remove the garlic. Add the breadcrumbs and toast lightly, moistening with the reserved clam juice a &frac14; cup at a time so it doesn't turn soggy. Season with salt, pepper, and hot pepper flakes if desired.</p>
+        <p>Separate the shells, keeping the clams intact, and release the muscle with a knife if needed. Toss the clams with a drizzle of olive oil, the lemon juice, a pinch of salt and pepper, and the chopped parsley, then nestle back into the shells. Top with the breadcrumb mixture and bake at 350&deg;F for 20 to 25 minutes, until golden brown and toasty. Serve with a lemon wedge and a sprinkle of parsley&mdash;serves 6, two clams each.</p>
+        <p><em>Disfruta! Enjoy!</em></p>
+      </article>
+
+      <article class="blog-post" id="post-2026-06">
+        <div class="blog-post-date">June 15th 2026</div>
+        <h2>It's been a long time since I wrote something here&hellip;</h2>
+        <p>New posts coming for the summer months. See you soon.</p>
+      </article>
+
+
+      <article class="blog-post" id="post-2024-12" data-category="edible">
+        <div class="blog-post-photo placeholder"><span>Photo coming soon</span></div>
+        <div class="blog-post-date">Winter 2024/2025</div>
+        <h2>Falling for "The Riv"</h2>
+        <p class="edible-byline">by Rhonda M. Fazio and Terry Vandewater &middot; <em>originally published in edible Southeastern Massachusetts</em></p>
+        <p>What is it about a city that appeals to people so much that they want to visit or live in it? When we think of Boston, there is Fenway Park, the Freedom Trail, foods from all over the world, a music scene, cityscapes, public parks and gardens, and that Corita Kent Rainbow Swash gas tank visible from the Southeast Expressway into or out of Boston and its harbor of history.</p>
+        <p>Pretty cool when you think of how much of our nation's history began in Boston. The same can be said about Fall River. That is right, you read that correctly&mdash;Fall River. The city may not have a famed ballpark, or be named for a place in England, but it has its own harbor of history and its very own identity.</p>
+        <h2>Fall River &mdash; The Origin Story</h2>
+        <p>Originally inhabited by the Pocasset Wampanoag Tribe of the Pokanoket Nation, Fall River is a city with rolling hills and "falling water" that cascades from the Quequechan River (pronounced "Quick-a-shan" by locals), flowing into Mount Hope Bay. Even more distinctive, the Pocasset tribe once had a female ruler, Weetamoe. You may recognize her name and that of her brother-in-law, Metacomet, also known as King Philip, on street signs, land reserves, and mills, many of which originally were named after the tribal nations that existed at the time and still do today.</p>
+        <p>In 1659, 26 colonists from Plymouth Bay recognized the abundant waterpower from the confluence of two rivers (including the Taunton River) that would eventually power a mighty textile industry. The colonists purchased 26 lots of land from the two Pocasset leaders, Wamsutta and Weetamoe. Unfortunately for the Pocasset, their tribal lands were soon to shrink substantially. Today what remains of their land is the oldest maintained reservation in the country.</p>
+        <p>(In welcome news this year, the Boston Globe reported that "Brown University is transferring 255 acres of land in Bristol [RI] to a preservation trust set up by the Pokanoket Indian Tribe, marking one of the nation's biggest victories in attempts by Indigenous people to reclaim ancestral lands. The transfer, finalized on November 15, 2024, represents the culmination of an agreement reached in 2017 when Pokanoket tribal members and their supporters occupied the property overlooking Mount Hope Bay for more than a month. The land is the ancestral home of Metacom, the leader of the Pokanoket Wampanoag people, and it's the site of his death in 1676 during King Philip's War. Metacom was a son of Massasoit, the chief who first welcomed the Pilgrims of Plymouth Colony in 1621.")</p>
+        <p>After its incorporation as a town in 1803, Fall River eventually became a city in 1854, and with that began a thriving economy, industrial wealth, jobs for immigrants, a regional train line, and a Fall River Line sailing from a New York harbor to Mount Hope Bay. With an economy in full speed, immigrants from Europe and beyond poured into the city, establishing homes and small businesses amid the mills and rapidly growing textile industry, bringing their tastes and culinary skills with them. By 1880, Fall River was the largest textile hub in the United States. After WWI, when southern textile operations could offer more diversified products at a much lower price, the gleam of Fall River began to fade. In 2007, Quaker Fabric, at one time Fall River's largest employer and the last of the mighty mills, shut its doors with nothing to take its place. It was a brutal reality, one that has left its mark on the city to this day.</p>
+        <h2>So, What Does This Have to Do with Food?</h2>
+        <p>There is still a heartbeat here&mdash;the city's character has taken a beating and a lot of work to clean up and restore&mdash;with a pulse that is getting stronger. A resurgence of economic development in the form of niche markets, restaurants, smaller textile industries, coffee shops, specialty markets, redesigned landscapes, parks, a music venue, murals, galleries, museums, and a trolley that threads through the living history that is Fall River. The Fall River Visitor Center is run by Viva Fall River and exhibits artwork and crafts created by over 40 makers, artists, and artisans from across the South Coast of Massachusetts and Rhode Island (as well as running the trolley).</p>
+        <p>One of the small businesses that is putting community first is Christopher's Caf&eacute;, located at 1816 South Main Street (they recently also opened a grab &amp; go at the New Boston Medical Center on New Boston Road). Christopher's has been operating a scratch kitchen since March 2023. The Main Street property had been neglected, and lifelong Fall River residents Christopher and Nathan Silvia had a vision of opening a restaurant with more than mouth-watering eats in mind. In essence, Nate and Christopher wanted to give back to the community that was their childhood home. They transformed the property into a welcoming, inclusive eatery. While the establishment is famous for chocolate chip cookies and other pastries and savories, they have a revolving menu that changes every day and is enjoyed by a diverse group of patrons including neighbors, tradespeople, and tourists.</p>
+        <p>Christopher's uses a robust social media network to get the word out about the neighborhood and Fall River and how to take care of one's own neighborhood by simple acts that don't require a lot of government intervention&mdash;bottle clean-up, clothing drives, toy drives. Christopher's has become a neighborhood community hub in southeast Fall River. Throughout the year, they throw out challenges like creating and maintaining unique storefronts that draw patrons inside&mdash;at time of writing, they just kicked off their Holiday Windows &amp; Storefront contest. They also have a donations jar so if someone in the neighborhood can't afford a sandwich, they can eat for free with the collected funds. Last summer, the Silvias made free pizza available on a daily basis for children 16 and under to bridge the need for children's lunches after the school year ended.</p>
+        <p>Pride is returning to the area. And while the made-from-scratch food at both their locations has many fans, perhaps the most compelling reason to go there is the positive vibes and energy around supporting small businesses, even when it's yet another eatery. Recently, they challenged their customers to "stop by a small, local restaurant, caf&eacute;, or bakery, take a picture of your visit and what you ordered there and tag Christopher's in a FB post about it." Three winners were each given a $100 gift card to the restaurant of their choice, getting the community involved in a real way, with wins all around.</p>
+        <p>Talking with Patti Rego of Viva Fall River, I asked about the changes going on in the city, the rising cost of living, and who benefits from this transformative time. While understanding the frustrations of watching the city change, she says change must take place to bring people in to support the redevelopment. To retain the city's identity, residents must voice their opinions, we agreed. Create community beyond your comfort zone. Stay informed of what is going on in this city that is changing quickly. Get involved and support local small businesses even if it's through acts of kindness versus dollars&mdash;as you can see, it is these acts that bond a neighborhood, a community, a city.</p>
+        <p>So grab some food and embrace the falling rivers. Take a stroll along Heritage State Park, offering a unique view of an industrial sunset overlooking the waters flowing into Mount Hope Bay. Or head to the Quequechan River Rail Trail and enjoy the place where Weetamoe camped for the winter. It can be hard to imagine that you can find such peace in the middle of the city, but it's there. And if you are fortunate and the timing is right, you may hear some drums at the pond on any given day. Unexpectedly profound when it occurs, and a beautiful testament to the life of the "falling waters" of the "Riv."</p>
+        <p>VivaFallRiver.com &middot; FallRiverMA.gov</p>
+      </article>
+
+      <article class="blog-post" id="post-2024-09" data-category="edible">
+        <div class="blog-post-photo placeholder"><span>Photo coming soon</span></div>
+        <div class="blog-post-date">Fall 2024</div>
+        <h2>The Best Things in Life are Trees&hellip; with Acorns</h2>
+        <p class="edible-byline">by Rhonda M. Fazio &middot; foodWAYS &middot; <em>originally published in edible Southeastern Massachusetts</em></p>
+        <p>All hail the mighty oak, the tree of the gods, of which man himself was born, sacred to Zeus and worshiped by the Druids, "knower of the oak tree." The oak is one of humankind's most ancient foods: the acorn. The history of how the oak reaches deep into the ground of human civilization has left us with a lore and legend as strong and durable as the tree itself.</p>
+        <p>These books were a significant part of my journey as a self-taught botanist and forager, opening my eyes to the world of natural plant dyes along the way. I was always in pursuit of how to feed myself and become self-sufficient, but it wasn't until university that the question of how to sustain a creative and self-sufficient future became important to me. The early days of my own creative process led me to the self-sustaining practices I use today.</p>
+        <p>I recall a crisp autumn day gathering acorns with some dear friends on a gorgeous fall day in New England, peeling back the leathery skin of the shells, chopping up the acorn meat with a blender! We laughed about taking the easy way out with the blender instead of the old-fashioned way, then squeezing the ground acorns through a bandana repeatedly, until the water ran clear and the bitterness washed away.</p>
+        <p>After the full process, we had a freezer full of acorn flour to use in our favorite cookie, pie, and bread recipes.</p>
+        <h2>Quercus alba, White Oak</h2>
+        <p><em>Quercus alba</em>, White Oak, grows all around us and bears the least bitter of the acorn nuts. It takes about 30 to 40 years for one tree to produce fruit, and a healthy tree drops about thirty pounds of acorns every few years. Yet acorns are one of the most under-utilized foods on the planet. But we can remedy that.</p>
+        <p>With more than four hundred species of oak trees found throughout the world&mdash;a hundred alone in the United States&mdash;and acorns a historical source of food for Indigenous peoples, why are we not utilizing acorns more fully?</p>
+        <p>The leaves would adorn the ancient crowns of kings, while Elizabeth Tudor learned she would be proclaimed Queen of England while sitting under the long-reaching branches of an oak tree. Ironically, years later, Elizabeth's distant relative Charles II would hide in an oak tree thick with leaves and acorns to escape Oliver Cromwell's soldiers. The tactic would be used again in 1675 during King Philip's War, when a man named Edward Babbitt hid in his own oak tree in Berkley, MA&mdash;until his dog gave him away.</p>
+        <p>In his book <em>Stalking the Wild Asparagus</em>, Euell Gibbons demonstrates how to make acorn flour. You may know Mr. Gibbons from his commercials about wild foods, or as an advocate for foraging over fifty years ago. Born in the Dust Bowl era, Gibbons learned from his mother how to forage wild food when food was scarce, and went on to hone that skill, becoming an advocate for foraging and writing a series of books to support himself and his family.</p>
+        <p>This recipe is straight out of Euell's book, with a slight rewrite of words to update the vernacular. I leave you with this quote as food for thought:</p>
+        <p>"It seems a pity that the food which nourished the childhood of our humanity is today nearly everywhere neglected and despised."<br>&mdash;Euell Gibbons, 1962</p>
+        <h2>Acorn Flour &mdash; Cold Leaching Method</h2>
+        <p><em>Inspired by Euell Gibbons</em></p>
+        <p><strong>Step 1:</strong> Collect acorns from a White Oak Tree&mdash;they are the least bitter. (All acorns are good to use but need to be leached of their tannic acid to become edible.) Remove any with cracks or holes. Put in a bowl and fill with water. Remove any that float.</p>
+        <p><strong>Step 2:</strong> Dry, then hammer to open. Discard shells. Transfer the acorn meat to a bowl.</p>
+        <p><strong>Step 3:</strong> Put 2 cups of the acorns in a blender or food processor to coarsely grind, adding a little water as needed until finely chopped. Rinse through a colander lined with a fine cloth, squeezing and repeating several times. Taste for bitterness, and keep rinsing until it should do.</p>
+        <p><strong>Step 4:</strong> On a parchment-lined cookie sheet, dry the leached acorns in a slow oven set at 250&deg;F until dry. Drying time varies&mdash;check after 20 minutes the first time, then every 10 to 15 minutes afterward. Document your time, because every oven is different.</p>
+        <p><strong>Step 5:</strong> Return the dried acorn meal to the blender or food processor and mix until finely ground.</p>
+        <p><strong>Step 6:</strong> Store in a glass jar in the refrigerator, or freeze in measured amounts to accommodate recipe conversion.</p>
+        <p><strong>Step 7:</strong> Use acorn flour in a 1:1 ratio with regular white flour in your favorite baking recipes.</p>
+        <p><strong>Note:</strong> Instead of cold leaching, you can roughly chop the acorns and boil them to leach out the bitterness&mdash;boil and drain until the water is clear and the bitterness is gone, then follow Steps 4 through 7.</p>
+        <p><strong>Author's Note:</strong> Use <em>Peterson</em> and <em>Golden</em> guides to cross-reference plant identification. When foraging, always use three references. One should always be aware of potentially poisonous plants from your region.</p>
+        <p><em>Happy foraging! Disfruta!</em></p>
+      </article>
+
+      <article class="blog-post" id="post-2024-06" data-category="edible">
+        <div class="blog-post-photo placeholder"><span>Photo coming soon</span></div>
+        <div class="blog-post-date">Summer 2024</div>
+        <h2>International Waters: Bringing Your Bucket List Home</h2>
+        <p class="edible-byline">by Rhonda M. Fazio &middot; foodWAYS &middot; <em>originally published in edible Southeastern Massachusetts</em></p>
+        <p>A bucket list can mean so many things in a person's life. What is it that you most want to do before you reach the invisible finish line here on Earth? And how are you going to live that life until you get to the place where life stops? The concept of a bucket list is personal and can be as fluid as water or as hard as a rock. It all depends on you, your interests, your curiosity, and where you want to go with it.</p>
+        <p>We can look at food the same way. We can enjoy the abundance of local, seasonal foods from the South Coast in the summer, while it is at its most vibrant and fresh and easily available&mdash;or we can dip our toes into new waters and try something completely different.</p>
+        <p>My favorite fare in the summer comes from salty ocean bays. It isn't summer for me until I eat my first clam, or feel a warm breeze with the scent of saltwater tickle my face, or enjoy a cocktail on a deck somewhere, a juicy lime clinging to the rim of a pretty glass. (Shout out to PLAY Arcade Bar and Restaurant for having one of the most beautiful views of the New Bedford harbor.)</p>
+        <p>Speaking of limes&hellip; that is a brilliant fruit. Not only do they make your drink taste refreshingly delicious, they also can cook your food without heat. Which makes them a key ingredient in ceviche.</p>
+        <h2>Finding Ceviche</h2>
+        <p>When I began to create my bucket list, the prospect of traveling to distant lands to participate in artist residencies that would enrich both my food and fabric interests put Peru at the top of my list. Known for the ancient art of weaving, spiritual landscapes of the Inca, painted deserts, terrestrial terrain and&hellip; food. Impressive range, to say the least. We can thank Peru for foods such as potatoes, tomatoes, and quinoa, to name a few. However, nothing beats their national dish: ceviche.</p>
+        <p>Many regions of Central and South America have variations of this popular dish, consisting of seafood, lime, and chilies, often with a few extra ingredients, depending on the region&mdash;much like the varying seafood that is the focal point of the dish. It simply depends on where you are. For instance, fresh saltwater fish along the coast of Peru is a given when looking for a good ceviche. Lima has two of the best restaurants in the world that feature ceviche. Inland, in the mountain range of the Andes, freshwater trout is the preferred fish, with a delicious, beautiful shade of salmon.</p>
+        <p>Then there is Mexico, where I experienced a delightful ceviche made with octopus. Here is where the plot thickens: they are extremely intelligent creatures of the ocean. Octopus is in the mollusk family, along with clam, mussel, snail, scallop, and squid. Mollusks can be spineless, soft-bodied organisms with beautiful hard shells, or they can have slinky bodies loaded with defense mechanisms that move them through the water in a hurry, leaving behind a haze of murky ink. Most of them are edible and delicious&mdash;even octopus ink, which finds its way into breads and pastas in shades of charcoal, a hue slightly lighter than burnt wood. An octopus is clever&mdash;it can open a tightly closed clam. Proof that octopi know about good food.</p>
+        <h2>Where Octopi Abide</h2>
+        <p>Be sure to pick up some frozen octopus at a local grocery store. Most of the octopus on the market is harvested from the waters around the African continent. Fresh octopus, while hard to find (because of its very short freshness factor&mdash;my friends at Kyler's Seafood confirmed this), is not such a promising choice: it dies slowly, and making ceviche from fresh octopus would be difficult if you are squeamish about cutting into a living animal&mdash;it will still move. There is a dish in Japan that serves octopus still moving on the plate&mdash;no thank you!</p>
+        <p>Ceviche requires raw seafood. The acid of the lime combined with the octopus cooks the meat, and adding the other ingredients finishes the dish. Served with a side of sweet potato and corn, it comes as close as you can get to the authenticity of the Peruvian dish. Add the acid of the lime just before serving&mdash;this allows the "cooking" absorption of the lime juice into the meat without blocking the absorption of the oil.</p>
+        <p>Octopus is a favored ingredient in European countries that touch the ocean and the seas. It is enjoyed in local Portuguese cuisine and, my favorite, my Sicilian mother's cooking. It has been an ongoing bucket list pursuit to get my food to taste like my mother's&mdash;all my questions, all the sentry moments of watching her in the kitchen, an ingredient out, then add it into the pot when I wasn't looking. But finally, after years of trying, my linguini with white clam sauce tastes just like my mother's! But that's another story for another time.</p>
+        <h2>Ceviche de Pulpo</h2>
+        <p><strong>1 to 2 pounds octopus meat</strong>, thawed in fridge, legs only (remove and discard head and beak, may be used)<br>
+        <strong>1 cup freshly squeezed lime juice</strong> &middot; <strong>1 small red onion</strong> (shallot or scallion may be used)<br>
+        <strong>1 thinly sliced hot pepper of choice</strong>, or mild sweet bell pepper<br>
+        A few sprigs of fresh cilantro, salt and pepper, to taste<br>
+        <strong>&frac14; to &frac12; cup extra virgin olive oil</strong> (add oil just before serving)</p>
+        <p>Bring a medium pot of water to a boil. Drop in the octopus and blanch for one minute. Remove from the pot and submerge in ice cold water until cool. Slice the legs into quarter-inch pieces and put in a large bowl. Add the lime juice&mdash;enough to evenly coat the octopus slices&mdash;and the rest of the ingredients except the oil. Toss, cover, and refrigerate for 2 hours.</p>
+        <p>Add oil before serving, toss, and season to taste. Spoon into a bowl and serve with tortillas and guacamole. As a light lunch or dinner, serve with corn on the cob and sweet potato&mdash;a popular combo in Peru!</p>
+        <p><strong>Please Note:</strong> Consuming raw or undercooked meats, poultry, seafood, shellfish, or eggs may increase your risk of foodborne illness, especially if you have certain medical conditions. If you cannot find raw octopus, cooked frozen can be used and the dish becomes more of a ceviche-style versus a straightforward ceviche.</p>
+      </article>
+
+      <article class="blog-post" id="post-2024-03" data-category="edible">
+        <div class="blog-post-photo placeholder"><span>Photo coming soon</span></div>
+        <div class="blog-post-date">Spring 2024</div>
+        <h2>Home is Where the Hub is: The Coastal Foodshed</h2>
+        <p class="edible-byline">by Rhonda M. Fazio &middot; <em>originally published in edible Southeastern Massachusetts</em></p>
+        <p>It's hard to imagine that in the abundantly beautiful region of Southeastern Massachusetts, access to local food is not created equal. While many of us can jump in a car, drive down a country road, and pick up a few things at a local farm stand, if you are living in a city it becomes more of a challenge: in an urban environment, where do you get fresh and local foods?</p>
+        <p>Eight years ago, a nonprofit organization spearheaded work on this question by talking with the urban community of New Bedford. In 2017, the Coastal Foodshed (CFS) was formed with a mission to make local foods accessible to everyone and to become southeastern Massachusetts's local food hub. Stephanie Perks, one of CFS's co-founders and its hand at the helm, has accomplished much more than that in the years since.</p>
+        <h2>Creating a Network</h2>
+        <p>The Southeastern Massachusetts Agricultural Partnership (SEMAP) is an organization that supports and connects local farmers to resources, and educates the community about the value of local food. SEMAP played a vital role in establishing CFS's early connections between farmers and the food hub. Initial grant funding came from the Massachusetts Department of Agricultural Resources (MDAR, CFS's biggest supporter) and Harvard Pilgrim Healthcare&mdash;capital that helped establish the New Bedford Farmers Market (NBFM). Those who are food insecure can use their Supplemental Nutrition Assistance Program (SNAP) benefits to purchase local foods at the NBFM.</p>
+        <p>CFS farmer Chris English of Groundwork Farm in Westport is a vendor at the New Bedford Farmers Market. He says having CFS open markets in cities like New Bedford creates a tremendous opportunity for farmers who lack a permanent site of their own. "It gives farmers access to a huge demographic of people who want to buy local," Chris says. "We get to meet and interact with our customers, broadening our demographic." Chris describes using methods derived from permaculture, a form of regenerative agriculture&mdash;small scale farming that helps him keep the farm healthy and creates a robust ecosystem that produces nutrient-dense foods. He's happy that this is the quality of food that reaches the NBFM community.</p>
+        <p>"The idea of a food hub existed before we even thought of it," says Stephanie. "Our goal was to form one in our region and stretch it throughout the South Coast." With a background in food culture and nutrition, Stephanie wanted the hub to become more than simply a place to find local foods&mdash;she wanted people to feel connected to the foods they eat, for that connection to become a part of their everyday life. But building such an organization meant she needed the help of the community and its partners.</p>
+        <h2>Navigating the Pandemic</h2>
+        <p>As the demand for local food grew, people wanted more choices. Funding grew consistent, coming from sponsors like Bristol County Savings, private bank donations, community foundation grants, and public donations&mdash;which led to a truck for a mobile food stand, another market, and more food demos. CFS was moving at a productive pace when the pandemic hit, abruptly killing the momentum in all directions. In response to the closings of in-person markets around the city, CFS pivoted to a virtual market so local food could still get into the hands of the community.</p>
+        <p>The early days of the farmers' market in downtown New Bedford validated the decision to create a regional food hub. Local food producers began selling small-batch goods&mdash;honey and baked goods among them. I was one of them, selling my own jams, sourcing ingredients locally through the CFS to make the best quality product possible. Then Stephanie asked if I wanted to do a cooking demo, an educational component of the food hub. So there I was, out on the street at a CSA site, flipping veggies and giving out free samples, working side by side with community health worker Jamie Barberena, closing the gap between cultures with language and food. It was working: local food was getting into the hands of the community at last.</p>
+        <p>Now, on the other side of the pandemic, building a hunger relief program funded by federal Local Food Purchasing Assistance (LFPA) grants administered by the Massachusetts Department of Agricultural Resources helps address ongoing issues of food insecurity. Just as CFS built relationships with farmers, partner organizations such as Coastline Elderly, PACE (People Acting in Community Endeavors), the newly formed Sacred Birthing Village, YWCA, and the Bend Farm are direct points of contact with New Bedford's food-insecure populations. Working together, they distribute food throughout the city, closing the gap yet again and bringing nutrient-dense food to the community as a whole.</p>
+        <h2>A Place to Call Home</h2>
+        <p>Recently, Coastal Foodshed moved into 5,500 square feet of office space at the Kilburn Mill, now referred to as a "Farmer Food Hub" and headquarters for service to the South Coast region&mdash;including Tiverton, Wareham, and Westport. That means everyone has access to the same quality of food, because the food coming from the food hub has been grown and sourced with the same shared goals.</p>
+        <p>"We have never had a home before, or a place to invite the public in," Stephanie explains. "We want folks to understand the importance of local foods. We want to educate people about the connection to your food. The hub is a place where everyone can visit, where you can know your farmer, and feel connected to your food. And that's a pretty good thing."</p>
+        <p>DoCo (short for Dough Company), a restaurant in the Mill, has been serving up local fare since opening in 2020&mdash;they are a customer and vendor of the Virtual Market. So is Coastal Provisions, a boutique general store in New Bedford's West End dedicated to providing quality local products to the community. And then there's me&mdash;Stephanie reminds me during our conversation&mdash;La Rhonda, the South Coast Sicilian! Besides making a craft jam, I am a zero-waste caterer and food preserver. Through another MDAR grant, I teach the community how to preserve food each month at the NBFM.</p>
+        <h2>The Coastal Foodshed</h2>
+        <p>127 W. Rodney French Boulevard<br>New Bedford, MA 02744<br>(508) 259-2647<br>CoastalFoodshed.org</p>
+      </article>
+
+      <article class="blog-post" id="post-2023-12" data-category="edible">
+        <div class="blog-post-photo placeholder"><span>Photo coming soon</span></div>
+        <div class="blog-post-date">Winter 2023/2024</div>
+        <h2>Gingerbread People</h2>
+        <p class="edible-byline">by Rhonda M. Fazio &middot; <em>originally published in edible Southeastern Massachusetts</em></p>
+        <p>Gingerbread people, sweet and spicy treats that usually show up during winter holidays, have their origins in ancient times. However, it wasn't until the 16th century that they began to take shape as gingerbread men, literally and figuratively. Queen Elizabeth the First had her royal baker make gingerbread men in the image of visiting dignitaries to be presented as diplomatic tributes at state events. Today, these gingerbread figures are often tied with ribbon for seasonal festivities. Gingerbread is made with ingredients you may already have in your cupboard. Need a fun, creative, and tasty snow day activity? Make gingerbread people from the recipe below!</p>
+        <p><strong>Preheat the oven to 350&deg;F.</strong><br>
+        <strong>2&frac14; cups flour</strong> &middot; <strong>&frac12; cup sugar</strong> &middot; <strong>&frac12; cup molasses</strong> &middot; <strong>1 egg</strong> &middot; <strong>&frac12; cup butter</strong><br>
+        <strong>1 teaspoon each ground ginger and cloves</strong> &middot; <strong>&frac12; teaspoon each ground cinnamon, cardamom, and nutmeg</strong><br>
+        <strong>1 teaspoon baking soda</strong> &middot; <strong>&frac12; teaspoon baking powder</strong> &middot; <strong>&frac12; teaspoon salt</strong></p>
+        <p>Combine all the ingredients in a bowl and mix on medium speed with a hand mixer, or use a wooden spoon, until well mixed. Form into a ball and refrigerate for an hour.</p>
+        <p>Working on a lightly floured surface, cut the ball of dough into 4 pieces. Roll out to about &#8539;-inch thickness and cut into gingerbread people (or your favorite shapes) using cookie cutters. Using a spatula, transfer to a cookie sheet lined with parchment paper. Bake for about 8 minutes, watching closely minute by minute so they don't burn.</p>
+        <p>Transfer to a wire rack and cool completely before icing and decorating.</p>
+        <p><strong>Icing</strong><br>
+        <strong>1&frac34; cups confectioners' sugar</strong> &middot; <strong>&frac18; teaspoon cream of tartar</strong> &middot; <strong>&frac14; cup water</strong> &middot; Drop of vanilla extract</p>
+        <p>In a small bowl, sift the confectioners' sugar and cream of tartar. Mix in the water and vanilla extract to form a smooth, creamy icing&mdash;adjust with more confectioners' sugar or water until it's slightly thinner than peanut butter, not so thin that it drips. Pipe onto the cooled gingerbread people and decorate with your favorite sprinkles or candy.</p>
+        <p><strong>Cook's Note:</strong> If using raisins for decorating, press them into the raw dough before baking rather than adding them after.</p>
+        <p><em>Desfruta! Enjoy!</em></p>
+      </article>
+
+      <article class="blog-post" id="post-2023-09" data-category="edible">
+        <div class="blog-post-photo placeholder"><span>Photo coming soon</span></div>
+        <div class="blog-post-date">Fall 2023</div>
+        <h2>The Great American Pumpkin Bread &mdash; La gran calabaza americana</h2>
+        <p class="edible-byline">by Rhonda M. Fazio &middot; <em>originally published in edible Southeastern Massachusetts</em></p>
+        <p>It is universally known that there are questions in the world that necessitate a response. For instance, do you like cats or dogs, Beatles or Rolling Stones, sweet or savory&hellip;? I can go on with the list, for it is as big as the universe itself, there are so many obsessions and fascinations in this world.</p>
+        <p>Perhaps there is no bigger obsession in the autumn than pumpkin-spice-flavored anything. However, a few questions arise about this fall favorite, such as the origin of the pumpkin. Is it from North America or South America? Is it a fruit or a vegetable? And what color is it, really?</p>
+        <p>To begin with, pumpkins are from Central America, specifically Mexico&mdash;as we know from seeds that date back about 10,000 years. Second, pumpkins grow from a flower, which makes them a fruit&mdash;a prolific seed bearer in the botanical world with a voluminous range of varieties and colors from green to yellow, orange and browns, even reds, white, and blue. As you enjoy every bite of your pumpkin bread, know that this treat is more American than apple pie.</p>
+        <h2>American Pumpkin Bread &mdash; Pan Americano de Calabaza</h2>
+        <p>Preheat the oven to 325&deg;F and set an oven rack in the middle position. Prepare two 8" x 4" loaf pans with butter and dust with flour.</p>
+        <p><strong>2 cups all-purpose flour</strong> &middot; <strong>&frac12; teaspoon salt</strong> &middot; <strong>1 teaspoon baking soda</strong> &middot; <strong>&frac12; teaspoon baking powder</strong><br>
+        <strong>1 teaspoon each ground cloves, cinnamon, nutmeg</strong><br>
+        <strong>1&frac12; sticks (&frac34; cup) unsalted butter</strong>, softened &middot; <strong>2 cups sugar</strong> &middot; <strong>2 large eggs</strong><br>
+        <strong>2 cups roasted/baked pumpkin, pur&eacute;ed</strong><br>
+        Chopped pecans and golden raisins (optional)</p>
+        <p>In a medium bowl, combine the dry ingredients. Whisk to combine and set aside.</p>
+        <p>In a large bowl, cream together the butter and sugar by hand or mixer until just blended. Add the eggs one at a time, beating well after each addition. Continue beating until very light and fluffy, a few minutes.</p>
+        <p>Add the flour mixture, one cup at a time, and mix on low speed until combined. Add the pumpkin and mix on low speed until combined.</p>
+        <p>Turn the batter into the prepared pans, dividing evenly, and bake for 65 to 75 minutes, or until a cake tester inserted into the center comes out clean. Cool in the pans for 10 minutes, then remove and cool completely on a wire rack.</p>
+        <p><strong>Cook's Note:</strong> I like to soak my raisins in rum or whiskey overnight before adding them to the recipe.</p>
+        <p>If not serving immediately, wrap in foil and freeze up to 3 months. Thaw in the fridge overnight before serving.</p>
+        <p><em>Disfruta!</em></p>
+      </article>
+
+      <article class="blog-post" id="post-2023-06" data-category="edible">
+        <div class="blog-post-photo placeholder"><span>Photo coming soon</span></div>
+        <div class="blog-post-date">Summer 2023</div>
+        <h2>Mulberries &mdash; The Mulberry-go-round: The Myth and Power of the Berry</h2>
+        <p class="edible-byline">by Rhonda M. Fazio &middot; <em>originally published in edible Southeastern Massachusetts</em></p>
+        <p>It is summer on the South Coast. The fields are planted with crops shooting up from the ground, pointing towards the sun. It has just rained, and you are out for a walk across the wet lawn, toward a wide-open path that connects to a cluster of overgrown brush with trees towering overhead, casting shade as they lean to one side. These are old trees, older than the abandoned and rusted-down tractor nested in the brush. The tractor is covered in berries that seem to drop from the sky. What are those berries? They look like they could be blackberries&mdash;plump clusters of juiciness, not purple at all, but a rosy pink.</p>
+        <p>Mulberries! <em>Morus alba</em>, better known as a White Mulberry tree. And not a bush at all, if one remembers the nursery rhyme. One could half expect to find a Maypole around the general vicinity, left over from a midsummer festival a hundred or so years ago. People would dance around a tall wooden pole draped in garland, holding onto silk ribbons for reasons I do not know. What I do know is the silk ribbons were made through a governmental initiative of the sericulture days of Colonial America up until the first half of the 19th century. Sericulture is the cultivation of silkworms to produce silk. <em>Morus rubra</em> is the Red Mulberry tree indigenous to eastern North America, but farmers in the 19th century planted White Mulberry trees when offered a bounty by the British, as a way of establishing an economic resource for the developing economy.</p>
+        <p>While the berries are a sweet and succulent treat for birds, humans, and other animals, mulberry leaves fed the voracious hunger of the silkworms. Their waste turned into the filament that would be reeled and spun into silk thread, wound into skeins of yarn, sometimes dyed, and woven into the finest fabric, then shipped off to Europe up until the Revolutionary War.</p>
+        <p>But mulberries, packed to the max with health benefits&mdash;fresh or dried, purple, rosy-pink, or white&mdash;are a taste of the past, present, and future all in one fruit, present in our American landscape from before the 17th century all the way through present time. We can use the fresh berries in pies, tarts, mix them with yogurt, sprinkle them over a bowl of ice cream, or mix them into a smoothie for natural sweetness without the addition of processed sugars.</p>
+        <p>Mulberries have been a part of human consumption for centuries, dating back to the original trade routes of the Silk Road. And when that road closed in 1453 due to the fall of the Byzantine Empire, Europeans would pick up that meandering thread to seek out new routes in which to trade with Asia&mdash;and, by taking a wrong turn, would open a gateway to the Americas, changing the course of history.</p>
+        <p>So, the next time you see mulberries as you walk down a dirt road, a path to some overgrown woods, or that annoying tree in your yard that drops berries all over the place (as do the birds that eat them)&mdash;pick some up and try them. Bring them to your next social gathering and mix them in with your favorite cocktails for a great conversation starter.</p>
+        <p>Mulberry trees are a part of our American history&mdash;they branch from the roads that people have traveled worldwide to the ones that have been here all along.</p>
+        <h2>Rhonda's Sweet Summer Soda with Mulberries</h2>
+        <p><strong>Simple Syrup</strong><br>
+        <strong>2 cups water</strong> &middot; <strong>1 cup sugar</strong> &middot; <strong>1 cup of mulberries</strong> &middot; Juice of one lemon</p>
+        <p>Combine all of the ingredients and cook over medium heat in a saucepan, stirring occasionally, until the sugar is completely dissolved.</p>
+        <p>Strain the syrup, cool before pouring into a glass jar or bottle, and refrigerate for up to one week.</p>
+        <p>Combine with soda, seltzer, or mineral water to make a fresh summer soda. Garnish with berries, or any of the citrus fruits. Enjoy!</p>
+        <p>Makes enough syrup for about 12 to 16 drinks, with or without alcohol, to taste.</p>
+        <p><strong>Author's note:</strong> you can replace mulberries with other summer fruits for a variety of different summer sodas.</p>
+      </article>
+
+
+      <article class="blog-post" id="post-2022-06" data-category="blog">
         <div class="blog-post-gallery">
           <figure><img src="the-blog/blog-pics/strawberry-prep.jpg" alt="Strawberries and herbs being prepped on a cutting board" loading="lazy"></figure>
           <figure><img src="the-blog/blog-pics/strawberry.jpg" alt="A plate of sliced strawberries and greens" loading="lazy"></figure>
@@ -754,7 +1371,7 @@
         <p>See you soon.</p>
       </article>
 
-      <article class="blog-post" id="post-2022-03">
+      <article class="blog-post" id="post-2022-03" data-category="blog">
         <div class="blog-post-gallery float-right">
           <figure>
             <img src="the-blog/blog-pics/its-your-move-sig.jpg" alt="A YES vinyl record album signed by Jon Anderson" loading="lazy">
@@ -778,7 +1395,7 @@
         <p>Coffee, tea and goodies will be available. Donations only. This is an alcohol free event. Space is limited.</p>
       </article>
 
-      <article class="blog-post" id="post-2022-02">
+      <article class="blog-post" id="post-2022-02" data-category="blog">
         <div class="blog-post-photo"><img src="the-blog/blog-pics/the-road-new-hampshire_orig.jpg" alt="A New Hampshire highway under a cloud-filled sky" loading="lazy"></div>
         <div class="blog-post-date">February 22nd 2022</div>
         <h2>&ldquo;Back on the Highway yeah, yeah, yeah&hellip;&rdquo;</h2>
@@ -786,14 +1403,14 @@
         <p>Thanks to the many Local Cultural Councils throughout the Commonwealth with the support of the Massachusetts Cultural Council, <a href="the-fabric.html" class="post-link">Dyer Maker Studio</a>&reg; will be "back on the road again" this spring and summer. &ldquo;<a href="the-fabric.html" class="post-link">Dyeing to Wear It: Creating Community with Color</a>&rdquo; will partner with libraries all around the Commonwealth. Follow my social media pages as I prepare to journey around this beautiful state of Massachusetts, along with a dip into the neighboring state of New Hampshire, with more announcements and more places to come, just there, on the "blue horizon"&hellip;</p>
       </article>
 
-      <article class="blog-post" id="post-2021-12">
+      <article class="blog-post" id="post-2021-12" data-category="blog">
         <div class="blog-post-date">December 2nd 2021</div>
         <h2>December: "Out of the darkness, into the light&hellip;"</h2>
         <p>And where there is light, there is color and hand crafted gifts you can make yourself! Sign up for my "<a href="the-fabric.html" class="post-link">Dyeing to Wear It</a>"&trade; class, The Art of the Gift, click on the <span class="post-link">Book now</span> button and choose the date.</p>
         <p>On Saturday, December 18th 10-2, I will be decorating cookies with the New Bedford Farmers Market at Buttonwood Park Zoo. Bring your kids/grandkids &mdash; special treats if you come dressed as an elf!</p>
       </article>
 
-      <article class="blog-post" id="post-2021-11">
+      <article class="blog-post" id="post-2021-11" data-category="blog">
         <div class="blog-post-date">November 16th 2021</div>
         <h2>&ldquo;Sweetest November, the world renewed its color&hellip;&rdquo;</h2>
         <p>In my world, all color is beautiful so how can it not be renewed &mdash; It's my birthday month! The quote comes from a song by <a href="https://www.sarahblasko.com/" target="_blank" rel="noopener" class="post-link">Sarah Brasko</a> and is such a well written lyric, filled with life and strength. Like the city of New Bedford.</p>
@@ -819,7 +1436,7 @@
         <p>Just a serving or two. Simple and fresh. I enjoy the tart flavor however, sweeten more if desired.</p>
       </article>
 
-      <article class="blog-post" id="post-2021-09">
+      <article class="blog-post" id="post-2021-09" data-category="blog">
         <div class="blog-post-gallery">
           <figure><img src="the-blog/blog-pics/eggplant.jpg" alt="A harvest of tomatoes, peppers, eggplant, and garlic" loading="lazy"></figure>
           <figure><img src="the-blog/blog-pics/garden-salsa.jpg" alt="A bowl of fresh garden salsa with bread" loading="lazy"></figure>
@@ -832,7 +1449,7 @@
         <p>The Coastal Foodshed pop up market will be at Clasky Common every Friday from 2-6. Cooking demo is 2-4.</p>
       </article>
 
-      <article class="blog-post" id="post-2021-08">
+      <article class="blog-post" id="post-2021-08" data-category="blog">
         <div class="blog-post-date">August 15th 2021</div>
         <h2>Canning Demonstration</h2>
         <div class="blog-post-gallery float-right">
@@ -843,7 +1460,7 @@
         <p>To register: <a href="https://fb.me/e/2wHwrniWi" target="_blank" rel="noopener" class="post-link">fb.me/e/2wHwrniWi</a></p>
       </article>
 
-      <article class="blog-post">
+      <article class="blog-post" id="post-2021-08b" data-category="blog">
         <div class="blog-post-photo"><img src="pics/interwoven-outside.jpg" alt="Interwoven" loading="lazy"></div>
         <div class="blog-post-date">August 1st 2021</div>
         <h2>Interwoven is opening!</h2>
@@ -851,25 +1468,924 @@
       </article>
     </div>
 
-    <aside class="blog-sidebar">
-      <div class="sidebar-block">
-        <h3>Categories</h3>
-        <ul>
-          <li><a href="#post-recipes">Recipes</a></li>
-          <li><a href="#post-2026-06">Blog</a></li>
-        </ul>
+    <div class="recipes-panel" id="recipesPanel" hidden>
+      <h2 class="recipes-panel-title">Seasonal Recipes</h2>
+
+      <div class="season-grid" id="seasonGrid">
+        <button type="button" class="season-card" data-season="spring">
+          <span class="season-name">Spring</span>
+          <span class="season-teaser">Lighter meals with the season's greens.</span>
+        </button>
+        <button type="button" class="season-card" data-season="summer">
+          <span class="season-name">Summer</span>
+          <span class="season-teaser">Fresh produce and coastal flavors.</span>
+        </button>
+        <button type="button" class="season-card" data-season="fall">
+          <span class="season-name">Fall</span>
+          <span class="season-teaser">Cozy dishes from the last of the harvest.</span>
+        </button>
+        <button type="button" class="season-card" data-season="winter">
+          <span class="season-name">Winter</span>
+          <span class="season-teaser">Make-ahead meals for cold, busy days.</span>
+        </button>
       </div>
-      <div class="sidebar-block">
+
+      <section class="season-view" data-season="spring">
+<div class="season-intro">
+        <h2 class="season-intro-title">&mdash; Spring &mdash;</h2>
+        <p class="season-quote">"Spring is a perfect time to prepare lighter and simpler meals packed with nutritious flavor.</p>
+        <p>The greener the vegetable, the more nutrient dense it is, and exactly what we need after a long winter of comfort foods. All you have to do is grab a handful of greens and top off any dish raw or cooked. Choose from a variety of deep green foods such as kale, spinach, pea tendrils, red and green lettuces, and asparagus. There are still so many more varieties out there but it depends on what your local farmer is growing each season.</p>
+        <p>Many greens at the farmers market already come in bags and just need a quick wash. It is always a good idea to put your greens in a bowl filled with water and a cap full of apple cider vinegar, give it a swish, drain, pat dry with a paper towel and store in a breathable container in the refrigerator. Leafy greens cook within a minute, asparagus takes a little longer."</p>
+        <p class="season-signature">&mdash; Rhonda</p>
+      </div>
+
+      <div class="gallery-heading-row">
+        <h2 class="gallery-heading">Choose a Recipe</h2>
+        <button type="button" class="storage-tips-btn">See Storage Tips</button>
+      </div>
+      <div class="recipe-picker">
+        <button type="button" class="recipe-card" data-recipe="green-omelet">
+          <span class="recipe-card-name">Green Omelet</span>
+          <span class="recipe-card-serves">Serves: 1</span>
+        </button>
+        <button type="button" class="recipe-card" data-recipe="spinach-salad">
+          <span class="recipe-card-name">Warm Spinach Salad with Mushrooms &amp; Roasted Root Vegetables</span>
+          <span class="recipe-card-serves">Serves: 2-3</span>
+        </button>
+        <button type="button" class="recipe-card" data-recipe="pasta">
+          <span class="recipe-card-name">Pasta with Mushrooms &amp; Spinach</span>
+          <span class="recipe-card-serves">Serves: 2</span>
+        </button>
+        <button type="button" class="recipe-card" data-recipe="rhubarb-soda">
+          <span class="recipe-card-name">La Rhonda's Rhubarb Soda</span>
+          <span class="recipe-card-serves">Makes about 1&frac12;&ndash;2 cups syrup</span>
+        </button>
+      </div>
+
+      <div class="recipe-detail" hidden>
+        <button type="button" class="recipe-back">&larr; Back to recipes</button>
+
+        <article class="recipe" id="recipe-green-omelet">
+          <h2>Green Omelet</h2>
+          <p class="recipe-desc">A simple, flexible omelet packed with greens and asparagus. Easily adaptable based on what vegetables you have on hand.</p>
+          <span class="recipe-serves">Serves: 1</span>
+          <h3>Ingredients</h3>
+          <ul>
+            <li>2-3 eggs, beaten</li>
+            <li>1 tablespoon light cream or milk</li>
+            <li>1 teaspoon butter</li>
+            <li>1 tablespoon olive oil</li>
+            <li>2 asparagus spears, chopped</li>
+            <li>1 handful leafy greens (spinach, kale, or similar)</li>
+            <li>Salt and black pepper, to taste</li>
+            <li>Cheese, optional</li>
+          </ul>
+          <h3>Instructions</h3>
+          <ol>
+            <li>In a small bowl, whisk together the eggs and cream. Season lightly with salt and pepper.</li>
+            <li>Heat butter and olive oil in a small skillet over medium heat. Add the asparagus and cook for about 2 minutes. Add greens and stir until just wilted.</li>
+            <li>Pour in the egg mixture, tilting the pan to spread evenly. Cook until the edges begin to set and the bottom is lightly golden.</li>
+            <li>Gently flip or fold the omelet. Cook for another 30&ndash;60 seconds, or until the eggs are fully set but still tender. Add cheese before folding, if using.</li>
+            <li>Serve warm with toast or fruit on the side.</li>
+          </ol>
+          <h3>Variation (Baked Option)</h3>
+          <p>Mix chopped asparagus and leafy greens into the egg mixture. Pour the mixture into greased muffin cups and bake at 350&deg;F until set and lightly golden. These can be cooled, wrapped individually, and frozen for up to 2 months. Reheat gently at 250&deg;F or until warmed through.</p>
+        </article>
+
+        <article class="recipe" id="recipe-spinach-salad" hidden>
+          <h2>Warm Spinach Salad with Mushrooms &amp; Roasted Root Vegetables</h2>
+          <p class="recipe-desc">A flexible, hearty salad that uses up leftover vegetables and turns them into a warm, satisfying meal. The heat from the roasted vegetables gently wilts the spinach.</p>
+          <span class="recipe-serves">Serves: 2-3</span>
+          <h3>Ingredients</h3>
+          <ul>
+            <li>2-3 cups roasted vegetables (such as beets, potatoes, carrots, parsnips, turnips, radishes, sweet potatoes, and onion)</li>
+            <li>2 mushrooms, sliced</li>
+            <li>2 handfuls fresh spinach, washed</li>
+            <li>Olive oil</li>
+            <li>Balsamic vinegar or balsamic glaze</li>
+            <li>Salt and black pepper, to taste</li>
+            <li>Fresh parsley or rosemary, chopped</li>
+            <li>Optional: feta cheese for topping</li>
+          </ul>
+          <h3>Instructions</h3>
+          <ol>
+            <li>Preheat oven to 350&deg;F. Cut vegetables into even pieces and place in a bowl. Drizzle with olive oil and toss to coat. Spread on a parchment-lined baking sheet.</li>
+            <li>Roast until fork-tender, stirring occasionally. (Timing will vary depending on the vegetables used.)</li>
+            <li>Add the sliced mushrooms and herbs partway through roasting. Toss gently and continue roasting until the mushrooms are tender.</li>
+            <li>Remove from the oven and transfer the warm vegetables to a large bowl.</li>
+            <li>Add the spinach and drizzle with olive oil and balsamic vinegar or glaze. Toss gently so the heat from the vegetables wilts the spinach.</li>
+            <li>Season with salt and pepper to taste. Top with feta cheese if desired.</li>
+          </ol>
+          <h3>Serving Tip</h3>
+          <p>Serve warm as a light lunch or dinner on its own.</p>
+          <h3>Variations</h3>
+          <ul>
+            <li>Serve leftover roasted vegetables over quinoa with olive oil, lemon juice, zest, parsley, and basil.</li>
+            <li>For a different flavor profile, use cilantro, lime, and spices like cumin or chili powder.</li>
+            <li>Turn leftovers into a baked casserole by mixing vegetables with a little cream, shredded cheese (such as cheddar, Colby, or Monterey Jack), herbs, and spices. Bake in a buttered dish until bubbly and lightly golden.</li>
+          </ul>
+        </article>
+
+        <article class="recipe" id="recipe-pasta" hidden>
+          <h2>Pasta with Mushrooms &amp; Spinach</h2>
+          <p class="recipe-desc">A simple, comforting pasta dish with saut&eacute;ed mushrooms, fresh spinach, and a light lemon finish.</p>
+          <span class="recipe-serves">Serves: 2</span>
+          <h3>Ingredients</h3>
+          <ul>
+            <li>6 oz dried pasta (about 2 cups dry), such as spaghetti, penne, or linguine</li>
+            <li>1 handful mushrooms, sliced (or more, to taste)</li>
+            <li>1 small garlic clove, minced</li>
+            <li>1 small shallot, sliced</li>
+            <li>2 handfuls fresh spinach</li>
+            <li>Olive oil</li>
+            <li>Zest of &frac12; lemon (or to taste)</li>
+            <li>Salt and black pepper, to taste</li>
+            <li>Parmesan cheese, optional</li>
+            <li>Pinch of red pepper flakes, optional</li>
+            <li>Reserved pasta water (about 1 cup)</li>
+          </ul>
+          <h3>Instructions</h3>
+          <ol>
+            <li>Cook pasta according to package directions. Before draining, reserve about 1 cup of pasta water. Drain and set aside.</li>
+            <li>While the pasta cooks, heat olive oil in a skillet over medium heat. Add mushrooms, garlic, and shallot. Saut&eacute; until the mushrooms are golden and softened.</li>
+            <li>Remove the pan from heat and stir in the spinach until just wilted.</li>
+            <li>Add the cooked pasta to the skillet.</li>
+            <li>Add lemon zest and a pinch of red pepper flakes if using. Toss to combine, adding reserved pasta water a little at a time to help create a light sauce. Drizzle in a little olive oil as needed to coat the pasta.</li>
+            <li>Season with salt and pepper to taste. Toss again until well combined.</li>
+            <li>Top with Parmesan cheese, if desired, and serve warm with a simple salad.</li>
+          </ol>
+        </article>
+
+        <article class="recipe" id="recipe-rhubarb-soda" hidden>
+          <h2>La Rhonda's Rhubarb Soda</h2>
+          <p class="recipe-desc">A bright, tart homemade syrup made with fresh rhubarb and lemon. Mix with sparkling water for a refreshing seasonal drink.</p>
+          <span class="recipe-serves">Makes about 1&frac12;&ndash;2 cups syrup &middot; Yields approximately 12&ndash;16 drinks</span>
+          <h3>Rhubarb Simple Syrup &mdash; Ingredients</h3>
+          <ul>
+            <li>2 cups water</li>
+            <li>1 cup sugar</li>
+            <li>1 cup diced rhubarb</li>
+            <li>Juice of 1 lemon</li>
+          </ul>
+          <h3>Instructions</h3>
+          <ol>
+            <li>In a medium saucepan, combine water, sugar, rhubarb, and lemon juice.</li>
+            <li>Bring to a gentle simmer over medium heat, stirring occasionally until the sugar dissolves.</li>
+            <li>Simmer for about 10&ndash;15 minutes, until the rhubarb softens and the liquid turns a light pink color.</li>
+            <li>Remove from heat and strain through a fine mesh strainer, pressing gently on the solids to extract flavor.</li>
+            <li>Let cool completely. Store in a glass jar or bottle in the refrigerator for up to 1 week.</li>
+          </ol>
+          <h3>To Serve</h3>
+          <p>Mix 2&ndash;4 tablespoons of syrup with soda water, seltzer, or mineral water to taste.</p>
+          <h3>Serving Tip</h3>
+          <p>Serve over ice and garnish with strawberries, lime, or other citrus.</p>
+          <h3>Cook's Note</h3>
+          <p>This syrup can also be used in cocktails or mocktails. Adjust sweetness by adding more or less syrup depending on your preference.</p>
+        </article>
+      </div>
+      </section>
+
+      <section class="season-view" data-season="summer" hidden>
+<div class="season-intro">
+        <h2 class="season-intro-title">&mdash; Summer &mdash;</h2>
+        <p class="season-quote">"Summer yields a variety of fresh fruits and vegetables in a gorgeous array of colors that make them a delight to eat.</p>
+        <p>Some of my fondest memories of food made by my mother came from my dad's garden. Sweet, savory, and succulent one-dish wonders that I still make to this day. The summer months are also an opportunity to begin proper planning for the foods you can keep with you and have ready to use during the long days of winter wishing for summer again.</p>
+        <p>On the coast of southeastern Massachusetts, we have an abundance of food in and out of the water that is hard not to cook even in the summer heat. We love to cook outside on the grill to keep things cool whenever possible."</p>
+        <p class="season-signature">&mdash; Rhonda</p>
+      </div>
+
+      <div class="gallery-heading-row">
+        <h2 class="gallery-heading">Choose a Recipe</h2>
+        <button type="button" class="storage-tips-btn">See Storage Tips</button>
+      </div>
+      <div class="recipe-picker">
+        <button type="button" class="recipe-card" data-recipe="sicilian-saute">
+          <span class="recipe-card-name">The Sicilian Saut&eacute;</span>
+          <span class="recipe-card-serves">Serves: 1-2 (or 2-3 as a side dish)</span>
+        </button>
+        <button type="button" class="recipe-card" data-recipe="veggie-fritters">
+          <span class="recipe-card-name">Veggie Fritters</span>
+          <span class="recipe-card-serves">Serves: 2-3</span>
+        </button>
+        <button type="button" class="recipe-card" data-recipe="seafood-stew">
+          <span class="recipe-card-name">Southcoast Sicilian Seafood Stew</span>
+          <span class="recipe-card-serves">Serves: 2-3</span>
+        </button>
+        <button type="button" class="recipe-card" data-recipe="blueberry-soda">
+          <span class="recipe-card-name">La Rhonda's Blueberry Soda</span>
+          <span class="recipe-card-serves">Makes about 1&frac12;-2 cups syrup</span>
+        </button>
+        <button type="button" class="recipe-card" data-recipe="ceviche-de-pulpo">
+          <span class="recipe-card-name">Ceviche de Pulpo</span>
+          <span class="recipe-card-serves">Serves: 2-3</span>
+        </button>
+        <button type="button" class="recipe-card" data-recipe="deep-purple-stuffies">
+          <span class="recipe-card-name">Deep Purple &ldquo;Stuffies&rdquo; &mdash; Baked Clams on the Half Shell</span>
+          <span class="recipe-card-serves">Serves: 6 people, two clams each</span>
+        </button>
+      </div>
+
+      <div class="recipe-detail" hidden>
+        <button type="button" class="recipe-back">&larr; Back to recipes</button>
+
+        <article class="recipe" id="recipe-sicilian-saute">
+          <h2>The Sicilian Saut&eacute;</h2>
+          <p class="recipe-desc">A simple, fresh vegetable saut&eacute; that highlights summer produce with olive oil, herbs, and garlic. Serve as a side dish or over pasta or rice for a light meal.</p>
+          <span class="recipe-serves">Serves: 1-2 (or 2-3 as a side dish)</span>
+          <h3>Ingredients</h3>
+          <ul>
+            <li>1 small zucchini, sliced</li>
+            <li>1 small summer squash, sliced</li>
+            <li>&frac12; red bell pepper, quartered and sliced</li>
+            <li>&frac12; small onion, sliced</li>
+            <li>1 small garlic clove, minced</li>
+            <li>Olive oil, for saut&eacute;ing</li>
+            <li>Fresh basil or parsley, to taste</li>
+            <li>Salt and black pepper, to taste</li>
+            <li>Parmesan cheese, for serving (optional)</li>
+          </ul>
+          <h3>Instructions</h3>
+          <ol>
+            <li>Heat a drizzle of olive oil in a skillet over medium heat. Add the garlic and onion and saut&eacute; until softened and translucent.</li>
+            <li>Add the zucchini, summer squash, and bell pepper. Stir to combine. Cook for a few minutes, stirring occasionally, until the vegetables begin to soften and release moisture.</li>
+            <li>Continue cooking until the vegetables are tender but still slightly firm (not mushy) and lightly golden in spots.</li>
+            <li>Season with salt and pepper, then add fresh herbs and toss to combine.</li>
+            <li>Serve warm as-is, over pasta or rice, or as a side dish. Top with pesto or a sprinkle of Parmesan if desired.</li>
+          </ol>
+          <h3>Serving Tip</h3>
+          <p>This makes a simple, flavorful side for grilled or roasted meats, or a light vegetarian meal over grains or pasta.</p>
+        </article>
+
+        <article class="recipe" id="recipe-veggie-fritters" hidden>
+          <h2>Veggie Fritters</h2>
+          <p class="recipe-desc">Crispy, savory fritters made with fresh corn and vegetables. Great as a light meal, side dish, or tucked into wraps and tacos.</p>
+          <span class="recipe-serves">Serves: 2-3 (as a light meal or side)</span>
+          <h3>Ingredients</h3>
+          <ul>
+            <li>2 cups corn kernels (from about 2 fresh cobs)</li>
+            <li>&frac12; onion, red or white, finely chopped</li>
+            <li>&frac12; bell pepper, finely chopped</li>
+            <li>1 carrot, grated</li>
+            <li>Fresh herbs (cilantro, parsley, or basil), to taste</li>
+            <li>Juice of &frac12; lime (with cilantro) or &frac12; lemon (with basil)</li>
+            <li>Zest of &frac12; citrus fruit</li>
+            <li>&frac12; to 1 cup flour (all-purpose or gluten-free)</li>
+            <li>&frac12; teaspoon baking powder</li>
+            <li>Salt and black pepper, to taste</li>
+            <li>Olive oil, for frying</li>
+          </ul>
+          <h3>Instructions</h3>
+          <ol>
+            <li>In a mixing bowl, combine all ingredients. Stir until well mixed. The batter should be thick and sticky&mdash;able to hold its shape when scooped. If it is too loose, add a little more flour, a tablespoon at a time.</li>
+            <li>Heat a skillet over medium heat and add a thin layer of olive oil.</li>
+            <li>Drop spoonfuls of batter into the pan using a tablespoon. Flatten slightly if needed.</li>
+            <li>Cook until golden brown on both sides, about 2&ndash;3 minutes per side.</li>
+            <li>Transfer to a paper towel-lined plate to drain excess oil.</li>
+          </ol>
+          <h3>Serving Tip</h3>
+          <p>Serve warm with yogurt sauce, and add hot sauce if desired.</p>
+          <h3>Variation</h3>
+          <p>Shape into larger patties for veggie burgers, or cut into halves to use in tacos or wraps.</p>
+          <h3>Storage Tip</h3>
+          <p>Cooked fritters can be refrigerated for up to 3 days. Reheat in a skillet or oven to maintain crispness.</p>
+          <h3>Freezer Tip</h3>
+          <p>Freeze cooked fritters in a single layer, then transfer to a container or bag. Reheat from frozen in a skillet or oven until warmed through and crisp.</p>
+        </article>
+
+        <article class="recipe" id="recipe-seafood-stew" hidden>
+          <h2>Southcoast Sicilian Seafood Stew</h2>
+          <p class="recipe-desc">A simple, coastal-inspired tomato and seafood stew that comes together quickly and is best served with crusty bread.</p>
+          <span class="recipe-serves">Serves: 2-3</span>
+          <h3>Ingredients</h3>
+          <ul>
+            <li>8 oz white fish (such as cod), or other seafood of choice</li>
+            <li>2 medium tomatoes or 1 (8 oz) can tomato sauce</li>
+            <li>1 small garlic clove, minced</li>
+            <li>Olive oil, for saut&eacute;ing</li>
+            <li>Salt and black pepper, to taste</li>
+            <li>Fresh basil, chopped</li>
+            <li>&frac12;&ndash;1 cup water, as needed</li>
+          </ul>
+          <h3>Instructions</h3>
+          <ol>
+            <li>Heat a small amount of olive oil in a skillet over medium heat. Add the garlic and saut&eacute; for about 2 minutes.</li>
+            <li>Add the tomato sauce or chopped tomatoes and simmer for about 10 minutes. If using fresh tomatoes, add about &frac12; cup water to help them break down.</li>
+            <li>Add the fish and simmer gently until cooked through and flaky, adding more water as needed to maintain a light broth.</li>
+            <li>Season with salt and pepper to taste.</li>
+            <li>Stir in fresh basil and simmer briefly until the flavors come together.</li>
+            <li>Adjust consistency as desired&mdash;simmer longer for a thicker stew or keep it more brothy if preferred.</li>
+          </ol>
+          <h3>Serving Tip</h3>
+          <p>Serve warm with crusty bread for dipping.</p>
+          <h3>Variation</h3>
+          <p>Add shellfish or squid for a mixed seafood version. Cook shellfish separately until opened, then add to the tomato base along with any cooking liquid (avoiding any grit at the bottom of the pan). Fresh corn kernels also make a nice addition.</p>
+          <h3>Freezer Tip</h3>
+          <p>This stew is best enjoyed fresh. If freezing, do so without shellfish and note that the texture of fish may soften slightly when reheated.</p>
+        </article>
+
+        <article class="recipe" id="recipe-blueberry-soda" hidden>
+          <h2>La Rhonda's Blueberry Soda</h2>
+          <p class="recipe-desc">A refreshing homemade soda made with fresh blueberries and lemon. Mix with sparkling water for a bright, seasonal drink.</p>
+          <span class="recipe-serves">Serves: about 1&frac12; to 2 cups of syrup &middot; Yields approximately 12&ndash;16 drinks (depending on how strong you like it)</span>
+          <h3>Blueberry Simple Syrup &mdash; Ingredients</h3>
+          <ul>
+            <li>2 cups water</li>
+            <li>1 cup sugar</li>
+            <li>1 cup blueberries</li>
+            <li>Juice of 1 lemon</li>
+          </ul>
+          <h3>Instructions</h3>
+          <ol>
+            <li>In a medium saucepan, combine water, sugar, blueberries, and lemon juice.</li>
+            <li>Bring to a gentle simmer over medium heat, stirring occasionally until the sugar dissolves.</li>
+            <li>Continue simmering for about 10&ndash;15 minutes, until the blueberries soften and release their color.</li>
+            <li>Remove from heat and strain through a fine mesh strainer, pressing lightly on the berries to extract flavor.</li>
+            <li>Let cool completely. Store in a glass jar or bottle in the refrigerator for up to 1 week.</li>
+          </ol>
+          <h3>To Serve</h3>
+          <p>Mix 2&ndash;4 tablespoons of blueberry syrup with soda water, seltzer, or mineral water to taste.</p>
+          <h3>Serving Tip</h3>
+          <p>Serve over ice and garnish with fresh blueberries, lemon, or lime slices.</p>
+          <h3>Variation</h3>
+          <p>Swap out the blueberries for mulberries or any other fruit in season&mdash;the same method works for a variety of different summer sodas.</p>
+          <h3>Cook's Note</h3>
+          <p>This syrup also works well in cocktails or mocktails. Adjust sweetness by adding more or less syrup depending on your taste.</p>
+          <p>Makes enough syrup for approximately 12&ndash;16 drinks.</p>
+        </article>
+
+        <article class="recipe" id="recipe-ceviche-de-pulpo" hidden>
+          <h2>Ceviche de Pulpo</h2>
+          <p class="recipe-desc">Octopus ceviche brightened with lime, sweet peppers, and cilantro &mdash; the acid of the lime cooks the meat, just like the other ingredients finish the dish. Served with a side of sweet potato and corn as close as you can get to the authenticity of the Peruvian dish.</p>
+          <span class="recipe-serves">Serves: 2-3</span>
+          <h3>Ingredients</h3>
+          <ul>
+            <li>1 to 2 pounds octopus meat, thawed in fridge, legs only (remove and discard head and beak, may be used)</li>
+            <li>1 cup freshly squeezed lime juice</li>
+            <li>1 small red onion (shallot or scallion may be used)</li>
+            <li>1 thinly sliced hot pepper of choice, or mild sweet bell pepper</li>
+            <li>A few sprigs of fresh cilantro, to taste</li>
+            <li>Salt and pepper, to taste</li>
+            <li>&frac14; to &frac12; cup extra virgin olive oil (add oil just before serving)</li>
+          </ul>
+          <h3>Instructions</h3>
+          <ol>
+            <li>Bring a medium pot of water to a boil. Drop in the octopus and blanch for one minute. Remove from pot and submerge in ice cold water until cool.</li>
+            <li>Slice the legs into quarter-inch pieces, put in a large bowl.</li>
+            <li>Add lime juice. Add more to evenly coat the octopus slices if needed. Add the rest of the ingredients except the oil.</li>
+            <li>Toss, cover, and place in the refrigerator for 2 hours.</li>
+            <li>Add oil before serving. Toss and season to taste.</li>
+            <li>Spoon ceviche into a bowl and serve with tortillas and guacamole.</li>
+          </ol>
+          <h3>Serving Options</h3>
+          <p>As a light lunch or dinner, serve with corn on the cob and sweet potato. This is a popular combo in Peru!</p>
+          <h3>Please Note</h3>
+          <p>Consuming raw or undercooked meats, poultry, seafood, shellfish, or eggs may increase your risk of foodborne illness, especially if you have certain medical conditions.</p>
+          <h3>Note</h3>
+          <p>If you cannot find raw octopus, then cooked frozen can be used and the dish becomes more of a ceviche-style versus a straightforward ceviche.</p>
+        </article>
+
+        <article class="recipe" id="recipe-deep-purple-stuffies" hidden>
+          <h2>Deep Purple &ldquo;Stuffies&rdquo; &mdash; Baked Clams on the Half Shell</h2>
+          <p class="recipe-desc">Local top neck quahog clams, simmered open, then stuffed with a lightly toasted breadcrumb filling and baked until golden &mdash; a South Coast summer classic, inspired by a lifetime of digging for quahogs with family.</p>
+          <span class="recipe-serves">Serves: 6 people, two clams each</span>
+          <h3>Ingredients</h3>
+          <ul>
+            <li>12 raw top neck quahog clams (be sure all the clams are closed &mdash; if the shells are open, they are not safe for consumption, though you may want to save the shell for its color. Scrub the excess mud off the clam and rinse.)</li>
+            <li>2 teaspoons of salt</li>
+            <li>2 quarts of water</li>
+            <li>2 tablespoons of corn meal</li>
+            <li>1 tablespoon of butter</li>
+            <li>1 tablespoon olive oil</li>
+            <li>1 shallot, minced</li>
+            <li>1 whole garlic clove</li>
+            <li>1 cup of breadcrumbs (Italian seasoning or plain) or Ritz crackers if preferred</li>
+            <li>1 teaspoon freshly chopped flat-leaf parsley</li>
+            <li>Salt and pepper, to taste</li>
+            <li>Hot pepper flakes, if desired</li>
+            <li>One lemon (to include 1 teaspoon of lemon juice and 6 lemon wedges)</li>
+            <li>1 to 2 sprigs of flat-leaf parsley</li>
+          </ul>
+          <h3>Instructions</h3>
+          <ol>
+            <li>Soak the clams in a saltwater solution of 2 teaspoons of salt, two quarts of water, and 2 tablespoons of corn meal for 30 to 60 minutes.</li>
+            <li>Put clams in a bowl with fresh, running water to rinse.</li>
+            <li>Place the clams in a skillet with an inch or two of water, cover, and simmer until the clams open, 5 to 10 minutes. Remove and allow to cool.</li>
+            <li>Save the clam juice from simmering and pour into a large jar or measuring cup, allowing the sediment to settle. Set aside.</li>
+            <li>In a skillet on medium heat, melt the butter and olive oil gently. Do not let it burn or smoke. Add minced shallot and the whole garlic clove, saut&eacute; until translucent, then remove the garlic clove. Add the breadcrumbs and toast lightly. Add clam juice to moisten as needed, &frac14; cup at a time to avoid making a soggy mess. (Freeze the remainder of the clam juice for another recipe.)</li>
+            <li>Mix and season with salt and pepper to taste. Add hot pepper flakes if desired.</li>
+            <li>Assemble the clam shells on a baking sheet by separating the shells, keeping the whole clams intact. With a knife, release the muscle if needed, and place the clams in a small bowl.</li>
+            <li>Season the clams with a light drizzle of olive oil, 1 tablespoon of lemon juice, a pinch of salt and pepper, and 1 teaspoon of freshly chopped flat-leaf parsley. Toss to coat and place in shells. Top with the breadcrumb mixture to evenly distribute the crumbs and bake for 20 to 25 minutes, or until golden brown and toasty.</li>
+            <li>Serve with one fresh lemon wedge per plate and top with a sprinkle of fresh parsley.</li>
+          </ol>
+          <p><em>Disfruta! Enjoy!</em></p>
+        </article>
+      </div>
+      </section>
+
+      <section class="season-view" data-season="fall" hidden>
+<div class="season-intro">
+        <h2 class="season-intro-title">&mdash; Autumn &mdash;</h2>
+        <p class="season-quote">"Autumn is as beautiful as it is abundantly bittersweet.</p>
+        <p>Watching the summer ebb, we enjoy the last of the harvest as we get ready for what is creeping around the corner - winter! Now is the time to freeze some of your favorite local vegetables and fruits like: corn, green beans, berries and even dry some herbs to be used over the winter."</p>
+        <p class="season-signature">&mdash; Rhonda</p>
+      </div>
+
+      <div class="gallery-heading-row">
+        <h2 class="gallery-heading">Choose a Recipe</h2>
+        <button type="button" class="storage-tips-btn">See Storage Tips</button>
+      </div>
+      <div class="recipe-picker">
+        <button type="button" class="recipe-card" data-recipe="autumn-soup">
+          <span class="recipe-card-name">Bittersweet Autumn Soup</span>
+          <span class="recipe-card-serves">Serves: 3-4</span>
+        </button>
+        <button type="button" class="recipe-card" data-recipe="marinara">
+          <span class="recipe-card-name">La Rhonda's Rustic Marinara Sauce</span>
+          <span class="recipe-card-serves">Serves: 2-3</span>
+        </button>
+        <button type="button" class="recipe-card" data-recipe="apple-crisp">
+          <span class="recipe-card-name">Sweet Tart Apple Crisp</span>
+          <span class="recipe-card-serves">Serves: 2 (or 1-2 depending on portion size)</span>
+        </button>
+        <button type="button" class="recipe-card" data-recipe="shepherds-pie">
+          <span class="recipe-card-name">Thanksgiving Shepherd's Pie</span>
+          <span class="recipe-card-serves">Serves: 2-4</span>
+        </button>
+        <button type="button" class="recipe-card" data-recipe="acorn-flour">
+          <span class="recipe-card-name">Acorn Flour &mdash; Cold Leaching Method</span>
+          <span class="recipe-card-serves">Yield: varies by batch</span>
+        </button>
+      </div>
+
+      <div class="recipe-detail" hidden>
+        <button type="button" class="recipe-back">&larr; Back to recipes</button>
+
+        <article class="recipe" id="recipe-autumn-soup">
+          <h2>Bittersweet Autumn Soup</h2>
+          <p class="recipe-desc">A flexible, hearty soup designed for using up leftover vegetables. Warm, comforting, and easy to adapt based on what you have on hand.</p>
+          <span class="recipe-serves">Serves: 3-4</span>
+          <h3>Ingredients</h3>
+          <ul>
+            <li>Leftover vegetables such as corn, carrots, green beans, potatoes, peppers, onion, garlic, tomato, mushrooms, or similar</li>
+            <li>2 tablespoons olive oil</li>
+            <li>1 teaspoon Herbs de Provence or other dried herbs</li>
+            <li>Water, enough to cover vegetables</li>
+            <li>Better Than Bouillon, to taste</li>
+            <li>2 tablespoons Bragg's Liquid Aminos</li>
+            <li>Black pepper, to taste</li>
+            <li>Optional: cooked rice, barley, or small pasta</li>
+          </ul>
+          <h3>Instructions</h3>
+          <ol>
+            <li>Heat olive oil in a large pot over medium heat. Add chopped vegetables and cook for about 10 minutes, stirring occasionally.</li>
+            <li>Add Herbs de Provence and cook for 2 more minutes.</li>
+            <li>Pour in enough water to just cover the vegetables. Stir in Better Than Bouillon, Liquid Aminos, and black pepper.</li>
+            <li>Cover and simmer for about 30 minutes, or until vegetables are tender. Add more water if needed.</li>
+            <li>If using a starch (rice, barley, or pasta), cook it separately, rinse, and stir into the soup just before serving.</li>
+          </ol>
+          <h3>Serving Tip</h3>
+          <p>Serve warm with bread and a simple salad for a complete meal.</p>
+          <h3>Freezer Tip</h3>
+          <p>Cool completely and freeze leftovers in single portions for easy future meals.</p>
+        </article>
+
+        <article class="recipe" id="recipe-marinara" hidden>
+          <h2>La Rhonda's Rustic Marinara Sauce</h2>
+          <p class="recipe-desc">Tomatoes are dwindling in the late summer and early fall, so you can still enjoy them through this simple, fresh tomato sauce made with summer tomatoes, garlic, and basil. Perfect tossed with pasta or served alongside bread.</p>
+          <span class="recipe-serves">Serves: 2-3</span>
+          <h3>Ingredients</h3>
+          <ul>
+            <li>4&ndash;6 fresh summer tomatoes (from the vine or local farmers market), diced</li>
+            <li>2 cloves garlic, chopped</li>
+            <li>1 small onion, chopped</li>
+            <li>2&ndash;3 tablespoons olive oil</li>
+            <li>Salt and black pepper, to taste</li>
+            <li>Red pepper flakes (optional)</li>
+            <li>Fresh basil (a handful), chopped plus extra whole leaves for garnish</li>
+            <li>6&ndash;8 oz pasta of choice</li>
+          </ul>
+          <h3>Instructions</h3>
+          <ol>
+            <li>Heat olive oil in a skillet over medium heat. Add the garlic and onion.</li>
+            <li>Saut&eacute; until softened and translucent, about 5 minutes. Do not let them brown.</li>
+            <li>Add the diced tomatoes, salt, pepper, and red pepper flakes if using. Stir to combine.</li>
+            <li>Bring to a gentle simmer, then reduce heat to low-medium. Cook for about 20 minutes, stirring occasionally.</li>
+            <li>If the sauce becomes too thick, add a small splash of water as needed.</li>
+            <li>Stir in chopped basil just before serving, reserving whole leaves for garnish.</li>
+            <li>Toss with cooked pasta and serve warm.</li>
+          </ol>
+          <h3>Serving Tip</h3>
+          <p>Pasta shapes with ridges or curves work best, as they hold onto the sauce. Top with Parmesan cheese if desired.</p>
+          <h3>Cook's Note</h3>
+          <p>This sauce is best made with peak-season summer tomatoes for the richest flavor.</p>
+        </article>
+
+        <article class="recipe" id="recipe-apple-crisp" hidden>
+          <h2>Sweet Tart Apple Crisp</h2>
+          <p class="recipe-desc">This simple fruit crisp is warmly spiced with a bright tart flavor from the cranberries. It makes a cozy dessert for chilly evenings and is just as lovely served for breakfast the next morning.</p>
+          <span class="recipe-serves">Serves: 2 (or 1-2 depending on portion size)</span>
+          <h3>Ingredients</h3>
+          <ul>
+            <li>2 apples, peeled and diced or sliced</li>
+            <li>&frac14; cup cranberries</li>
+            <li>Pinches of cinnamon, nutmeg, and cloves, to taste</li>
+            <li>1 tablespoon butter</li>
+            <li>&frac14;&ndash;&frac12; cup water</li>
+            <li>Maple syrup, to taste</li>
+            <li>1 tablespoon sugar, optional</li>
+            <li>Oats, for topping</li>
+          </ul>
+          <h3>Instructions</h3>
+          <ol>
+            <li>In a saut&eacute; pan over medium heat, melt the butter. Add the apples, cranberries, cinnamon, nutmeg, and cloves. Cook for about 2 minutes.</li>
+            <li>Add the water and drizzle with maple syrup to taste. Add sugar, if desired.</li>
+            <li>Continue cooking until the fruit is tender and the cranberries begin to burst and release their color. Let the liquid cook down slightly until syrupy.</li>
+            <li>In a separate pan, toast the oats over medium heat with a little butter and a sprinkle of the spices. Drizzle with maple syrup near the end of cooking and continue to toast until lightly golden.</li>
+            <li>Spoon the fruit mixture into bowls and top with the toasted oats.</li>
+          </ol>
+          <h3>Serving Tip</h3>
+          <p>Serve warm with whipped cream, a drizzle of heavy cream, or a scoop of ice cream.</p>
+          <h3>Variation</h3>
+          <p>For a warm breakfast, serve with yogurt instead of cream or ice cream. You can also replace the cranberries with roasted butternut squash for a cozy fall variation.</p>
+        </article>
+
+        <article class="recipe" id="recipe-shepherds-pie" hidden>
+          <h2>Thanksgiving Shepherd's Pie</h2>
+          <p class="recipe-desc">A cozy way to turn Thanksgiving leftovers into a brand-new meal. This comforting casserole is flexible, easy to assemble, and perfect for a quiet supper the day after the holiday.</p>
+          <span class="recipe-serves">Serves: 2-4</span>
+          <h3>Ingredients</h3>
+          <ul>
+            <li>Leftover cooked turkey, cut into bite-sized pieces</li>
+            <li>Leftover vegetables, or peas and carrots</li>
+            <li>Leftover gravy</li>
+            <li>Savory holiday leftovers, as desired</li>
+            <li>Leftover mashed potatoes, mashed sweet potatoes, or mashed butternut squash</li>
+            <li>Homemade cranberry sauce, for serving</li>
+          </ul>
+          <h3>Instructions</h3>
+          <ol>
+            <li>Preheat the oven to 350&deg;F. Butter a small casserole dish or baking dish.</li>
+            <li>In a large bowl, gently combine the turkey, vegetables, gravy, and any other savory leftovers. Avoid adding sweet dishes such as candied vegetables or sweet casseroles.</li>
+            <li>Spoon the mixture into the prepared baking dish.</li>
+            <li>Spread the mashed potatoes, sweet potatoes, or butternut squash evenly over the top.</li>
+            <li>Bake for 25&ndash;30 minutes, or until hot and bubbly and the top is lightly browned.</li>
+            <li>Serve warm with a spoonful of cranberry sauce drizzled over the top.</li>
+          </ol>
+          <h3>Cook's Tip</h3>
+          <p>This recipe is very forgiving&mdash;use whatever savory Thanksgiving leftovers you have on hand to make it your own.</p>
+          <h3>Freezer Tip</h3>
+          <p>Freeze extra portions for an easy meal later in the season. Reheat in the oven or microwave until warmed through.</p>
+        </article>
+
+        <article class="recipe" id="recipe-acorn-flour" hidden>
+          <h2>Acorn Flour &mdash; Cold Leaching Method</h2>
+          <p class="recipe-desc">Inspired by Euell Gibbons. A foraged flour made from acorns, leached of their bitter tannic acid, then dried and ground &mdash; use it in a 1:1 ratio with regular white flour in your favorite baking recipes.</p>
+          <span class="recipe-serves">Yield: varies by batch</span>
+          <h3>Ingredients</h3>
+          <ul>
+            <li>Fresh acorns, ideally from a White Oak tree (least bitter)</li>
+            <li>Water</li>
+          </ul>
+          <h3>Instructions</h3>
+          <ol>
+            <li>Collect acorns. (All acorns are good to use but need to be leached of their tannic acid to become edible.) Remove any with cracks or holes. Put the acorns in a bowl and fill with water. Remove any that float.</li>
+            <li>Dry, then hammer to open. Discard the shells. Transfer the acorn meat to a bowl.</li>
+            <li>Put 2 cups of the acorns in a blender or food processor to coarsely grind, adding a little water as needed until finely chopped. Rinse through a colander lined with a fine cloth, squeezing and repeating several times. Taste for bitterness and keep rinsing until it should do.</li>
+            <li>On a parchment-lined cookie sheet, dry the leached acorns in a slow oven set at 250&deg;F until dry. Drying time varies depending on the size of the acorn bits &mdash; check after 20 minutes the first time, then every 10 to 15 minutes afterward. Document your time, because every oven is different.</li>
+            <li>Return the dried acorn meal to the blender or food processor and mix until finely ground.</li>
+            <li>Store in a glass jar in the refrigerator, or freeze in measured amounts to accommodate recipe conversion.</li>
+            <li>Use acorn flour in a 1:1 ratio with regular white flour in your favorite baking recipes.</li>
+          </ol>
+          <h3>Note</h3>
+          <p>Instead of cold leaching, you can roughly chop the acorns and boil them to leach out the bitterness. Boil and drain until the water is clear and the bitterness is gone, then follow the drying and grinding steps above.</p>
+          <h3>Author's Note</h3>
+          <p>Use <em>Peterson</em> and <em>Golden</em> guides to cross-reference plant identification. When foraging, always use three references. One should always be aware of potentially poisonous plants from your region.</p>
+          <p><em>Happy foraging! Disfruta!</em></p>
+        </article>
+      </div>
+      </section>
+
+      <section class="season-view" data-season="winter" hidden>
+<div class="season-intro">
+        <h2 class="season-intro-title">&mdash; Winter &mdash;</h2>
+        <p class="season-quote">"Winter is a wonderful time to cook ahead and keep a few homemade meals in the freezer for snowy or busy days.</p>
+        <p>Freeze single portions in labeled containers so they're easy to thaw and enjoy later. Don't forget to add the date before freezing."</p>
+        <p class="season-signature">&mdash; Rhonda</p>
+      </div>
+
+      <div class="gallery-heading-row">
+        <h2 class="gallery-heading">Choose a Recipe</h2>
+        <button type="button" class="storage-tips-btn">See Storage Tips</button>
+      </div>
+      <div class="recipe-picker">
+        <button type="button" class="recipe-card" data-recipe="pumpkin-bread">
+          <span class="recipe-card-name">American Pumpkin Bread <em>AKA</em> Pan Americano de Calabaza</span>
+          <span class="recipe-card-serves">Serves: 10-12 (or 1-2 small loaves / about 12 muffins)</span>
+        </button>
+        <button type="button" class="recipe-card" data-recipe="meatloaf-muffins">
+          <span class="recipe-card-name">Mini Meatloaf Muffins</span>
+          <span class="recipe-card-serves">Serves: 4 (makes 8-10 mini meatloaf muffins)</span>
+        </button>
+        <button type="button" class="recipe-card" data-recipe="winter-soup">
+          <span class="recipe-card-name">Summer in Winter Soup</span>
+          <span class="recipe-card-serves">Serves: 3 cups</span>
+        </button>
+        <button type="button" class="recipe-card" data-recipe="sweet-potato-rounds">
+          <span class="recipe-card-name">Roasted Sweet Potato Rounds with Honey &amp; Feta</span>
+          <span class="recipe-card-serves">Serves: 2-4 as a side dish</span>
+        </button>
+        <button type="button" class="recipe-card" data-recipe="gingerbread-people">
+          <span class="recipe-card-name">Gingerbread People</span>
+          <span class="recipe-card-serves">Makes about 2 dozen cookies</span>
+        </button>
+      </div>
+
+      <div class="recipe-detail" hidden>
+        <button type="button" class="recipe-back">&larr; Back to recipes</button>
+
+        <article class="recipe" id="recipe-pumpkin-bread">
+          <h2>American Pumpkin Bread <em>AKA</em> Pan Americano de Calabaza</h2>
+          <p class="recipe-desc">A warmly spiced pumpkin bread that's rich, tender, and perfect for fall mornings or afternoon coffee. Add pecans and golden raisins for extra texture and sweetness.</p>
+          <span class="recipe-serves">Serves: 10-12 (or 1-2 small loaves / about 12 muffins&mdash;to freeze and use later)</span>
+          <h3>Ingredients</h3>
+          <ul>
+            <li>2 cups all-purpose flour</li>
+            <li>&frac12; teaspoon salt</li>
+            <li>1 teaspoon baking soda</li>
+            <li>&frac12; teaspoon baking powder</li>
+            <li>1 teaspoon ground cinnamon</li>
+            <li>1 teaspoon ground nutmeg</li>
+            <li>&frac14; teaspoon ground cloves</li>
+            <li>&frac34; cup (1&frac12; sticks) unsalted butter, softened</li>
+            <li>2 cups granulated sugar</li>
+            <li>2 large eggs</li>
+            <li>2 cups pumpkin pur&eacute;e (canned or homemade)</li>
+            <li>Chopped pecans and golden raisins, optional</li>
+          </ul>
+          <h3>Instructions</h3>
+          <ol>
+            <li>Preheat the oven to 325&deg;F. Position a rack in the center of the oven. Grease muffin tins or small loaf pans and lightly dust with flour.</li>
+            <li>In a medium bowl, whisk together the flour, salt, baking soda, baking powder, cinnamon, nutmeg, and cloves. Set aside.</li>
+            <li>In a large bowl, cream the butter and sugar together until light and fluffy. Add the eggs one at a time, beating well after each addition.</li>
+            <li>Stir in the pumpkin pur&eacute;e until fully combined. Gradually add the dry ingredients, mixing just until incorporated. Fold in pecans and raisins, if using.</li>
+            <li>Divide the batter evenly among the prepared pans. Bake for 65&ndash;75 minutes, or until a toothpick inserted into the center comes out clean. Smaller pans or muffins may require less baking time.</li>
+            <li>Let cool in the pans for 10 minutes before transferring to a wire rack to cool completely.</li>
+          </ol>
+          <h3>Storage Tip</h3>
+          <p>Wrap the cooled bread tightly in parchment paper, then foil, and freeze for up to 3 months. Thaw overnight in the refrigerator before serving.</p>
+          <h3>Cook's Notes</h3>
+          <ul>
+            <li>Homemade pumpkin pur&eacute;e adds a deeper, richer flavor to this bread. Simply halve a sugar pumpkin, scoop out the seeds, and roast cut-side down at 400&deg;F until tender, about 45&ndash;60 minutes. Scoop out the flesh and blend until smooth. Be sure to drain any excess liquid before baking.</li>
+            <li>For extra flavor, try soaking the raisins in rum or whiskey before adding them to the batter. Drain well before mixing in.</li>
+          </ul>
+          <h3>Variation</h3>
+          <p>This recipe also works beautifully with other winter squashes. Try substituting the pumpkin pur&eacute;e with roasted and pur&eacute;ed butternut squash, acorn squash, or blue hubbard squash for slightly different flavors and sweetness.</p>
+        </article>
+
+        <article class="recipe" id="recipe-meatloaf-muffins" hidden>
+          <h2>Mini Meatloaf Muffins</h2>
+          <p class="recipe-desc">These mini meatloaves are comforting, easy to portion, and perfect for freezing for future meals. Serve with mashed potatoes, roasted vegetables, or tucked into a sandwich the next day.</p>
+          <span class="recipe-serves">Serves: 4 (makes 8-10 mini meatloaf muffins&mdash;to freeze for use later)</span>
+          <h3>Ingredients</h3>
+          <ul>
+            <li>1 pound ground beef</li>
+            <li>&frac13; cup breadcrumbs (plain, Italian-style, or panko)</li>
+            <li>1 small onion, finely chopped</li>
+            <li>1 teaspoon garlic, minced</li>
+            <li>&frac13; cup whole milk, heavy cream, or half-and-half</li>
+            <li>1 egg, lightly beaten</li>
+            <li>&frac12; teaspoon salt</li>
+            <li>&frac14; teaspoon black pepper</li>
+            <li>&frac14; cup fresh parsley, chopped</li>
+            <li>Ketchup or barbecue sauce, optional</li>
+          </ul>
+          <h3>Instructions</h3>
+          <ol>
+            <li>Preheat the oven to 350&deg;F. Lightly grease a muffin pan or line with muffin liners.</li>
+            <li>In a large bowl, combine the ground beef, breadcrumbs, onion, garlic, milk, egg, salt, pepper, and parsley. Mix gently until just combined. Avoid overmixing, which can make the meatloaf tough.</li>
+            <li>Divide the mixture evenly among the muffin cups, filling each about &frac34; full. If desired, spread a small spoonful of ketchup or barbecue sauce on top of each muffin.</li>
+            <li>Bake for 20&ndash;25 minutes, or until the internal temperature reaches 165&deg;F.</li>
+            <li>Let rest for 5 minutes before serving.</li>
+          </ol>
+          <h3>Freezer Tip</h3>
+          <p>Freeze extra meatloaf muffins individually for easy future meals. Reheat in the microwave or oven until warmed through.</p>
+        </article>
+
+        <article class="recipe" id="recipe-winter-soup" hidden>
+          <h2>Summer in Winter Soup</h2>
+          <p class="recipe-desc">Bright flavors and warming spices make this comforting soup feel like a little taste of summer during the colder months. Enjoy with crusty bread, rice, or a simple salad.</p>
+          <span class="recipe-serves">Serves: 3 cups</span>
+          <h3>Ingredients</h3>
+          <ul>
+            <li>3 small or 2 medium potatoes, peeled and cut into 1-inch cubes</li>
+            <li>1 sweet pepper or chili pepper, minced</li>
+            <li>1 garlic clove, finely chopped</li>
+            <li>1 small onion, shallot, leek, or scallion, chopped</li>
+            <li>2 tablespoons oil (olive, safflower, or coconut oil)</li>
+            <li>1 teaspoon ground cumin</li>
+            <li>1 teaspoon turmeric</li>
+            <li>&frac12; teaspoon paprika</li>
+            <li>&frac14; teaspoon cayenne pepper</li>
+            <li>&frac14; teaspoon black pepper</li>
+            <li>1 teaspoon salt</li>
+            <li>1 cup frozen corn or peas</li>
+            <li>2 cups water, or enough to cover the vegetables</li>
+            <li>1 can coconut milk or 1 cup milk, optional</li>
+            <li>Juice and zest of &frac12; lime</li>
+            <li>Chopped cilantro and sliced scallions, for serving</li>
+            <li>Pinch of garam masala, optional</li>
+          </ul>
+          <h3>Instructions</h3>
+          <ol>
+            <li>Heat the oil in a medium pot over medium heat. Add the potatoes, pepper, garlic, and onion. Cook for about 3&ndash;5 minutes, stirring occasionally, until lightly softened.</li>
+            <li>Stir in the cumin, turmeric, paprika, and cayenne. Cook for 1 minute, until fragrant.</li>
+            <li>Add the frozen corn or peas and stir for another minute.</li>
+            <li>Pour in the water, making sure the vegetables are covered. Bring to a simmer and cook on low heat for about 10&ndash;15 minutes, or until the potatoes are tender.</li>
+            <li>Stir in the lime juice and zest.</li>
+            <li>For a smoother soup, carefully blend part of the soup with an immersion blender. You can also leave it chunky if preferred.</li>
+            <li>Stir in the coconut milk or milk and heat gently until warmed through. Taste and adjust seasoning as needed.</li>
+            <li>Top with cilantro, scallions, and a pinch of garam masala before serving.</li>
+          </ol>
+          <h3>Serving Tip</h3>
+          <p>Serve over rice or alongside bread and a salad for a simple meal.</p>
+          <h3>Freezer Tip</h3>
+          <p>Freeze extra soup in single portions for an easy meal another day.</p>
+          <h3>Variation</h3>
+          <p>This soup also works well with added chicken, fish, or shrimp. If you do not have garam masala, try a light pinch of cinnamon for a gentle warm spice.</p>
+        </article>
+
+        <article class="recipe" id="recipe-sweet-potato-rounds" hidden>
+          <h2>Roasted Sweet Potato Rounds with Honey &amp; Feta</h2>
+          <p class="recipe-desc">Tender roasted sweet potatoes topped with creamy feta and a drizzle of honey. This simple dish makes an elegant side for fall and winter meals.</p>
+          <span class="recipe-serves">Serves: 2-4 as a side dish</span>
+          <h3>Ingredients</h3>
+          <ul>
+            <li>2 large sweet potatoes, peeled and sliced into &frac12;-inch rounds</li>
+            <li>2 tablespoons olive oil</li>
+            <li>Salt and black pepper, to taste</li>
+            <li>&frac14; cup crumbled feta cheese</li>
+            <li>2 tablespoons honey</li>
+            <li>1 tablespoon fresh parsley, chopped</li>
+            <li>1 teaspoon fresh thyme leaves (optional)</li>
+          </ul>
+          <h3>Instructions</h3>
+          <ol>
+            <li>Preheat the oven to 400&deg;F. Line a baking sheet with parchment paper.</li>
+            <li>Arrange the sweet potato slices in a single layer on the prepared baking sheet.</li>
+            <li>Drizzle with olive oil and season with salt and pepper. Toss gently to coat.</li>
+            <li>Roast for 20&ndash;25 minutes, turning halfway through, until the sweet potatoes are tender and lightly golden.</li>
+            <li>Remove from the oven and immediately sprinkle with the crumbled feta cheese.</li>
+            <li>Drizzle the honey evenly over the warm sweet potatoes.</li>
+            <li>Garnish with parsley and thyme, if using.</li>
+          </ol>
+          <h3>Serving Tip</h3>
+          <p>Serve warm as a side dish with roasted chicken, pork, fish, or a hearty grain salad.</p>
+          <h3>Variations</h3>
+          <ul>
+            <li>Sprinkle with a pinch of cinnamon for a sweeter flavor.</li>
+            <li>Add a light dusting of smoked paprika for a savory twist.</li>
+            <li>For a dairy-free version, omit the feta or substitute a plant-based cheese.</li>
+          </ul>
+        </article>
+
+        <article class="recipe" id="recipe-gingerbread-people" hidden>
+          <h2>Gingerbread People</h2>
+          <p class="recipe-desc">Classic spiced gingerbread cookies with a simple piped icing &mdash; a fun, creative snow day activity, decorated with your favorite sprinkles or candy.</p>
+          <span class="recipe-serves">Makes about 2 dozen cookies</span>
+          <h3>Ingredients</h3>
+          <ul>
+            <li>2&frac14; cups flour</li>
+            <li>&frac12; cup sugar</li>
+            <li>&frac12; cup molasses</li>
+            <li>1 egg</li>
+            <li>&frac12; cup butter</li>
+            <li>1 teaspoon each ground ginger and cloves</li>
+            <li>&frac12; teaspoon each ground cinnamon, cardamom, and nutmeg</li>
+            <li>1 teaspoon baking soda</li>
+            <li>&frac12; teaspoon baking powder</li>
+            <li>&frac12; teaspoon salt</li>
+          </ul>
+          <h3>Icing</h3>
+          <ul>
+            <li>1&frac34; cups confectioners' sugar</li>
+            <li>&frac18; teaspoon cream of tartar</li>
+            <li>&frac14; cup water</li>
+            <li>Drop of vanilla extract</li>
+          </ul>
+          <h3>Instructions</h3>
+          <ol>
+            <li>Preheat the oven to 350&deg;F.</li>
+            <li>Combine all the cookie ingredients in a bowl and mix on medium speed with a hand mixer, or use a wooden spoon, until well mixed. Form into a ball and refrigerate for an hour.</li>
+            <li>Working on a lightly floured surface, cut the ball of dough into 4 pieces. Roll out to about &#8539;-inch thickness.</li>
+            <li>Cut into gingerbread people (or your favorite shapes) using cookie cutters.</li>
+            <li>Using a spatula, transfer to a cookie sheet lined with parchment paper.</li>
+            <li>Bake for about 8 minutes, watching closely minute by minute so they don't burn.</li>
+            <li>Transfer to a wire rack and cool completely before icing and decorating.</li>
+          </ol>
+          <h3>For the Icing</h3>
+          <p>In a small bowl, sift the confectioners' sugar and cream of tartar. Mix in the water and vanilla extract to form a smooth, creamy icing &mdash; adjust with more confectioners' sugar or water until it's slightly thinner than peanut butter, not so thin that it drips. Pipe onto the cooled gingerbread people and decorate with your favorite sprinkles or candy.</p>
+          <h3>Cook's Note</h3>
+          <p>If using raisins for decorating, press them into the raw dough before baking rather than adding them after.</p>
+          <p><em>Desfruta! Enjoy!</em></p>
+        </article>
+      </div>
+      </section>
+
+      <div class="storage-tips-panel" id="storageTipsPanel" hidden>
+        <button type="button" class="recipe-back" id="storageTipsBack">&larr; Back to recipes</button>
+
+        <article class="recipe" id="storage-tips-content">
+          <h2>Keeping Local Food Year-Round</h2>
+          <p class="recipe-desc">Saving seasonal foods helps you enjoy local produce from the Southcoast of Massachusetts all year long. These simple preservation methods make winter cooking easier, especially when fresh local produce is harder to find. Small, ready-to-use portions help reduce waste and make everyday meals faster and more enjoyable.</p>
+
+          <h3>Freezing Vegetables</h3>
+          <p>Freezing is one of the easiest ways to preserve vegetables like corn, peppers, squash, and green beans.</p>
+          <p><strong>Basic steps:</strong></p>
+          <ol>
+            <li>Cut vegetables into small, even pieces (about 1 cup portions works well for single servings).</li>
+            <li>Bring a pot of water to a boil.</li>
+            <li>Place vegetables in the boiling water for 1&ndash;2 minutes (this is called blanching).</li>
+            <li>Drain immediately and place in a bowl of ice water to stop cooking.</li>
+            <li>Drain well and pat dry.</li>
+            <li>Store in labeled freezer bags or containers. Include the date.</li>
+          </ol>
+          <p><strong>Tip:</strong> Freeze in small portions so you can use just what you need for soups, saut&eacute;s, or side dishes.</p>
+
+          <h3>Freezing Fruit</h3>
+          <p>Freezing fruit is an easy way to save the taste of summer for later in the year. It works well for berries, peaches, apples, and rhubarb.</p>
+          <p><strong>Simple method:</strong></p>
+          <ol>
+            <li>Wash fruit and remove any stems, pits, or cores.</li>
+            <li>Cut larger fruit into bite-sized pieces.</li>
+            <li>Spread fruit in a single layer on a baking sheet so it does not stick together.</li>
+            <li>Freeze until solid (a few hours or overnight).</li>
+            <li>Transfer frozen fruit to labeled freezer bags or containers. Include the date.</li>
+          </ol>
+          <p><strong>Tip:</strong> Frozen fruit can be used directly in baking, smoothies, oatmeal, or cooked into sauces without thawing first.</p>
+
+          <h3>Drying Herbs</h3>
+          <p>Drying herbs helps you keep summer flavors for months.</p>
+          <p><strong>Simple method:</strong></p>
+          <ol>
+            <li>Tie herbs (such as parsley, thyme, oregano, or rosemary) into small bundles.</li>
+            <li>Place in a paper bag or hang in a dry, well-ventilated place away from sunlight.</li>
+            <li>Let herbs dry completely until they feel crisp.</li>
+            <li>Crumble into a clean jar and store tightly sealed.</li>
+            <li>Keep in a cool, dark cabinet.</li>
+          </ol>
+          <p><strong>Tip:</strong> Dried herbs are stronger than fresh&mdash;use a smaller amount when cooking.</p>
+
+          <h3>Freezing Herb Cubes (Easy Cooking Shortcut)</h3>
+          <p>This is a great way to save herbs like basil, parsley, cilantro, or celery tops.</p>
+          <p><strong>Steps:</strong></p>
+          <ol>
+            <li>Chop herbs finely in a food processor.</li>
+            <li>Add a small amount of olive oil (and a splash of water if needed) to form a thick paste.</li>
+            <li>Spoon into ice cube trays and freeze overnight.</li>
+            <li>Once frozen, transfer cubes to labeled freezer bags.</li>
+            <li>Return to freezer.</li>
+          </ol>
+          <p><strong>How to use:</strong> Drop a cube directly into soups, sauces, or saut&eacute;s while cooking.</p>
+        </article>
+      </div>
+    </div>
+
+    <aside class="blog-sidebar">
+      <div class="sidebar-block" id="sidebarBrowse">
+        <h3>Browse</h3>
+        <div class="sidebar-category-grid">
+          <button type="button" class="category-card category-card-sm" data-filter="recipes">
+            <span class="category-name">Check out all the recipes</span>
+          </button>
+          <button type="button" class="category-card category-card-sm" data-filter="blog">
+            <span class="category-name">Check out all the blog posts</span>
+          </button>
+          <button type="button" class="category-card category-card-sm" data-filter="edible">
+            <span class="category-name">Check out all the edible articles</span>
+          </button>
+        </div>
+      </div>
+      <div class="sidebar-block" id="sidebarArchives">
         <h3>Archives</h3>
-        <ul>
-          <li><a href="#post-2022-10">October 2022</a></li>
-          <li><a href="#post-2022-06">June 2022</a></li>
-          <li><a href="#post-2022-03">March 2022</a></li>
-          <li><a href="#post-2022-02">February 2022</a></li>
-          <li><a href="#post-2021-12">December 2021</a></li>
-          <li><a href="#post-2021-11">November 2021</a></li>
-          <li><a href="#post-2021-09">September 2021</a></li>
-          <li><a href="#post-2021-08">August 2021</a></li>
+        <ul data-archive="blog">
+          <li><a href="#post-2022-10" data-season="fall">October 2022</a></li>
+          <li><a href="#post-2022-06" data-season="summer">June 2022</a></li>
+          <li><a href="#post-2022-03" data-season="spring">March 2022</a></li>
+          <li><a href="#post-2022-02" data-season="winter">February 2022</a></li>
+          <li><a href="#post-2021-12" data-season="winter">December 2021</a></li>
+          <li><a href="#post-2021-11" data-season="fall">November 2021</a></li>
+          <li><a href="#post-2021-09" data-season="fall">September 2021</a></li>
+          <li><a href="#post-2021-08" data-season="summer">August 2021</a></li>
+        </ul>
+        <ul data-archive="edible">
+          <li><a href="#post-2025-06" data-season="summer">Summer 2025</a></li>
+          <li><a href="#post-2024-12" data-season="winter">Winter 2024</a></li>
+          <li><a href="#post-2024-09" data-season="fall">Fall 2024</a></li>
+          <li><a href="#post-2024-06" data-season="summer">Summer 2024</a></li>
+          <li><a href="#post-2024-03" data-season="spring">Spring 2024</a></li>
+          <li><a href="#post-2023-12" data-season="winter">Winter 2023</a></li>
+          <li><a href="#post-2023-09" data-season="fall">Fall 2023</a></li>
+          <li><a href="#post-2023-06" data-season="summer">Summer 2023</a></li>
         </ul>
       </div>
     </aside>
@@ -947,6 +2463,171 @@
     // Keep the footer copyright year current automatically
     const copyYear = document.getElementById('copyYear');
     if (copyYear) copyYear.textContent = new Date().getFullYear();
+
+    // Category filter: Blog / Edible / Recipes swap what's visible in
+    // place -- no navigation, no page load. Blog and Edible just filter
+    // which .blog-post articles show; Recipes instead swaps the whole
+    // post list out for .recipes-panel (the seasonal recipe browser,
+    // ported in from seasonal-recipes.html). Clicking the active filter
+    // again clears it back to "all posts". The Featured recipes card
+    // has no data-category, so it hides too whenever Blog/Edible is on,
+    // and both it and the rest of the post list hide under Recipes.
+    const allPosts = document.querySelectorAll('.blog-posts > .blog-post');
+    const filterLinks = document.querySelectorAll('[data-filter]');
+    const blogPostsEl = document.querySelector('.blog-posts');
+    const recipesPanel = document.getElementById('recipesPanel');
+    const blogSidebarEl = document.querySelector('.blog-sidebar');
+    const sidebarBrowseEl = document.getElementById('sidebarBrowse');
+    const sidebarArchivesEl = document.getElementById('sidebarArchives');
+    const archiveLists = document.querySelectorAll('.sidebar-block ul[data-archive]');
+    let activeFilter = null;
+
+    function applyFilter(category) {
+      activeFilter = category;
+      const showRecipes = category === 'recipes';
+      if (blogPostsEl) blogPostsEl.hidden = showRecipes;
+      if (recipesPanel) recipesPanel.hidden = !showRecipes;
+      // Recipes has its own season picker built in, so the sidebar has
+      // nothing useful to show there. Otherwise it always has something:
+      // the landing state (no category yet) gets the Browse block --
+      // quick links to jump straight into any category regardless of
+      // which featured post is showing -- and Blog/Edible get their own
+      // Archives block once picked.
+      if (blogSidebarEl) blogSidebarEl.hidden = showRecipes;
+      if (sidebarBrowseEl) sidebarBrowseEl.hidden = category !== null;
+      if (sidebarArchivesEl) sidebarArchivesEl.hidden = category !== 'blog' && category !== 'edible';
+      allPosts.forEach(post => {
+        if (!category) {
+          // Landing state: only the three featured posts show, nothing
+          // else in the list.
+          post.hidden = !post.classList.contains('featured');
+        } else if (showRecipes) {
+          post.hidden = false; // moot -- blogPostsEl itself is hidden
+        } else {
+          post.hidden = post.dataset.category !== category;
+        }
+      });
+      filterLinks.forEach(link => {
+        link.classList.toggle('active', link.dataset.filter === category);
+      });
+      // Only the archive matching the active category shows at all --
+      // nothing (not even both at once) until Blog or Edible is picked.
+      archiveLists.forEach(list => {
+        list.hidden = list.dataset.archive !== category;
+      });
+    }
+
+    filterLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        applyFilter(activeFilter === link.dataset.filter ? null : link.dataset.filter);
+      });
+    });
+
+    // Archive links jump straight to one post by id -- switch to that
+    // archive list's own category first (rather than clearing the filter)
+    // so every post in it, including the target, is visible for the
+    // browser to scroll to and for the reader to keep browsing from.
+    document.querySelectorAll('.sidebar-block a[href^="#post-"]').forEach(link => {
+      link.addEventListener('click', () => {
+        const list = link.closest('ul[data-archive]');
+        applyFilter(list ? list.dataset.archive : null);
+      });
+    });
+
+    // Landing state: only the three featured posts, sidebar hidden --
+    // unless a deep link asks for the recipes panel specifically (other
+    // pages' "recipe" buttons point at the-blog.html#recipes).
+    if (location.hash === '#recipes') {
+      applyFilter('recipes');
+      if (recipesPanel) recipesPanel.scrollIntoView({ behavior: 'auto', block: 'start' });
+    } else {
+      applyFilter(null);
+    }
+
+    // Seasonal recipe browser (ported from seasonal-recipes.html): season
+    // selector swaps which season's blurb + recipe picker is shown;
+    // recipe picker swaps a card out for that recipe's full detail;
+    // storage tips is one shared panel moved into whichever season
+    // opened it. All scoped to #recipesPanel so it only ever runs on
+    // the copy embedded in this page.
+    if (recipesPanel) {
+      const seasonGrid = recipesPanel.querySelector('#seasonGrid');
+      const seasonViews = recipesPanel.querySelectorAll('.season-view');
+      const validSeasons = ['spring', 'summer', 'fall', 'winter'];
+      const storagePanel = recipesPanel.querySelector('#storageTipsPanel');
+
+      function showSeason(season) {
+        seasonViews.forEach(view => {
+          view.hidden = view.dataset.season !== season;
+        });
+        seasonGrid.querySelectorAll('.season-card').forEach(card => {
+          card.classList.toggle('active', card.dataset.season === season);
+        });
+        const view = recipesPanel.querySelector(`.season-view[data-season="${season}"]`);
+        if (view) {
+          const picker = view.querySelector('.recipe-picker');
+          const detail = view.querySelector('.recipe-detail');
+          if (picker) picker.hidden = false;
+          if (detail) detail.hidden = true;
+        }
+        storagePanel.hidden = true;
+      }
+
+      seasonGrid.querySelectorAll('.season-card').forEach(card => {
+        card.addEventListener('click', () => showSeason(card.dataset.season));
+      });
+      showSeason('spring');
+
+      seasonViews.forEach(view => {
+        const picker = view.querySelector('.recipe-picker');
+        const detail = view.querySelector('.recipe-detail');
+        if (!picker || !detail) return;
+        const recipes = detail.querySelectorAll('.recipe');
+        const backBtn = detail.querySelector('.recipe-back');
+
+        picker.querySelectorAll('.recipe-card').forEach(card => {
+          card.addEventListener('click', () => {
+            const id = 'recipe-' + card.dataset.recipe;
+            recipes.forEach(r => { r.hidden = r.id !== id; });
+            picker.hidden = true;
+            detail.hidden = false;
+            detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+        });
+
+        backBtn.addEventListener('click', () => {
+          detail.hidden = true;
+          picker.hidden = false;
+          picker.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+
+      const storageTipsBack = recipesPanel.querySelector('#storageTipsBack');
+      let storageOpenedFrom = null;
+
+      recipesPanel.querySelectorAll('.storage-tips-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const view = btn.closest('.season-view');
+          const picker = view.querySelector('.recipe-picker');
+          const detail = view.querySelector('.recipe-detail');
+          storageOpenedFrom = picker;
+          picker.hidden = true;
+          if (detail) detail.hidden = true;
+          view.appendChild(storagePanel);
+          storagePanel.hidden = false;
+          storagePanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+
+      storageTipsBack.addEventListener('click', () => {
+        storagePanel.hidden = true;
+        if (storageOpenedFrom) {
+          storageOpenedFrom.hidden = false;
+          storageOpenedFrom.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    }
 
     // Dark mode toggle
     const themeToggle = document.getElementById('themeToggle');

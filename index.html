@@ -581,14 +581,14 @@
      Small-caps Fraunces treatment instead ("Made to tell a story"),
      kept as this panel's own distinct look now that the other panel
      titles (including Gallery's) are plain like .section h2. A normal
-     in-flow element, top-anchored by #calendar's own flex settings below
+     in-flow element, top-anchored by #story's own flex settings below
      rather than centered along with the rest of the panel's content (see
-     .calendar-body) -- that's what makes it hug the top edge instead of
+     .story-body) -- that's what makes it hug the top edge instead of
      drifting to the vertical middle with everything else. */
   .heart-title {
-    /* cqw (container query width, see #calendar) instead of vw: sized
+    /* cqw (container query width, see #story) instead of vw: sized
        off the panel's own width, which is what it actually has to fit
-       inside, not the viewport's -- see the #calendar comment below for
+       inside, not the viewport's -- see the #story comment below for
        why those two aren't the same thing here. white-space: nowrap is
        just a safety net now rather than something this size depends on;
        a container-relative size can't outgrow its own container. */
@@ -602,8 +602,8 @@
     margin-bottom: 72px;
   }
 
-  /* #calendar overrides the generic .section centering: the title hugs
-     the top, and everything else centers within whatever vertical space
+  /* #story overrides the generic .section centering: the title hugs
+     the top, and the bio below centers within whatever vertical space
      is left over, rather than the two competing for the same centered
      middle of the whole panel. padding-top matches .hero's own
      padding-top exactly, so the top of the title lines up with the top
@@ -616,24 +616,10 @@
      inside does not, eventually overflowing it. Sizing from the
      container instead makes that impossible: there's no wider "cqw" to
      grow into than the container's own width. */
-  #calendar {
+  #story {
     justify-content: flex-start;
     padding-top: 84px;
     container-type: inline-size;
-  }
-
-  .calendar-body {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    /* flex-start, not center: on a shorter browser window the remaining
-       space after the title can be less than this content actually
-       needs, and centering an overflow means it spills both up and
-       down -- the "up" half lands right on top of the title. This way
-       any real overflow only ever spills downward, into the panel's
-       existing scroll (.panel already has overflow-y: auto). */
-    justify-content: flex-start;
-    min-height: 0;
   }
 
   .heart-title::first-letter {
@@ -654,6 +640,22 @@
     line-height: 1.7;
     color: var(--text-muted);
     font-size: 19px;
+  }
+
+  .story-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 14vh;
+  }
+
+  .story-body p {
+    font-family: var(--ff-display);
+    color: var(--text-muted);
+    line-height: 1.6;
+    max-width: 640px;
+    font-size: 36px;
+    text-align: center;
   }
 
   /* ---------- BUTTON ---------- */
@@ -1090,23 +1092,13 @@
       padding-bottom: 20px;
     }
 
-    /* #calendar keeps its desktop padding-top (84px, same as .hero's own
+    /* #story keeps its desktop padding-top (84px, same as .hero's own
        -- unchanged on mobile too) rather than falling back to .section's
        20px here: that's what actually keeps .heart-title level with the
        hero image's own top edge on a phone, not just on desktop. If that
        leaves less room than the panel's content needs at a given height,
        fitPanelContent (below) already scales the whole thing down to
        fit rather than letting it overflow. */
-
-    /* .heart-title stays pinned to the top (that's the whole point of
-       #calendar's own permanent justify-content:flex-start, so it lines
-       up with the hero image's top edge) -- but .calendar-body is a
-       separate flex item below it with its own flex:1 share of
-       whatever's left, so centering *its* content within that leftover
-       space doesn't move the title at all. Matches every other panel
-       now centering by default instead of leaving the event list
-       stranded at the very top with a slab of empty space under it. */
-    .calendar-body { justify-content: center; }
 
     .section-label { margin-bottom: 10px; }
 
@@ -1351,9 +1343,14 @@
     </header>
 
 
-    <section class="section panel panel-wide" id="calendar">
+    <section class="section panel panel-wide" id="story">
       <div class="heart-title">Made to tell a story...</div>
-      <div class="calendar-body">
+      <div class="story-body">
+        <p>Interwoven, founded by Rhonda M. Fazio, is a venue created by an artist for artists, and it becomes a space to make creativity blossom. It is a gallery for artists, a performance space for musicians and poets, a place to teach a class and learn new skills &mdash; a space where everyone is welcome to create and engage with local artists and their art.</p>
+      </div>
+    </section>
+
+    <section class="section panel panel-wide" id="calendar">
       <div class="section-label">The Calendar</div>
       <div class="section-top-row">
         <h2>Upcoming Events</h2>
@@ -1387,7 +1384,6 @@
         <div class="info-note-label">Pay attention to the location</div>
         <p>Most events are at Interwoven, but La Rhonda's Sea Food at Sunset or events by other artists might be somewhere else. Thank you for your attention :)</p>
       </div>
-      </div>
     </section>
 
 
@@ -1400,7 +1396,7 @@
       </div>
       <div class="btn-row btn-link-block">
         <a href="the-blog.html" class="btn-link">Read the blog</a>
-        <a href="the-blog/recipes/seasonal-recipes.html" class="btn-link">See the recipes</a>
+        <a href="the-blog.html#recipes" class="btn-link">See the recipes</a>
       </div>
     </section>
 
@@ -1410,7 +1406,7 @@
       <h2 id="gallery-tagline">Created by an artist, for artists</h2>
       <div class="space-gallery">
         <div class="ph-photo ph-photo-large" data-photo-label="The main room"><img src="pics/the-venue.jpg" alt="The main room" loading="lazy"></div>
-        <p class="section-body">A venue created by an artist for artists, it becomes a space to make creativity blossom. It is a gallery for artists, a performance space for musicians and poets, a place to teach a class and learn new skills - a space where everyone is welcome to create and engage with local artists and their art.</p>
+        <p class="section-body">Interwoven is a versatile space, and depending on the time, you can see it as a gallery, venue, cafe, meeting space, co-work, or really just a nice place to be.</p>
         <div class="photo-panner">
           <button type="button" class="pan-btn pan-prev" aria-label="Scroll photos left">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>

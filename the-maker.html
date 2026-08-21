@@ -523,6 +523,92 @@
     .artist-row,
     .artist-row.reverse { flex-direction: column; gap: 28px; }
   }
+
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    background: rgba(10,9,8,0.88);
+    cursor: pointer;
+    padding: 24px;
+  }
+  .lightbox.open { display: flex; }
+
+  .lightbox-stage {
+    flex: 0 0 auto;
+    width: min(90vw, 1100px);
+    height: 88vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lightbox-photo {
+    max-width: 100%;
+    max-height: 100%;
+    cursor: default;
+  }
+  .lightbox-photo img {
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+    border-radius: 4px;
+  }
+
+  .lightbox-photo-wrap {
+    position: relative;
+    display: flex;
+  }
+
+  .lightbox-close {
+    position: absolute;
+    z-index: 210;
+    top: -14px;
+    right: -14px;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(10,9,8,0.55);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .lightbox-close:hover { background: rgba(10,9,8,0.8); }
+  .lightbox-close svg { width: 16px; height: 16px; }
+
+  .lightbox-nav {
+    flex: 0 0 auto;
+    z-index: 210;
+    width: 88px;
+    height: 88px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(10,9,8,0.55);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease, opacity 0.2s ease;
+  }
+
+  .lightbox-nav:hover { background: rgba(10,9,8,0.8); }
+  .lightbox-nav svg { width: 40px; height: 40px; }
+
+  .lightbox-nav:disabled {
+    opacity: 0;
+    pointer-events: none;
+  }
+
   .makers-divider {
     margin-top: 96px;
     padding-top: 56px;
@@ -534,6 +620,91 @@
     font-size: 31px;
     margin: 0 0 48px;
   }
+
+  /* Collaborators grid -- 3 per row, photo on top with the link icons
+     sitting between it and the text blurb below, so it scales to many
+     more people than the full-width alternating bio rows above. */
+  .makers-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 48px 40px;
+  }
+  .maker-card-photo {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    background: linear-gradient(155deg, var(--stone) 0%, var(--line) 100%);
+    margin-bottom: 16px;
+  }
+  .maker-card-photo img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+  .maker-card-photo:hover img {
+    transform: scale(1.04);
+    opacity: 0.9;
+  }
+  .maker-card-photo.placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: default;
+  }
+  .maker-card-photo.placeholder span {
+    font-size: 12.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .maker-card-links {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .maker-card-links a {
+    display: flex;
+    color: var(--text);
+    opacity: 0.75;
+    transition: opacity 0.25s ease;
+  }
+  .maker-card-links a:hover { opacity: 1; }
+  .maker-card-links svg { width: 16px; height: 16px; }
+  .maker-card-name {
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-weight: bold;
+    font-size: 21px;
+    margin: 0 0 4px;
+  }
+  .maker-card-medium {
+    font-size: 11.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--label-color);
+    margin: 0 0 10px;
+  }
+  .maker-card-text {
+    color: var(--text-muted);
+    line-height: 1.6;
+    font-size: 15.5px;
+    margin: 0;
+  }
+  .maker-card-text.placeholder-note { font-style: italic; }
+
+  @media (max-width: 1100px) {
+    .makers-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 760px) {
+    .makers-grid { grid-template-columns: 1fr; gap: 32px; }
+  }
+
   .involved {
     text-align: center;
     max-width: 620px;
@@ -613,6 +784,15 @@
     main { padding: 40px 24px 72px; }
     .layout { flex-direction: column; gap: 28px; }
     .layout-photo { width: 100%; }
+
+    .lightbox { gap: 0; }
+    .lightbox-nav {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .lightbox-prev { left: 12px; }
+    .lightbox-next { right: 12px; }
   }
 </style>
 </head>
@@ -721,63 +901,119 @@
 
     <div class="makers-divider">
       <h2 class="makers-heading">Makers Collaborating</h2>
-      <div class="artist-rows">
-      <div class="artist-row reverse">
-        <div class="layout-photo" data-photo-label="Kim Gatesman"><img src="pics/artist-kim.png" alt="Kim Gatesman" loading="lazy"></div>
-        <div class="layout-text">
-          <div class="artist-name-row">
-            <h2 class="artist-name">Kim Gatesman</h2>
-            <div class="artist-links">
-              <a href="https://kimgatesman.com" target="_blank" rel="noopener" aria-label="Kim Gatesman — website">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="12" cy="12" r="9"/>
-                  <path d="M3 12h18M12 3c2.5 2.5 4 6 4 9s-1.5 6.5-4 9c-2.5-2.5-4-6-4-9s1.5-6.5 4-9z"/>
-                </svg>
-              </a>
-              <a href="https://www.instagram.com/kimgatesman_thirdswitchpress" target="_blank" rel="noopener" aria-label="Kim Gatesman — Instagram">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="3" y="3" width="18" height="18" rx="5"/>
-                  <circle cx="12" cy="12" r="4"/>
-                  <circle cx="17.3" cy="6.7" r="1.1" fill="currentColor" stroke="none"/>
-                </svg>
-              </a>
-              <a href="mailto:contact@kimgatesman.com" aria-label="Kim Gatesman — email">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="3" y="5" width="18" height="14" rx="2"/>
-                  <path d="M3 7l9 6 9-6" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </a>
-            </div>
+      <div class="makers-grid">
+        <div class="maker-card">
+          <div class="maker-card-photo" data-photo-label="Margaret"><img src="pics/angel.jpg" alt="Margaret" loading="lazy"></div>
+          <div class="maker-card-links">
+            <a href="mailto:marplbk1693@gmail.com" aria-label="Margaret — email">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="5" width="18" height="14" rx="2"/>
+                <path d="M3 7l9 6 9-6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
           </div>
-          <p class="artist-medium">Painting + Printmaking + Tinkering</p>
-          <p>Kim is a painter, printmaker, and an overall creative with a professional career that spans a range of disciplines and industries over that last 20 years. With numerous bodies of work, Kim covers a variety of genres from realism to abstract, colorful to black and white, and traditional to esoteric, with all showing the same level of skill and dedication across her portfolio. </p>
-          <p>"I care as much about how work is made as why it’s made, therefore the practical foundation for all of my work is a combination of technique, craftsmanship, intent, and process, all of which give my interests something stable on which to grow. However, the primary drive behind why I make art is the desire for a genuinely honest and thoughtful means of expression, full of fascination and wonder. Unsurprisingly then, my work represents the wide variety of subjects and processes that pique my interests and the quirky ways said variety combines in my imagination. "</p>
+          <h3 class="maker-card-name">Margaret</h3>
+          <p class="maker-card-medium">Reupholstery &amp; Restoration</p>
+          <p class="maker-card-text">Silent partner who means the world to us here at Interwoven. Deeply grateful for all the support she has given us. Come ask us about reupholstery and restoration if you want to learn more about her.</p>
         </div>
-      </div>
 
-      <div class="artist-row">
-          <div class="layout-photo" data-photo-label="Margaret"><img src="pics/angel.jpg" alt="Margaret" loading="lazy"></div>
-        <div class="layout-text">
-          <div class="artist-name-row">
-            <h2 class="artist-name">Margaret</h2>
-            <div class="artist-links">
-              <a href="mailto:marplbk1693@gmail.com" aria-label="Margaret — email">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="3" y="5" width="18" height="14" rx="2"/>
-                  <path d="M3 7l9 6 9-6" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </a>
-            </div>
+        <div class="maker-card">
+          <div class="maker-card-photo" data-photo-label="Kim Smith"><img src="pics/artist-kim_smith.jpeg" alt="Kim Smith" loading="lazy"></div>
+          <div class="maker-card-links">
+            <a href="https://sustainabubble.org" target="_blank" rel="noopener" aria-label="Kim Smith — website">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="9"/>
+                <path d="M3 12h18M12 3c2.5 2.5 4 6 4 9s-1.5 6.5-4 9c-2.5-2.5-4-6-4-9s1.5-6.5 4-9z"/>
+              </svg>
+            </a>
+            <a href="mailto:sustainabubbleproject@gmail.com" aria-label="Kim Smith — email">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="5" width="18" height="14" rx="2"/>
+                <path d="M3 7l9 6 9-6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+            <a href="tel:+15088173369" aria-label="Kim Smith — phone">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
           </div>
-          <p class="artist-medium">Reupholstery & Restoration</p>
-          <p>Silent partner who means the world to us here at Interwoven. Deeply grateful for all the support she has given us.</p>
-          <p>Come ask us about reupholstery and restoration if you want to learn more about her.</p>
+          <h3 class="maker-card-name">Kim Smith</h3>
+          <p class="maker-card-medium">Music, Performance &amp; Sustainable Living</p>
+          <p class="maker-card-text">Kim Smith is a multimedia artist and performer who uses creativity to connect people to climate change solutions with her startup, the Sustainabubble Project. When she is not making music as Miss Myth, Kim creates upcycled vertical aquaponic gardens ("Sustainabubbles") and hosts workshops for those curious to grow more of their own survival needs without spending money (or by spending very little).</p>
         </div>
-      </div>
+
+        <div class="maker-card">
+          <div class="maker-card-photo" data-photo-label="Kim Gatesman"><img src="pics/artist-kim.png" alt="Kim Gatesman" loading="lazy"></div>
+          <div class="maker-card-links">
+            <a href="https://kimgatesman.com" target="_blank" rel="noopener" aria-label="Kim Gatesman — website">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="9"/>
+                <path d="M3 12h18M12 3c2.5 2.5 4 6 4 9s-1.5 6.5-4 9c-2.5-2.5-4-6-4-9s1.5-6.5 4-9z"/>
+              </svg>
+            </a>
+            <a href="https://www.instagram.com/kimgatesman_thirdswitchpress" target="_blank" rel="noopener" aria-label="Kim Gatesman — Instagram">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="3" width="18" height="18" rx="5"/>
+                <circle cx="12" cy="12" r="4"/>
+                <circle cx="17.3" cy="6.7" r="1.1" fill="currentColor" stroke="none"/>
+              </svg>
+            </a>
+            <a href="mailto:contact@kimgatesman.com" aria-label="Kim Gatesman — email">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="5" width="18" height="14" rx="2"/>
+                <path d="M3 7l9 6 9-6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+          </div>
+          <h3 class="maker-card-name">Kim Gatesman</h3>
+          <p class="maker-card-medium">Painting + Printmaking + Tinkering</p>
+          <p class="maker-card-text">Kim is a painter, printmaker, and an overall creative with a professional career that spans a range of disciplines and industries over the last 20 years, covering everything from realism to abstract with the same level of skill and dedication.</p>
+        </div>
+
+        <div class="maker-card">
+          <div class="maker-card-photo" data-photo-label="Michael"><img src="pics/artist-michael.png" alt="Michael" loading="lazy"></div>
+          <div class="maker-card-links">
+            <a href="https://www.instagram.com/stoveboatconcerts/?hl=en" target="_blank" rel="noopener" aria-label="Michael — Instagram">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="3" width="18" height="18" rx="5"/>
+                <circle cx="12" cy="12" r="4"/>
+                <circle cx="17.3" cy="6.7" r="1.1" fill="currentColor" stroke="none"/>
+              </svg>
+            </a>
+          </div>
+          <h3 class="maker-card-name">Michael</h3>
+          <p class="maker-card-medium">Music, Performance &amp; Carpentry</p>
+          <p class="maker-card-text">Michael brings a lifelong love of woodworking to Interwoven, building and repairing furniture and fixtures around the space. When he's not building, he's often playing music with the community that gathers here.</p>
+        </div>
+
+        <div class="maker-card">
+          <div class="maker-card-photo placeholder"><span>Daniel</span></div>
+          <h3 class="maker-card-name">Daniel</h3>
+          <p class="maker-card-text placeholder-note">Bio and links coming soon.</p>
+        </div>
       </div>
     </div>
 
   </main>
+
+  <div class="lightbox" id="lightbox">
+    <button type="button" class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous photo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="lightbox-stage">
+      <div class="lightbox-photo-wrap">
+        <div class="lightbox-photo" id="lightboxPhoto"></div>
+        <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+    <button type="button" class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next photo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+
   <footer class="site-footer">
     <div class="footer-weave" id="footerWeave"></div>
     <div class="footer-social">
@@ -877,6 +1113,69 @@
     window.addEventListener('scroll', () => {
       nav.classList.toggle('scrolled', window.scrollY > 40);
     }, { passive: true });
+
+    // Lightbox: click a collaborator's photo to see it larger, click
+    // anywhere outside the enlarged photo (or the X) to close it.
+    // Prev/next pan through the makers grid, stopping at the first/last
+    // photo rather than wrapping around. Placeholder cards (no photo
+    // yet) aren't wired up -- nothing to enlarge.
+    const lightbox = document.getElementById('lightbox');
+    const lightboxPhoto = document.getElementById('lightboxPhoto');
+    const lightboxClose = document.getElementById('lightboxClose');
+    const lightboxPrev = document.getElementById('lightboxPrev');
+    const lightboxNext = document.getElementById('lightboxNext');
+    let lightboxGroup = [];
+    let lightboxIndex = 0;
+
+    function showLightboxPhoto(photo) {
+      const img = photo.querySelector('img');
+      lightboxPhoto.innerHTML = '';
+      const full = document.createElement('img');
+      full.src = img.src;
+      full.alt = photo.dataset.photoLabel || img.alt;
+      lightboxPhoto.appendChild(full);
+      lightboxPrev.disabled = lightboxIndex === 0;
+      lightboxNext.disabled = lightboxIndex === lightboxGroup.length - 1;
+    }
+
+    document.querySelectorAll('.maker-card-photo:not(.placeholder)').forEach(photo => {
+      photo.addEventListener('click', () => {
+        const grid = photo.closest('.makers-grid') || document;
+        lightboxGroup = Array.from(grid.querySelectorAll('.maker-card-photo:not(.placeholder)'));
+        lightboxIndex = lightboxGroup.indexOf(photo);
+        showLightboxPhoto(photo);
+        lightbox.classList.add('open');
+      });
+    });
+
+    document.querySelectorAll('.layout-photo').forEach(photo => {
+      photo.addEventListener('click', () => {
+        lightboxGroup = [photo];
+        lightboxIndex = 0;
+        showLightboxPhoto(photo);
+        lightbox.classList.add('open');
+      });
+    });
+
+    function stepLightbox(delta) {
+      const next = lightboxIndex + delta;
+      if (next < 0 || next >= lightboxGroup.length) return;
+      lightboxIndex = next;
+      showLightboxPhoto(lightboxGroup[lightboxIndex]);
+    }
+    lightboxPrev.addEventListener('click', () => stepLightbox(-1));
+    lightboxNext.addEventListener('click', () => stepLightbox(1));
+    lightboxClose.addEventListener('click', () => lightbox.classList.remove('open'));
+
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) lightbox.classList.remove('open');
+    });
+    document.addEventListener('keydown', (e) => {
+      if (!lightbox.classList.contains('open')) return;
+      if (e.key === 'Escape') lightbox.classList.remove('open');
+      if (e.key === 'ArrowLeft') stepLightbox(-1);
+      if (e.key === 'ArrowRight') stepLightbox(1);
+    });
   </script>
 </body>
 </html>

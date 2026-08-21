@@ -278,7 +278,7 @@
   }
   .back-link {
     display: inline-block;
-    font-size: 12.5px;
+    font-size: 15px;
     letter-spacing: 0.06em;
     color: var(--text-muted);
     text-decoration: underline;
@@ -299,6 +299,7 @@
      using real text instead of a photo of the printed page. */
   .season-intro {
     background: var(--line);
+    border: 2px solid var(--season-color, var(--line));
     border-radius: 6px;
     padding: 48px 40px;
     margin-bottom: 64px;
@@ -314,22 +315,26 @@
   .season-quote {
     font-family: "Papyrus Local", "Papyrus", fantasy;
     font-style: italic;
-    font-size: 23px;
-    line-height: 1.5;
-    text-align: center;
-    max-width: 560px;
-    margin: 0 auto 24px;
+    font-size: 24px;
+    line-height: 1.6;
+    margin: 0 0 18px;
   }
+  /* This whole block is one continuous Rhonda quote (opening line,
+     body, signature) -- it needs to stay in the same italic Papyrus
+     voice all the way through instead of the body paragraphs falling
+     back to the plain Goudos body font partway in. */
   .season-intro p {
+    font-family: "Papyrus Local", "Papyrus", fantasy;
+    font-style: italic;
     color: var(--text-muted);
-    line-height: 1.75;
-    font-size: 15px;
+    line-height: 1.6;
+    font-size: 24px;
     margin: 0 0 18px;
   }
   .season-signature {
     font-family: "Papyrus Local", "Papyrus", fantasy;
     font-style: italic;
-    font-size: 22px;
+    font-size: 24px;
     text-align: center;
     color: var(--text) !important;
     margin: 24px 0 0 !important;
@@ -514,7 +519,7 @@
     .recipe-picker { grid-template-columns: 1fr; }
     .season-intro { padding: 32px 24px; }
     .season-intro-title { font-size: 32px; }
-    .season-quote { font-size: 17px; }
+    .season-quote, .season-intro p, .season-signature { font-size: 18px; }
   }
 
   /* ---------- SEASONAL RECIPES: season selector + per-season color ----------
@@ -839,6 +844,14 @@
         <span class="recipe-card-name">La Rhonda's Blueberry Soda</span>
         <span class="recipe-card-serves">Makes about 1&frac12;-2 cups syrup</span>
       </button>
+      <button type="button" class="recipe-card" data-recipe="ceviche-de-pulpo">
+        <span class="recipe-card-name">Ceviche de Pulpo</span>
+        <span class="recipe-card-serves">Serves: 2-3</span>
+      </button>
+      <button type="button" class="recipe-card" data-recipe="deep-purple-stuffies">
+        <span class="recipe-card-name">Deep Purple &ldquo;Stuffies&rdquo; &mdash; Baked Clams on the Half Shell</span>
+        <span class="recipe-card-serves">Serves: 6 people, two clams each</span>
+      </button>
     </div>
 
     <div class="recipe-detail" hidden>
@@ -962,9 +975,78 @@
         <p>Mix 2&ndash;4 tablespoons of blueberry syrup with soda water, seltzer, or mineral water to taste.</p>
         <h3>Serving Tip</h3>
         <p>Serve over ice and garnish with fresh blueberries, lemon, or lime slices.</p>
+        <h3>Variation</h3>
+        <p>Swap out the blueberries for mulberries or any other fruit in season&mdash;the same method works for a variety of different summer sodas.</p>
         <h3>Cook's Note</h3>
         <p>This syrup also works well in cocktails or mocktails. Adjust sweetness by adding more or less syrup depending on your taste.</p>
         <p>Makes enough syrup for approximately 12&ndash;16 drinks.</p>
+      </article>
+
+      <article class="recipe" id="recipe-ceviche-de-pulpo" hidden>
+        <h2>Ceviche de Pulpo</h2>
+        <p class="recipe-desc">Octopus ceviche brightened with lime, sweet peppers, and cilantro &mdash; the acid of the lime cooks the meat, just like the other ingredients finish the dish. Served with a side of sweet potato and corn as close as you can get to the authenticity of the Peruvian dish.</p>
+        <span class="recipe-serves">Serves: 2-3</span>
+        <h3>Ingredients</h3>
+        <ul>
+          <li>1 to 2 pounds octopus meat, thawed in fridge, legs only (remove and discard head and beak, may be used)</li>
+          <li>1 cup freshly squeezed lime juice</li>
+          <li>1 small red onion (shallot or scallion may be used)</li>
+          <li>1 thinly sliced hot pepper of choice, or mild sweet bell pepper</li>
+          <li>A few sprigs of fresh cilantro, to taste</li>
+          <li>Salt and pepper, to taste</li>
+          <li>&frac14; to &frac12; cup extra virgin olive oil (add oil just before serving)</li>
+        </ul>
+        <h3>Instructions</h3>
+        <ol>
+          <li>Bring a medium pot of water to a boil. Drop in the octopus and blanch for one minute. Remove from pot and submerge in ice cold water until cool.</li>
+          <li>Slice the legs into quarter-inch pieces, put in a large bowl.</li>
+          <li>Add lime juice. Add more to evenly coat the octopus slices if needed. Add the rest of the ingredients except the oil.</li>
+          <li>Toss, cover, and place in the refrigerator for 2 hours.</li>
+          <li>Add oil before serving. Toss and season to taste.</li>
+          <li>Spoon ceviche into a bowl and serve with tortillas and guacamole.</li>
+        </ol>
+        <h3>Serving Options</h3>
+        <p>As a light lunch or dinner, serve with corn on the cob and sweet potato. This is a popular combo in Peru!</p>
+        <h3>Please Note</h3>
+        <p>Consuming raw or undercooked meats, poultry, seafood, shellfish, or eggs may increase your risk of foodborne illness, especially if you have certain medical conditions.</p>
+        <h3>Note</h3>
+        <p>If you cannot find raw octopus, then cooked frozen can be used and the dish becomes more of a ceviche-style versus a straightforward ceviche.</p>
+      </article>
+
+      <article class="recipe" id="recipe-deep-purple-stuffies" hidden>
+        <h2>Deep Purple &ldquo;Stuffies&rdquo; &mdash; Baked Clams on the Half Shell</h2>
+        <p class="recipe-desc">Local top neck quahog clams, simmered open, then stuffed with a lightly toasted breadcrumb filling and baked until golden &mdash; a South Coast summer classic, inspired by a lifetime of digging for quahogs with family.</p>
+        <span class="recipe-serves">Serves: 6 people, two clams each</span>
+        <h3>Ingredients</h3>
+        <ul>
+          <li>12 raw top neck quahog clams (be sure all the clams are closed &mdash; if the shells are open, they are not safe for consumption, though you may want to save the shell for its color. Scrub the excess mud off the clam and rinse.)</li>
+          <li>2 teaspoons of salt</li>
+          <li>2 quarts of water</li>
+          <li>2 tablespoons of corn meal</li>
+          <li>1 tablespoon of butter</li>
+          <li>1 tablespoon olive oil</li>
+          <li>1 shallot, minced</li>
+          <li>1 whole garlic clove</li>
+          <li>1 cup of breadcrumbs (Italian seasoning or plain) or Ritz crackers if preferred</li>
+          <li>1 teaspoon freshly chopped flat-leaf parsley</li>
+          <li>Salt and pepper, to taste</li>
+          <li>Hot pepper flakes, if desired</li>
+          <li>One lemon (to include 1 teaspoon of lemon juice and 6 lemon wedges)</li>
+          <li>1 to 2 sprigs of flat-leaf parsley</li>
+        </ul>
+        <h3>Instructions</h3>
+        <ol>
+          <li>Soak the clams in a saltwater solution of 2 teaspoons of salt, two quarts of water, and 2 tablespoons of corn meal for 30 to 60 minutes.</li>
+          <li>Put clams in a bowl with fresh, running water to rinse.</li>
+          <li>Place the clams in a skillet with an inch or two of water, cover, and simmer until the clams open, 5 to 10 minutes. Remove and allow to cool.</li>
+          <li>Save the clam juice from simmering and pour into a large jar or measuring cup, allowing the sediment to settle. Set aside.</li>
+          <li>In a skillet on medium heat, melt the butter and olive oil gently. Do not let it burn or smoke. Add minced shallot and the whole garlic clove, saut&eacute; until translucent, then remove the garlic clove. Add the breadcrumbs and toast lightly. Add clam juice to moisten as needed, &frac14; cup at a time to avoid making a soggy mess. (Freeze the remainder of the clam juice for another recipe.)</li>
+          <li>Mix and season with salt and pepper to taste. Add hot pepper flakes if desired.</li>
+          <li>Assemble the clam shells on a baking sheet by separating the shells, keeping the whole clams intact. With a knife, release the muscle if needed, and place the clams in a small bowl.</li>
+          <li>Season the clams with a light drizzle of olive oil, 1 tablespoon of lemon juice, a pinch of salt and pepper, and 1 teaspoon of freshly chopped flat-leaf parsley. Toss to coat and place in shells. Top with the breadcrumb mixture to evenly distribute the crumbs and bake for 20 to 25 minutes, or until golden brown and toasty.</li>
+          <li>Serve with one fresh lemon wedge per plate and top with a sprinkle of fresh parsley.</li>
+        </ol>
+        <p><em>Disfruta! Enjoy!</em></p>
       </article>
     </div>
     </section>
@@ -996,6 +1078,10 @@
       <button type="button" class="recipe-card" data-recipe="shepherds-pie">
         <span class="recipe-card-name">Thanksgiving Shepherd's Pie</span>
         <span class="recipe-card-serves">Serves: 2-4</span>
+      </button>
+      <button type="button" class="recipe-card" data-recipe="acorn-flour">
+        <span class="recipe-card-name">Acorn Flour &mdash; Cold Leaching Method</span>
+        <span class="recipe-card-serves">Yield: varies by batch</span>
       </button>
     </div>
 
@@ -1118,6 +1204,32 @@
         <h3>Freezer Tip</h3>
         <p>Freeze extra portions for an easy meal later in the season. Reheat in the oven or microwave until warmed through.</p>
       </article>
+
+      <article class="recipe" id="recipe-acorn-flour" hidden>
+        <h2>Acorn Flour &mdash; Cold Leaching Method</h2>
+        <p class="recipe-desc">Inspired by Euell Gibbons. A foraged flour made from acorns, leached of their bitter tannic acid, then dried and ground &mdash; use it in a 1:1 ratio with regular white flour in your favorite baking recipes.</p>
+        <span class="recipe-serves">Yield: varies by batch</span>
+        <h3>Ingredients</h3>
+        <ul>
+          <li>Fresh acorns, ideally from a White Oak tree (least bitter)</li>
+          <li>Water</li>
+        </ul>
+        <h3>Instructions</h3>
+        <ol>
+          <li>Collect acorns. (All acorns are good to use but need to be leached of their tannic acid to become edible.) Remove any with cracks or holes. Put the acorns in a bowl and fill with water. Remove any that float.</li>
+          <li>Dry, then hammer to open. Discard the shells. Transfer the acorn meat to a bowl.</li>
+          <li>Put 2 cups of the acorns in a blender or food processor to coarsely grind, adding a little water as needed until finely chopped. Rinse through a colander lined with a fine cloth, squeezing and repeating several times. Taste for bitterness and keep rinsing until it should do.</li>
+          <li>On a parchment-lined cookie sheet, dry the leached acorns in a slow oven set at 250&deg;F until dry. Drying time varies depending on the size of the acorn bits &mdash; check after 20 minutes the first time, then every 10 to 15 minutes afterward. Document your time, because every oven is different.</li>
+          <li>Return the dried acorn meal to the blender or food processor and mix until finely ground.</li>
+          <li>Store in a glass jar in the refrigerator, or freeze in measured amounts to accommodate recipe conversion.</li>
+          <li>Use acorn flour in a 1:1 ratio with regular white flour in your favorite baking recipes.</li>
+        </ol>
+        <h3>Note</h3>
+        <p>Instead of cold leaching, you can roughly chop the acorns and boil them to leach out the bitterness. Boil and drain until the water is clear and the bitterness is gone, then follow the drying and grinding steps above.</p>
+        <h3>Author's Note</h3>
+        <p>Use <em>Peterson</em> and <em>Golden</em> guides to cross-reference plant identification. When foraging, always use three references. One should always be aware of potentially poisonous plants from your region.</p>
+        <p><em>Happy foraging! Disfruta!</em></p>
+      </article>
     </div>
     </section>
     <section class="season-view" data-season="winter" hidden>
@@ -1148,6 +1260,10 @@
       <button type="button" class="recipe-card" data-recipe="sweet-potato-rounds">
         <span class="recipe-card-name">Roasted Sweet Potato Rounds with Honey &amp; Feta</span>
         <span class="recipe-card-serves">Serves: 2-4 as a side dish</span>
+      </button>
+      <button type="button" class="recipe-card" data-recipe="gingerbread-people">
+        <span class="recipe-card-name">Gingerbread People</span>
+        <span class="recipe-card-serves">Makes about 2 dozen cookies</span>
       </button>
     </div>
 
@@ -1297,6 +1413,47 @@
           <li>Add a light dusting of smoked paprika for a savory twist.</li>
           <li>For a dairy-free version, omit the feta or substitute a plant-based cheese.</li>
         </ul>
+      </article>
+
+      <article class="recipe" id="recipe-gingerbread-people" hidden>
+        <h2>Gingerbread People</h2>
+        <p class="recipe-desc">Classic spiced gingerbread cookies with a simple piped icing &mdash; a fun, creative snow day activity, decorated with your favorite sprinkles or candy.</p>
+        <span class="recipe-serves">Makes about 2 dozen cookies</span>
+        <h3>Ingredients</h3>
+        <ul>
+          <li>2&frac14; cups flour</li>
+          <li>&frac12; cup sugar</li>
+          <li>&frac12; cup molasses</li>
+          <li>1 egg</li>
+          <li>&frac12; cup butter</li>
+          <li>1 teaspoon each ground ginger and cloves</li>
+          <li>&frac12; teaspoon each ground cinnamon, cardamom, and nutmeg</li>
+          <li>1 teaspoon baking soda</li>
+          <li>&frac12; teaspoon baking powder</li>
+          <li>&frac12; teaspoon salt</li>
+        </ul>
+        <h3>Icing</h3>
+        <ul>
+          <li>1&frac34; cups confectioners' sugar</li>
+          <li>&frac18; teaspoon cream of tartar</li>
+          <li>&frac14; cup water</li>
+          <li>Drop of vanilla extract</li>
+        </ul>
+        <h3>Instructions</h3>
+        <ol>
+          <li>Preheat the oven to 350&deg;F.</li>
+          <li>Combine all the cookie ingredients in a bowl and mix on medium speed with a hand mixer, or use a wooden spoon, until well mixed. Form into a ball and refrigerate for an hour.</li>
+          <li>Working on a lightly floured surface, cut the ball of dough into 4 pieces. Roll out to about &#8539;-inch thickness.</li>
+          <li>Cut into gingerbread people (or your favorite shapes) using cookie cutters.</li>
+          <li>Using a spatula, transfer to a cookie sheet lined with parchment paper.</li>
+          <li>Bake for about 8 minutes, watching closely minute by minute so they don't burn.</li>
+          <li>Transfer to a wire rack and cool completely before icing and decorating.</li>
+        </ol>
+        <h3>For the Icing</h3>
+        <p>In a small bowl, sift the confectioners' sugar and cream of tartar. Mix in the water and vanilla extract to form a smooth, creamy icing &mdash; adjust with more confectioners' sugar or water until it's slightly thinner than peanut butter, not so thin that it drips. Pipe onto the cooled gingerbread people and decorate with your favorite sprinkles or candy.</p>
+        <h3>Cook's Note</h3>
+        <p>If using raisins for decorating, press them into the raw dough before baking rather than adding them after.</p>
+        <p><em>Desfruta! Enjoy!</em></p>
       </article>
     </div>
     </section>

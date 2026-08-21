@@ -380,6 +380,91 @@
     object-fit: cover;
     display: block;
   }
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    background: rgba(10,9,8,0.88);
+    cursor: pointer;
+    padding: 24px;
+  }
+  .lightbox.open { display: flex; }
+
+  .lightbox-stage {
+    flex: 0 0 auto;
+    width: min(90vw, 1100px);
+    height: 88vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lightbox-photo {
+    max-width: 100%;
+    max-height: 100%;
+    cursor: default;
+  }
+  .lightbox-photo img {
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+    border-radius: 4px;
+  }
+
+  .lightbox-photo-wrap {
+    position: relative;
+    display: flex;
+  }
+
+  .lightbox-close {
+    position: absolute;
+    z-index: 210;
+    top: -14px;
+    right: -14px;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(10,9,8,0.55);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .lightbox-close:hover { background: rgba(10,9,8,0.8); }
+  .lightbox-close svg { width: 16px; height: 16px; }
+
+  .lightbox-nav {
+    flex: 0 0 auto;
+    z-index: 210;
+    width: 88px;
+    height: 88px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(10,9,8,0.55);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease, opacity 0.2s ease;
+  }
+
+  .lightbox-nav:hover { background: rgba(10,9,8,0.8); }
+  .lightbox-nav svg { width: 40px; height: 40px; }
+
+  .lightbox-nav:disabled {
+    opacity: 0;
+    pointer-events: none;
+  }
+
   .layout-text {
     flex: 1 1 50%;
   }
@@ -461,6 +546,7 @@
     height: 240px;
     border-radius: 4px;
     overflow: hidden;
+    cursor: pointer;
     background: linear-gradient(155deg, var(--stone) 0%, var(--line) 100%);
   }
   .shop-item-photo img {
@@ -470,6 +556,23 @@
     height: 100%;
     object-fit: cover;
     display: block;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+  .shop-item-photo:hover img {
+    transform: scale(1.04);
+    opacity: 0.9;
+  }
+  .shop-item-photo.placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: default;
+  }
+  .shop-item-photo.placeholder span {
+    font-size: 12.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
   }
   .shop-item-info h3 {
     font-family: "Papyrus Local", "Papyrus", fantasy;
@@ -495,7 +598,7 @@
     color: var(--text-muted);
     line-height: 1.7;
     font-size: 18px;
-    margin: 0;
+    margin: 0 0 24px;
   }
 
   /* Services table -- same paper/line/Papyrus language as the rest of
@@ -681,6 +784,15 @@
     .shop-hours h3 { font-size: 14px; }
     .shop-hours p { font-size: 12px; }
     .shop-services-table th, .shop-services-table td { padding: 10px 12px; font-size: 13px; }
+
+    .lightbox { gap: 0; }
+    .lightbox-nav {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .lightbox-prev { left: 12px; }
+    .lightbox-next { right: 12px; }
   }
 </style>
 </head>
@@ -754,6 +866,7 @@
       <div class="shop-main">
         <h2 class="shop-goods-heading">The Goods</h2>
         <h1 class="shop-donation-note">Everything is suggested donation.</h1>
+        <h1 class="shop-donation-note">Stop by or contact us to coordinate purchases</h1>
 
         <h2 class="shop-category">Fabric</h2>
         <div class="shop-grid">
@@ -824,10 +937,30 @@
           </div>
         </div>
 
-        <h2 class="shop-category">Other Work</h2>
+        <h2 class="shop-category">Work from Collaborators</h2>
         <p class="shop-other-note">Work from other artists might be available -- soaps, frames, furniture, glassware, fabric... you name it. These goods will need to be seen at the gallery and price discussed with an artist in residence.</p>
+        <div class="shop-grid">
+          <div class="shop-item">
+            <div class="shop-item-photo" data-photo-label="Bill - Wood carvings"><img src="pics/artist-bill-carvings.jpeg" alt="Bill - Wood carvings" loading="lazy"></div>
+            <div class="shop-item-info">
+              <h3>Bill - Wood carvings</h3>
+            </div>
+          </div>
+          <div class="shop-item">
+            <div class="shop-item-photo" data-photo-label="Kim Smith - Massages"><img src="pics/artist-kim_smith-massage.jpg" alt="Kim Smith - Massages" loading="lazy"></div>
+            <div class="shop-item-info">
+              <h3>Kim Smith - Massages</h3>
+            </div>
+          </div>
+          <div class="shop-item">
+            <div class="shop-item-photo" data-photo-label="Daniel - Designer Clothing"><img src="pics/artist-daniel-clothing.jpeg" alt="Daniel - Designer Clothing" loading="lazy"></div>
+            <div class="shop-item-info">
+              <h3>Daniel - Designer Clothing</h3>
+            </div>
+          </div>
+        </div>
 
-        <h2 class="shop-category">The Services</h2>
+        <h2 class="shop-category" id="services">The Services</h2>
         <div class="shop-services-wrap">
           <table class="shop-services-table">
             <thead>
@@ -895,6 +1028,23 @@
       <a href="#donate" class="btn-link">Donate</a>
     </div>
   </main>
+
+  <div class="lightbox" id="lightbox">
+    <button type="button" class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous photo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="lightbox-stage">
+      <div class="lightbox-photo-wrap">
+        <div class="lightbox-photo" id="lightboxPhoto"></div>
+        <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+    <button type="button" class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next photo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
 
   <footer class="site-footer">
     <div class="footer-weave" id="footerWeave"></div>
@@ -995,6 +1145,79 @@
     window.addEventListener('scroll', () => {
       nav.classList.toggle('scrolled', window.scrollY > 40);
     }, { passive: true });
+
+    // Reliably jump to a #hash target on load -- scroll-behavior:smooth
+    // combined with the fixed navbar can otherwise cause the browser's
+    // automatic fragment scroll to land at the top of the page instead.
+    if (location.hash) {
+      const jumpTarget = document.querySelector(location.hash);
+      if (jumpTarget) {
+        requestAnimationFrame(() => jumpTarget.scrollIntoView({ block: 'start' }));
+      }
+    }
+
+    // Lightbox: click any photo to see it larger, click anywhere outside
+    // the enlarged photo (or the X) to close it. Prev/next pan through
+    // the photos in that same shop-grid, stopping at the first/last
+    // photo rather than wrapping around. Placeholder cards (no photo
+    // yet) aren't wired up -- nothing to enlarge.
+    const lightbox = document.getElementById('lightbox');
+    const lightboxPhoto = document.getElementById('lightboxPhoto');
+    const lightboxClose = document.getElementById('lightboxClose');
+    const lightboxPrev = document.getElementById('lightboxPrev');
+    const lightboxNext = document.getElementById('lightboxNext');
+    let lightboxGroup = [];
+    let lightboxIndex = 0;
+
+    function showLightboxPhoto(photo) {
+      const img = photo.querySelector('img');
+      lightboxPhoto.innerHTML = '';
+      const full = document.createElement('img');
+      full.src = img.src;
+      full.alt = photo.dataset.photoLabel || img.alt;
+      lightboxPhoto.appendChild(full);
+      lightboxPrev.disabled = lightboxIndex === 0;
+      lightboxNext.disabled = lightboxIndex === lightboxGroup.length - 1;
+    }
+
+    document.querySelectorAll('.shop-item-photo:not(.placeholder)').forEach(photo => {
+      photo.addEventListener('click', () => {
+        const grid = photo.closest('.shop-grid') || document;
+        lightboxGroup = Array.from(grid.querySelectorAll('.shop-item-photo:not(.placeholder)'));
+        lightboxIndex = lightboxGroup.indexOf(photo);
+        showLightboxPhoto(photo);
+        lightbox.classList.add('open');
+      });
+    });
+
+    document.querySelectorAll('.layout-photo').forEach(photo => {
+      photo.addEventListener('click', () => {
+        lightboxGroup = [photo];
+        lightboxIndex = 0;
+        showLightboxPhoto(photo);
+        lightbox.classList.add('open');
+      });
+    });
+
+    function stepLightbox(delta) {
+      const next = lightboxIndex + delta;
+      if (next < 0 || next >= lightboxGroup.length) return;
+      lightboxIndex = next;
+      showLightboxPhoto(lightboxGroup[lightboxIndex]);
+    }
+    lightboxPrev.addEventListener('click', () => stepLightbox(-1));
+    lightboxNext.addEventListener('click', () => stepLightbox(1));
+    lightboxClose.addEventListener('click', () => lightbox.classList.remove('open'));
+
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) lightbox.classList.remove('open');
+    });
+    document.addEventListener('keydown', (e) => {
+      if (!lightbox.classList.contains('open')) return;
+      if (e.key === 'Escape') lightbox.classList.remove('open');
+      if (e.key === 'ArrowLeft') stepLightbox(-1);
+      if (e.key === 'ArrowRight') stepLightbox(1);
+    });
   </script>
 </body>
 </html>
