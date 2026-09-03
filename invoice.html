@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Invoice — Interwoven / Dyer Maker Studio</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@300;500;600&family=Work+Sans:wght@300;400;500&family=Tangerine:wght@400;700&display=swap');
+
+  /* Studio faces, same as the rest of the site. If these .ttf files are
+     present (img/), the invoice matches the site display font exactly; if
+     not, it falls back to Fraunces/Georgia and still looks right. */
+  @font-face {
+    font-family: "Papyrus Local";
+    src: url('img/Papyrus-Font.ttf') format('truetype');
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "Goudos";
+    src: url('img/Goudos.ttf') format('truetype');
+    font-display: swap;
+  }
+
+  :root {
+    --ink: #1a1816;
+    --ivory: #f6f2ea;
+
+    --leaf-red:    #ed1a24;
+    --leaf-yellow: #fef100;
+    --leaf-blue:   #2e3093;
+
+    --burgundy: #da1a23;
+    --gold:     #77710d;
+    --indigo:   #2e3093;
+    --stone:    #8a857c;
+    --line: rgba(26,24,22,0.12);
+
+    --ff-display: "Papyrus Local", "Papyrus", "Fraunces", Georgia, serif;
+    --ff-body: "Goudos", "Fraunces", Georgia, serif;
+    --ff-script: "Tangerine", "Allura", cursive;
+
+    --text: var(--ink);
+    --text-muted: #4a4640;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--ff-body);
+    color: var(--ink);
+    background: #e9e4d9;
+    font-weight: 400;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* ============================================================
+     TOOLBAR — screen only, hidden when printing
+     ============================================================ */
+  .toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    padding: 14px 20px;
+    background: var(--ink);
+    color: var(--ivory);
+  }
+  .toolbar .tb-title {
+    font-family: var(--ff-display);
+    font-size: 17px;
+    letter-spacing: 0.04em;
+    margin-right: auto;
+  }
+  .toolbar button {
+    font-family: var(--ff-body);
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ivory);
+    background: transparent;
+    border: 1px solid rgba(246,242,234,0.5);
+    padding: 9px 16px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .toolbar button:hover { background: var(--ivory); color: var(--ink); }
+  .toolbar button.primary { background: var(--indigo); border-color: var(--indigo); }
+  .toolbar button.primary:hover { background: #3f42c4; color: var(--ivory); }
+  .toolbar .hint {
+    width: 100%;
+    font-size: 12px;
+    color: rgba(246,242,234,0.7);
+    letter-spacing: 0.02em;
+  }
+
+  /* ============================================================
+     SHEET
+     ============================================================ */
+  .sheet-wrap { padding: 28px 16px 60px; display: flex; justify-content: center; }
+
+  .sheet {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 13mm 20mm 14mm;
+    background: var(--ivory);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+  }
+
+  /* editable fields look like plain text until hovered/focused */
+  [contenteditable] {
+    outline: none;
+    border-radius: 2px;
+    transition: background 0.12s ease, box-shadow 0.12s ease;
+  }
+  [contenteditable]:hover {
+    background: rgba(46,48,147,0.06);
+    box-shadow: 0 0 0 3px rgba(46,48,147,0.06);
+  }
+  [contenteditable]:focus {
+    background: rgba(46,48,147,0.10);
+    box-shadow: 0 0 0 3px rgba(46,48,147,0.12);
+  }
+
+  /* ---------- rules ---------- */
+  .rule { border: none; border-top: 1px solid var(--ink); margin: 14px 0; }
+  .rule.accent { border-top: 2px solid var(--ink); }
+
+  /* ---------- header ---------- */
+  .head { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
+  .brand { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .brand img.rmf  { width: 60px; height: 60px; display: block; }
+
+  .doc-title { text-align: right; flex-shrink: 0; }
+  .doc-title h1 {
+    font-family: var(--ff-display);
+    font-weight: 300;
+    font-size: 20px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .doc-title .inv-no { margin-top: 8px; font-size: 12.5px; letter-spacing: 0.1em; color: var(--text-muted); }
+
+  /* ---------- meta ---------- */
+  .meta { display: flex; justify-content: space-between; gap: 40px; }
+  .meta .block { flex: 1; }
+  .label {
+    font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 8px;
+  }
+  .meta .block p { font-size: 13.5px; line-height: 1.65; }
+  .meta .block .name { font-weight: 500; color: var(--ink); }
+  .meta .block.right { flex: 1; text-align: right; }
+
+  .dates { display: flex; gap: 40px; justify-content: flex-end; }
+  .dates .item { text-align: right; }
+  .dates .item .k {
+    font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 4px;
+  }
+  .dates .item .v { font-family: var(--ff-body); font-size: 15px; }
+
+  /* ---------- line items ---------- */
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--gold); font-weight: 500; text-align: left; padding: 0 0 8px;
+  }
+  thead th.num { text-align: right; }
+  thead th.act { width: 26px; }
+  tbody td {
+    font-size: 13.5px; padding: 8px 0;
+    border-bottom: 1px solid var(--line); vertical-align: top;
+  }
+  tbody td.desc { padding-right: 16px; }
+  tbody td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  tbody td.num.amt { padding-left: 10px; }
+  tbody tr:first-child td { border-top: 1px solid var(--line); }
+  /* per-row delete control */
+  td.act { width: 26px; text-align: center; padding-left: 6px; }
+  td.act button {
+    border: none; background: none; cursor: pointer;
+    color: var(--stone); font-size: 16px; line-height: 1;
+    padding: 2px 4px; border-radius: 3px;
+  }
+  td.act button:hover { color: var(--burgundy); background: rgba(218,26,35,0.08); }
+
+  /* ---------- sections ---------- */
+  .section { margin-bottom: 14px; }
+  .section-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .section-name {
+    font-family: var(--ff-display); font-size: 14px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--ink);
+  }
+  .section-head .removeSection {
+    border: none; background: none; cursor: pointer;
+    color: var(--stone); font-size: 16px; line-height: 1;
+    padding: 2px 6px; border-radius: 3px;
+  }
+  .section-head .removeSection:hover { color: var(--burgundy); background: rgba(218,26,35,0.08); }
+
+  .section-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; }
+  .section-subtotal { display: flex; gap: 12px; font-size: 12.5px; }
+  .section-subtotal .k {
+    color: var(--text-muted); text-transform: uppercase;
+    letter-spacing: 0.1em; font-size: 10.5px; align-self: center;
+  }
+  .section-subtotal .v { font-variant-numeric: tabular-nums; font-weight: 500; }
+
+  .addLine, #addSection {
+    font-family: var(--ff-body);
+    font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--indigo); background: none; border: 1px dashed rgba(46,48,147,0.4);
+    padding: 8px 14px; border-radius: 3px; cursor: pointer;
+  }
+  .addLine:hover, #addSection:hover { background: rgba(46,48,147,0.06); }
+  #addSection { color: var(--ink); border-color: var(--stone); }
+  #addSection:hover { background: rgba(26,24,22,0.05); }
+  .add-section-wrap { margin-top: 4px; }
+
+  /* ---------- totals ---------- */
+  .totals { display: flex; justify-content: flex-end; }
+  .totals .box { width: 46%; }
+  .totals .row { display: flex; justify-content: space-between; font-size: 13.5px; padding: 5px 0; }
+  .totals .row .k { color: var(--text-muted); }
+  .totals .row .v { font-variant-numeric: tabular-nums; }
+  .totals .row.grand { border-top: 1.5px solid var(--ink); margin-top: 4px; padding-top: 9px; }
+  .totals .row.grand .k {
+    font-family: var(--ff-display); font-size: 16px; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--ink);
+  }
+  .totals .row.grand .v { font-family: var(--ff-body); font-size: 20px; color: var(--indigo); }
+
+  /* ---------- footer ---------- */
+  .pay { display: flex; justify-content: space-between; gap: 40px; }
+  .pay .block { flex: 1; }
+  .pay .block p { font-size: 12.5px; line-height: 1.7; color: var(--text-muted); }
+  .pay .block p.crypto {
+    margin-top: 8px; font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 10px; line-height: 1.8; word-break: break-all;
+  }
+  .pay .block p.crypto .ck {
+    display: inline-block; min-width: 30px; font-weight: 600;
+    font-family: var(--ff-body); color: var(--ink);
+  }
+  .thanks {
+    font-family: var(--ff-script); font-size: 40px; color: var(--ink);
+    text-align: center; margin-top: 14px; line-height: 1;
+  }
+
+  /* ============================================================
+     PRINT
+     ============================================================ */
+  @page { size: A4; margin: 0; }
+  @media print {
+    body { background: var(--ivory); }
+    .toolbar { display: none !important; }
+    .sheet-wrap { padding: 0; }
+    .sheet { box-shadow: none; width: 210mm; min-height: 297mm; }
+    [contenteditable]:hover, [contenteditable]:focus { background: none; box-shadow: none; }
+    td.act, thead th.act { display: none !important; }
+    .removeSection, .addLine, .add-section-wrap { display: none !important; }
+    .section { break-inside: avoid; }
+  }
+
+  @media screen and (max-width: 800px) {
+    .sheet { width: 100%; padding: 24px 18px; min-height: 0; }
+    .head { flex-direction: column; }
+    .doc-title { text-align: left; }
+    .meta, .pay { flex-direction: column; gap: 22px; }
+    .meta .block.right { text-align: left; }
+    .doc-title { text-align: left; }
+    .dates { justify-content: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="toolbar">
+    <span class="tb-title">Invoice generator</span>
+    <button id="addSectionTop" type="button">+ Add section</button>
+    <button id="resetBtn" type="button">Reset</button>
+    <button id="printBtn" class="primary" type="button">Print / Save PDF</button>
+    <span class="hint">Click any text to edit it. Group line items into sections (e.g. Food, Labor, Materials) — each section subtotals into the total due. Use “Print / Save PDF”, then choose “Save as PDF”.</span>
+  </div>
+
+  <div class="sheet-wrap">
+    <div class="sheet" id="sheet">
+
+      <div class="head">
+        <div class="brand">
+          <img class="rmf"  src="logos/rmf-mark-light.png" alt="RMF"
+               onerror="this.style.display='none'">
+        </div>
+        <div class="doc-title">
+          <h1>Invoice</h1>
+          <div class="inv-no">No. <span contenteditable="true">INV-0001</span></div>
+        </div>
+      </div>
+
+      <hr class="rule accent">
+
+      <div class="meta">
+        <div class="block">
+          <div class="label">From</div>
+          <p>
+            <span class="name" contenteditable="true">Rhonda M. Fazio</span><br>
+            <span contenteditable="true">634 Pleasant Street</span><br>
+            <span contenteditable="true">New Bedford, MA</span><br>
+            <span contenteditable="true">dyermakerstudio@gmail.com</span>
+          </p>
+        </div>
+        <div class="block right">
+          <div class="label">Billed to</div>
+          <p>
+            <span class="name" contenteditable="true">Client company</span><br>
+            <span contenteditable="true">Address line 1</span><br>
+            <span contenteditable="true">City, Region, Postcode</span><br>
+            <span contenteditable="true">client@email.com</span>
+          </p>
+        </div>
+      </div>
+
+      <hr class="rule">
+
+      <div class="dates">
+        <div class="item">
+          <div class="k">Date of event</div>
+          <div class="v" contenteditable="true">1 Aug 2026</div>
+        </div>
+        <div class="item">
+          <div class="k">Issued</div>
+          <div class="v" contenteditable="true">15 Aug 2026</div>
+        </div>
+      </div>
+
+      <div style="height:12px"></div>
+
+      <div id="sections">
+        <!-- sections injected by JS -->
+      </div>
+
+      <div class="add-section-wrap">
+        <button id="addSection" type="button">+ Add section</button>
+      </div>
+
+      <div style="height:4px"></div>
+
+      <div class="totals">
+        <div class="box">
+          <div class="row grand"><span class="k">Total due</span><span class="v" id="totalDue">$0.00</span></div>
+        </div>
+      </div>
+
+      <hr class="rule accent">
+
+      <div class="pay">
+        <div class="block">
+          <div class="label">Payment</div>
+          <p>
+            Venmo &nbsp;<span contenteditable="true">@RhondaMFazio</span><br>
+            Cash App &nbsp;<span contenteditable="true">@dyermakerstudio</span>
+          </p>
+        </div>
+        <div class="block">
+          <div class="label">Crypto</div>
+          <p class="crypto">
+            <span class="ck">BTC</span> <span contenteditable="true">bc1qrxy8srsuw6aqescm6mlfjkvnqpgvecf6p590ug</span><br>
+            <span class="ck">ETH</span> <span contenteditable="true">dyermaker.eth</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="thanks">Thank you</div>
+
+    </div>
+  </div>
+
+<script>
+  // ---- default sections ----
+  const DEFAULT_SECTIONS = [
+    { name: "Items", items: [
+      { desc: "Silk sarong", qty: "2", unit: "75.00" },
+      { desc: "Materials — hemp warp, indigo, mordant", qty: "1", unit: "68.00" },
+    ]},
+  ];
+
+  const sectionsEl = document.getElementById('sections');
+  const totalEl = document.getElementById('totalDue');
+
+  const money = n => '$' + (isFinite(n) ? n : 0).toLocaleString('en-US',
+    { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  // parse a contenteditable numeric cell tolerantly ("1", "6", "45.00", "1,200")
+  const num = el => {
+    const v = parseFloat((el.textContent || '').replace(/[^0-9.\-]/g, ''));
+    return isFinite(v) ? v : 0;
+  };
+
+  function recalc() {
+    let grandTotal = 0;
+    sectionsEl.querySelectorAll('.section').forEach(section => {
+      let subtotal = 0;
+      section.querySelectorAll('tbody tr').forEach(tr => {
+        const qty  = num(tr.querySelector('.qty'));
+        const unit = num(tr.querySelector('.unit'));
+        const amt  = qty * unit;
+        tr.querySelector('.amt').textContent = money(amt);
+        subtotal += amt;
+      });
+      section.querySelector('.section-subtotal .v').textContent = money(subtotal);
+      grandTotal += subtotal;
+    });
+    totalEl.textContent = money(grandTotal);
+  }
+
+  function makeRow(item = { desc: 'New item', qty: '1', unit: '0.00' }) {
+    const tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td class="desc" contenteditable="true">' + item.desc + '</td>' +
+      '<td class="num qty" contenteditable="true">' + item.qty + '</td>' +
+      '<td class="num unit" contenteditable="true">' + item.unit + '</td>' +
+      '<td class="num amt">$0.00</td>' +
+      '<td class="act"><button type="button" title="Remove line" aria-label="Remove line">&times;</button></td>';
+    tr.querySelector('.act button').addEventListener('click', () => {
+      tr.remove(); recalc();
+    });
+    // recalc as the qty/unit cells are edited
+    tr.querySelectorAll('.qty, .unit').forEach(c => {
+      c.addEventListener('input', recalc);
+    });
+    return tr;
+  }
+
+  function makeSection(section = { name: 'New section', items: [{ desc: 'New item', qty: '1', unit: '0.00' }] }) {
+    const div = document.createElement('div');
+    div.className = 'section';
+    div.innerHTML =
+      '<div class="section-head">' +
+        '<span class="section-name" contenteditable="true">' + section.name + '</span>' +
+        '<button type="button" class="removeSection" title="Remove section" aria-label="Remove section">&times;</button>' +
+      '</div>' +
+      '<table>' +
+        '<thead><tr>' +
+          '<th class="desc">Description</th>' +
+          '<th class="num">Qty</th>' +
+          '<th class="num">Unit</th>' +
+          '<th class="num">Amount</th>' +
+          '<th class="act" aria-hidden="true"></th>' +
+        '</tr></thead>' +
+        '<tbody></tbody>' +
+      '</table>' +
+      '<div class="section-foot">' +
+        '<button type="button" class="addLine">+ Add line item</button>' +
+        '<div class="section-subtotal"><span class="k">Subtotal</span><span class="v">$0.00</span></div>' +
+      '</div>';
+
+    const tbody = div.querySelector('tbody');
+    section.items.forEach(it => tbody.appendChild(makeRow(it)));
+
+    div.querySelector('.addLine').addEventListener('click', () => {
+      const tr = makeRow(); tbody.appendChild(tr); recalc();
+      tr.querySelector('.desc').focus();
+    });
+    div.querySelector('.removeSection').addEventListener('click', () => {
+      div.remove(); recalc();
+    });
+    // Enter in a cell shouldn't insert a newline in single-line numeric cells
+    tbody.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && e.target.classList.contains('num')) {
+        e.preventDefault(); e.target.blur();
+      }
+    });
+
+    return div;
+  }
+
+  function loadSections(sections) {
+    sectionsEl.innerHTML = '';
+    sections.forEach(s => sectionsEl.appendChild(makeSection(s)));
+    recalc();
+  }
+
+  document.getElementById('addSection').addEventListener('click', () => {
+    const div = makeSection();
+    sectionsEl.appendChild(div);
+    recalc();
+    div.querySelector('.section-name').focus();
+  });
+  document.getElementById('addSectionTop').addEventListener('click', () =>
+    document.getElementById('addSection').click());
+
+  document.getElementById('printBtn').addEventListener('click', () => window.print());
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    if (confirm('Reset to the default sections and line items? Text fields you edited elsewhere are left alone.')) {
+      loadSections(DEFAULT_SECTIONS);
+    }
+  });
+
+  loadSections(DEFAULT_SECTIONS);
+</script>
+</body>
+</html>
