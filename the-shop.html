@@ -83,7 +83,7 @@
   .navbar-weave {
     --cap-w: calc(var(--weave-h) * 5.3188);
     --tile-w: calc(var(--weave-h) * 4.3478);
-    --weave-start: calc(var(--nav-pad) + var(--logo-h) * 0.0584 - var(--weave-h) * 0.1159 + var(--logo-shift, 0px));
+    --weave-start: calc(var(--nav-pad) + var(--logo-h) * 0.0584 - var(--weave-h) * 0.1159);
     --chain-x: calc(var(--weave-start) + var(--cap-w));
     position: absolute;
     left: var(--weave-start);
@@ -128,14 +128,8 @@
   }
 
   .nav-logo {
-    font-family: var(--ff-display);
-    font-size: 25px;
-    font-weight: bold;
-    letter-spacing: 0.02em;
-    color: var(--text);
     display: flex;
     align-items: center;
-    gap: 10px;
     margin-right: 24px;
     flex-shrink: 0;
   }
@@ -148,20 +142,11 @@
   body.dark .nav-logo-wordmark-light { display: none; }
   body.dark .nav-logo-wordmark-dark { display: block; }
 
-  .nav-logo-is { font-size: 11px; font-style: italic; letter-spacing: 0.02em; }
 
-  /* Actual size/position is set in JS (see updateNavLogoLayout): it needs
-     to span from the top of "Interwoven" down to the bottom of the
-     underline stroke beneath it, flush with both, which isn't a fixed
-     ratio of any single existing variable. --nav-h here is just a
-     reasonable fallback in case JS hasn't run yet. */
-  /* position:relative + top (set in JS) instead of margin-top: a margin
-     would count toward .nav-logo's own intrinsic height (it's a flex
-     item), feeding back into where .navbar centers it and shifting the
-     target on every correction pass. A relative offset is purely visual
-     and doesn't feed back into anything. */
-  .nav-logo-img-link { align-self: flex-start; position: relative; }
-  .nav-logo-img { width: var(--nav-h); height: var(--nav-h); display: block; }
+  /* The RMF mark sits in .nav-right now, shrunk to a plain fixed size
+     next to Contact rather than sized/positioned off the wordmark. */
+  .nav-logo-img-link { display: flex; }
+  .nav-logo-img { width: 40px; height: 40px; display: block; }
 
   .nav-logo-img-dark { display: none; }
   body.dark .nav-logo-img-light { display: none; }
@@ -728,7 +713,7 @@
   .footer-weave {
     --cap-w: calc(var(--weave-h) * 5.3188);
     --tile-w: calc(var(--weave-h) * 4.3478);
-    --weave-start: calc(var(--nav-pad) + var(--logo-h) * 0.0584 - var(--weave-h) * 0.1159 + var(--logo-shift, 0px));
+    --weave-start: calc(var(--nav-pad) + var(--logo-h) * 0.0584 - var(--weave-h) * 0.1159);
     --chain-x: calc(var(--weave-start) + var(--cap-w));
     position: absolute;
     left: 0; right: 0;
@@ -800,11 +785,6 @@
   <script>if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');</script>
   <nav class="navbar" id="navbar">
     <div class="nav-logo">
-      <a href="https://rhondamfazio.com" target="_blank" rel="noopener" class="nav-logo-img-link" aria-label="Rhonda M. Fazio">
-        <img src="logos/rmf-mark-light.png" alt="Rhonda M. Fazio" class="nav-logo-img nav-logo-img-light">
-        <img src="logos/rmf-mark-dark.png" alt="Rhonda M. Fazio" class="nav-logo-img nav-logo-img-dark">
-      </a>
-      <span class="nav-logo-is">is</span>
       <a href="index.html" class="nav-logo-text" aria-label="Interwoven">
         <img src="logos/interwoven-wordmark-light.png" alt="Interwoven" class="nav-logo-wordmark nav-logo-wordmark-light">
         <img src="logos/interwoven-wordmark-dark.png" alt="Interwoven" class="nav-logo-wordmark nav-logo-wordmark-dark">
@@ -813,15 +793,19 @@
 
     <ul class="nav-links">
       <li><a href="the-gallery.html">The Gallery</a></li>
-      <li><a href="the-fabric.html">The Fabric</a></li>
-      <li><a href="the-food.html">The Food</a></li>
-      <li><a href="the-maker.html">The Maker</a></li>
-      <li><a href="the-blog.html">The Blog</a></li>
-      <li><a href="the-shop.html">The Shop</a></li>
       <li><a href="the-calendar.html">The Calendar</a></li>
+      <li><a href="the-food.html">The Food</a></li>
+      <li><a href="the-fabric.html">The Fabric</a></li>
+      <li><a href="the-writings.html">The Writings</a></li>
+      <li><a href="the-maker.html">The Maker</a></li>
+      <li><a href="the-shop.html">The Shop</a></li>
     </ul>
 
     <div class="nav-right">
+      <a href="https://rhondamfazio.com" target="_blank" rel="noopener" class="nav-logo-img-link" aria-label="Rhonda M. Fazio">
+        <img src="logos/rmf-mark-light.png" alt="Rhonda M. Fazio" class="nav-logo-img nav-logo-img-light">
+        <img src="logos/rmf-mark-dark.png" alt="Rhonda M. Fazio" class="nav-logo-img nav-logo-img-dark">
+      </a>
       <a href="mailto:interwovenmakerspace@gmail.com" class="nav-ticket">Contact</a>
       <a href="#" class="nav-lang">EN</a>
       <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
@@ -839,12 +823,12 @@
     </div>
     <div class="nav-mobile-menu" id="navMobileMenu">
       <a href="the-gallery.html">The Gallery</a>
-      <a href="the-fabric.html">The Fabric</a>
-      <a href="the-food.html">The Food</a>
-      <a href="the-maker.html">The Maker</a>
-      <a href="the-blog.html">The Blog</a>
-      <a href="the-shop.html">The Shop</a>
       <a href="the-calendar.html">The Calendar</a>
+      <a href="the-food.html">The Food</a>
+      <a href="the-fabric.html">The Fabric</a>
+      <a href="the-writings.html">The Writings</a>
+      <a href="the-maker.html">The Maker</a>
+      <a href="the-shop.html">The Shop</a>
       <a href="#" class="nav-lang">EN</a>
       <a href="mailto:interwovenmakerspace@gmail.com">Contact</a>
     </div>
@@ -953,9 +937,9 @@
             </div>
           </div>
           <div class="shop-item">
-            <div class="shop-item-photo" data-photo-label="Daniel - Designer Clothing"><img src="pics/artist-daniel-clothing.jpeg" alt="Daniel - Designer Clothing" loading="lazy"></div>
+            <div class="shop-item-photo" data-photo-label="Matt &amp; Nick - Designer Clothing"><img src="pics/artist-daniel-clothing.jpeg" alt="Matt &amp; Nick - Designer Clothing" loading="lazy"></div>
             <div class="shop-item-info">
-              <h3>Daniel - Designer Clothing</h3>
+              <h3>Matt &amp; Nick - Designer Clothing</h3>
             </div>
           </div>
         </div>
@@ -1071,54 +1055,6 @@
 
   <script>
     const nav = document.getElementById('navbar');
-
-    // Sizes and positions the RMF mark so it's flush with the top of
-    // "Interwoven" and flush with the bottom of the underline beneath it
-    // -- not a fixed ratio of any single CSS variable, so measured
-    // directly instead of derived algebraically. Also shifts the
-    // navbar/footer underline right by however far the wordmark itself
-    // ends up sitting from the navbar's own left edge, since the RMF mark
-    // and "is" now sit in front of it and would otherwise leave the
-    // underline's cap under RMF instead of under the wordmark.
-    function updateNavLogoLayout() {
-      const wordmarkLink = document.querySelector('.nav-logo-text');
-      const rmfLink = document.querySelector('.nav-logo-img-link');
-      const navLogoEl = document.querySelector('.nav-logo');
-      const weave = document.getElementById('navbarWeave');
-      if (!wordmarkLink || !rmfLink || !navLogoEl || !weave) return;
-
-      // Clear previous inline sizing first so these measurements reflect
-      // the underlying layout, not a stale prior computation.
-      rmfLink.style.height = '';
-      rmfLink.style.top = '';
-      document.querySelectorAll('.nav-logo-img').forEach(img => {
-        img.style.width = '';
-        img.style.height = '';
-      });
-
-      const wordmarkRect = wordmarkLink.getBoundingClientRect();
-      const weaveRect = weave.getBoundingClientRect();
-      const height = weaveRect.bottom - wordmarkRect.top;
-      rmfLink.style.height = height + 'px';
-      document.querySelectorAll('.nav-logo-img').forEach(img => {
-        img.style.width = height + 'px';
-        img.style.height = height + 'px';
-      });
-
-      // A relative top offset (not margin) so this doesn't feed back into
-      // .nav-logo's own intrinsic height -- one pass is enough since
-      // there's nothing left for it to disturb.
-      const top = wordmarkLink.getBoundingClientRect().top - rmfLink.getBoundingClientRect().top;
-      rmfLink.style.top = top + 'px';
-
-      // RMF just changed width (it's square), which moves the wordmark
-      // horizontally -- recompute the underline shift against its new
-      // position rather than the one measured before resizing RMF.
-      const shift = wordmarkLink.getBoundingClientRect().left - navLogoEl.getBoundingClientRect().left;
-      document.documentElement.style.setProperty('--logo-shift', shift + 'px');
-    }
-    updateNavLogoLayout();
-    window.addEventListener('resize', updateNavLogoLayout);
 
     // Keep the footer copyright year current automatically
     const copyYear = document.getElementById('copyYear');

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Blog — Interwoven</title>
+<title>The Writings — Interwoven</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@300;500;600&family=Work+Sans:wght@300;400;500&display=swap');
   @font-face {
@@ -113,7 +113,7 @@
        (source x 7.76 of a 400x133 art), and bottom lifts it so they meet. */
     --cap-w: calc(var(--weave-h) * 5.3188);
     --tile-w: calc(var(--weave-h) * 4.3478);
-    --weave-start: calc(var(--nav-pad) + var(--logo-h) * 0.0584 - var(--weave-h) * 0.1159 + var(--logo-shift, 0px));
+    --weave-start: calc(var(--nav-pad) + var(--logo-h) * 0.0584 - var(--weave-h) * 0.1159);
     --chain-x: calc(var(--weave-start) + var(--cap-w));
     position: absolute;
     left: var(--weave-start);
@@ -158,14 +158,8 @@
   }
 
   .nav-logo {
-    font-family: var(--ff-display);
-    font-size: 21px;
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    color: var(--text);
     display: flex;
     align-items: center;
-    gap: 10px;
     margin-right: 24px;
     flex-shrink: 0;
   }
@@ -178,20 +172,11 @@
   body.dark .nav-logo-wordmark-light { display: none; }
   body.dark .nav-logo-wordmark-dark { display: block; }
 
-  .nav-logo-is { font-size: 11px; font-style: italic; letter-spacing: 0.02em; }
 
-  /* Actual size/position is set in JS (see updateNavLogoLayout): it needs
-     to span from the top of "Interwoven" down to the bottom of the
-     underline stroke beneath it, flush with both, which isn't a fixed
-     ratio of any single existing variable. --nav-h here is just a
-     reasonable fallback in case JS hasn't run yet. */
-  /* position:relative + top (set in JS) instead of margin-top: a margin
-     would count toward .nav-logo's own intrinsic height (it's a flex
-     item), feeding back into where .navbar centers it and shifting the
-     target on every correction pass. A relative offset is purely visual
-     and doesn't feed back into anything. */
-  .nav-logo-img-link { align-self: flex-start; position: relative; }
-  .nav-logo-img { width: var(--nav-h); height: var(--nav-h); display: block; }
+  /* The RMF mark sits in .nav-right now, shrunk to a plain fixed size
+     next to Contact rather than sized/positioned off the wordmark. */
+  .nav-logo-img-link { display: flex; }
+  .nav-logo-img { width: 40px; height: 40px; display: block; }
 
   .nav-logo-img-dark { display: none; }
   body.dark .nav-logo-img-light { display: none; }
@@ -486,6 +471,7 @@
   .category-card[data-filter="recipes"] { --category-color: var(--indigo); }
   .category-card[data-filter="edible"]  { --category-color: var(--gold); }
   .category-card[data-filter="blog"]    { --category-color: var(--burgundy); }
+  #backToTop { --category-color: var(--text); }
   .category-card:hover, .category-card.active { border-color: var(--category-color); }
   .category-card:hover .category-name, .category-card.active .category-name { color: var(--category-color); }
 
@@ -864,6 +850,19 @@
     padding: 6px 12px;
     margin-bottom: 28px;
   }
+  .recipe-source {
+    display: block;
+    font-size: 13px;
+    font-style: italic;
+    color: var(--text-muted);
+    margin: -18px 0 28px;
+  }
+  .recipe-source a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .recipe-source a:hover { color: var(--text); }
   .recipe h3 {
     font-family: "Goudos", "Fraunces", Georgia, serif;
     font-size: 13px;
@@ -998,7 +997,7 @@
   .footer-weave {
     --cap-w: calc(var(--weave-h) * 5.3188);
     --tile-w: calc(var(--weave-h) * 4.3478);
-    --weave-start: calc(var(--nav-pad) + var(--logo-h) * 0.0584 - var(--weave-h) * 0.1159 + var(--logo-shift, 0px));
+    --weave-start: calc(var(--nav-pad) + var(--logo-h) * 0.0584 - var(--weave-h) * 0.1159);
     --chain-x: calc(var(--weave-start) + var(--cap-w));
     position: absolute;
     left: 0; right: 0;
@@ -1046,11 +1045,6 @@
   <script>if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');</script>
   <nav class="navbar" id="navbar">
     <div class="nav-logo">
-      <a href="https://rhondamfazio.com" target="_blank" rel="noopener" class="nav-logo-img-link" aria-label="Rhonda M. Fazio">
-        <img src="logos/rmf-mark-light.png" alt="Rhonda M. Fazio" class="nav-logo-img nav-logo-img-light">
-        <img src="logos/rmf-mark-dark.png" alt="Rhonda M. Fazio" class="nav-logo-img nav-logo-img-dark">
-      </a>
-      <span class="nav-logo-is">is</span>
       <a href="index.html" class="nav-logo-text" aria-label="Interwoven">
         <img src="logos/interwoven-wordmark-light.png" alt="Interwoven" class="nav-logo-wordmark nav-logo-wordmark-light">
         <img src="logos/interwoven-wordmark-dark.png" alt="Interwoven" class="nav-logo-wordmark nav-logo-wordmark-dark">
@@ -1059,15 +1053,19 @@
 
     <ul class="nav-links">
       <li><a href="the-gallery.html">The Gallery</a></li>
-      <li><a href="the-fabric.html">The Fabric</a></li>
-      <li><a href="the-food.html">The Food</a></li>
-      <li><a href="the-maker.html">The Maker</a></li>
-      <li><a href="the-blog.html">The Blog</a></li>
-      <li><a href="the-shop.html">The Shop</a></li>
       <li><a href="the-calendar.html">The Calendar</a></li>
+      <li><a href="the-food.html">The Food</a></li>
+      <li><a href="the-fabric.html">The Fabric</a></li>
+      <li><a href="the-writings.html">The Writings</a></li>
+      <li><a href="the-maker.html">The Maker</a></li>
+      <li><a href="the-shop.html">The Shop</a></li>
     </ul>
 
     <div class="nav-right">
+      <a href="https://rhondamfazio.com" target="_blank" rel="noopener" class="nav-logo-img-link" aria-label="Rhonda M. Fazio">
+        <img src="logos/rmf-mark-light.png" alt="Rhonda M. Fazio" class="nav-logo-img nav-logo-img-light">
+        <img src="logos/rmf-mark-dark.png" alt="Rhonda M. Fazio" class="nav-logo-img nav-logo-img-dark">
+      </a>
       <a href="mailto:interwovenmakerspace@gmail.com" class="nav-ticket">Contact</a>
       <a href="#" class="nav-lang">EN</a>
       <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
@@ -1085,19 +1083,19 @@
     </div>
     <div class="nav-mobile-menu" id="navMobileMenu">
       <a href="the-gallery.html">The Gallery</a>
-      <a href="the-fabric.html">The Fabric</a>
-      <a href="the-food.html">The Food</a>
-      <a href="the-maker.html">The Maker</a>
-      <a href="the-blog.html">The Blog</a>
-      <a href="the-shop.html">The Shop</a>
       <a href="the-calendar.html">The Calendar</a>
+      <a href="the-food.html">The Food</a>
+      <a href="the-fabric.html">The Fabric</a>
+      <a href="the-writings.html">The Writings</a>
+      <a href="the-maker.html">The Maker</a>
+      <a href="the-shop.html">The Shop</a>
       <a href="#" class="nav-lang">EN</a>
       <a href="mailto:interwovenmakerspace@gmail.com">Contact</a>
     </div>
     <div class="navbar-weave" id="navbarWeave"></div>
   </nav>
   <main>
-    <div class="label">The Blog</div>
+    <div class="label">The Writings</div>
     <h1>Writings</h1>
 
     <div class="category-grid" id="categoryGrid">
@@ -1105,13 +1103,13 @@
         <span class="category-name">Recipes</span>
         <span class="category-teaser">Seasonal recipes from La Rhonda's kitchen.</span>
       </button>
-      <button type="button" class="category-card" data-filter="blog">
-        <span class="category-name">Blog</span>
-        <span class="category-teaser">Notes and stories from the space.</span>
-      </button>
       <button type="button" class="category-card" data-filter="edible">
         <span class="category-name">Edible</span>
         <span class="category-teaser">Features from edible Southeastern Massachusetts.</span>
+      </button>
+      <button type="button" class="category-card" data-filter="blog">
+        <span class="category-name">Archives</span>
+        <span class="category-teaser">Notes and stories from the space.</span>
       </button>
     </div>
 
@@ -1817,6 +1815,7 @@
           <h2>Ceviche de Pulpo</h2>
           <p class="recipe-desc">Octopus ceviche brightened with lime, sweet peppers, and cilantro &mdash; the acid of the lime cooks the meat, just like the other ingredients finish the dish. Served with a side of sweet potato and corn as close as you can get to the authenticity of the Peruvian dish.</p>
           <span class="recipe-serves">Serves: 2-3</span>
+          <p class="recipe-source">From the edible article <a href="#post-2024-06">&ldquo;International Waters: Bringing Your Bucket List Home&rdquo;</a>.</p>
           <h3>Ingredients</h3>
           <ul>
             <li>1 to 2 pounds octopus meat, thawed in fridge, legs only (remove and discard head and beak, may be used)</li>
@@ -1848,6 +1847,7 @@
           <h2>Deep Purple &ldquo;Stuffies&rdquo; &mdash; Baked Clams on the Half Shell</h2>
           <p class="recipe-desc">Local top neck quahog clams, simmered open, then stuffed with a lightly toasted breadcrumb filling and baked until golden &mdash; a South Coast summer classic, inspired by a lifetime of digging for quahogs with family.</p>
           <span class="recipe-serves">Serves: 6 people, two clams each</span>
+          <p class="recipe-source">From the edible article <a href="#post-2025-06">&ldquo;Deep Purple&rdquo;</a>.</p>
           <h3>Ingredients</h3>
           <ul>
             <li>12 raw top neck quahog clams (be sure all the clams are closed &mdash; if the shells are open, they are not safe for consumption, though you may want to save the shell for its color. Scrub the excess mud off the clam and rinse.)</li>
@@ -2041,6 +2041,7 @@
           <h2>Acorn Flour &mdash; Cold Leaching Method</h2>
           <p class="recipe-desc">Inspired by Euell Gibbons. A foraged flour made from acorns, leached of their bitter tannic acid, then dried and ground &mdash; use it in a 1:1 ratio with regular white flour in your favorite baking recipes.</p>
           <span class="recipe-serves">Yield: varies by batch</span>
+          <p class="recipe-source">From the edible article <a href="#post-2024-09">&ldquo;The Best Things in Life are Trees&hellip; with Acorns&rdquo;</a>.</p>
           <h3>Ingredients</h3>
           <ul>
             <li>Fresh acorns, ideally from a White Oak tree (least bitter)</li>
@@ -2107,6 +2108,7 @@
           <h2>American Pumpkin Bread <em>AKA</em> Pan Americano de Calabaza</h2>
           <p class="recipe-desc">A warmly spiced pumpkin bread that's rich, tender, and perfect for fall mornings or afternoon coffee. Add pecans and golden raisins for extra texture and sweetness.</p>
           <span class="recipe-serves">Serves: 10-12 (or 1-2 small loaves / about 12 muffins&mdash;to freeze and use later)</span>
+          <p class="recipe-source">From the edible article <a href="#post-2023-09">&ldquo;The Great American Pumpkin Bread&rdquo;</a>.</p>
           <h3>Ingredients</h3>
           <ul>
             <li>2 cups all-purpose flour</li>
@@ -2252,6 +2254,7 @@
           <h2>Gingerbread People</h2>
           <p class="recipe-desc">Classic spiced gingerbread cookies with a simple piped icing &mdash; a fun, creative snow day activity, decorated with your favorite sprinkles or candy.</p>
           <span class="recipe-serves">Makes about 2 dozen cookies</span>
+          <p class="recipe-source">From the edible article <a href="#post-2023-12">&ldquo;Gingerbread People&rdquo;</a>.</p>
           <h3>Ingredients</h3>
           <ul>
             <li>2&frac14; cups flour</li>
@@ -2357,36 +2360,46 @@
           <button type="button" class="category-card category-card-sm" data-filter="recipes">
             <span class="category-name">Check out all the recipes</span>
           </button>
-          <button type="button" class="category-card category-card-sm" data-filter="blog">
-            <span class="category-name">Check out all the blog posts</span>
-          </button>
           <button type="button" class="category-card category-card-sm" data-filter="edible">
             <span class="category-name">Check out all the edible articles</span>
+          </button>
+          <button type="button" class="category-card category-card-sm" data-filter="blog">
+            <span class="category-name">Check out all the archives</span>
           </button>
         </div>
       </div>
       <div class="sidebar-block" id="sidebarArchives">
-        <h3>Archives</h3>
-        <ul data-archive="blog">
-          <li><a href="#post-2022-10" data-season="fall">October 2022</a></li>
-          <li><a href="#post-2022-06" data-season="summer">June 2022</a></li>
-          <li><a href="#post-2022-03" data-season="spring">March 2022</a></li>
-          <li><a href="#post-2022-02" data-season="winter">February 2022</a></li>
-          <li><a href="#post-2021-12" data-season="winter">December 2021</a></li>
-          <li><a href="#post-2021-11" data-season="fall">November 2021</a></li>
-          <li><a href="#post-2021-09" data-season="fall">September 2021</a></li>
-          <li><a href="#post-2021-08" data-season="summer">August 2021</a></li>
-        </ul>
-        <ul data-archive="edible">
-          <li><a href="#post-2025-06" data-season="summer">Summer 2025</a></li>
-          <li><a href="#post-2024-12" data-season="winter">Winter 2024</a></li>
-          <li><a href="#post-2024-09" data-season="fall">Fall 2024</a></li>
-          <li><a href="#post-2024-06" data-season="summer">Summer 2024</a></li>
-          <li><a href="#post-2024-03" data-season="spring">Spring 2024</a></li>
-          <li><a href="#post-2023-12" data-season="winter">Winter 2023</a></li>
-          <li><a href="#post-2023-09" data-season="fall">Fall 2023</a></li>
-          <li><a href="#post-2023-06" data-season="summer">Summer 2023</a></li>
-        </ul>
+        <div data-archive-group="blog">
+          <h3>Archives</h3>
+          <ul data-archive="blog">
+            <li><a href="#post-2022-10" data-season="fall">October 2022</a></li>
+            <li><a href="#post-2022-06" data-season="summer">June 2022</a></li>
+            <li><a href="#post-2022-03" data-season="spring">March 2022</a></li>
+            <li><a href="#post-2022-02" data-season="winter">February 2022</a></li>
+            <li><a href="#post-2021-12" data-season="winter">December 2021</a></li>
+            <li><a href="#post-2021-11" data-season="fall">November 2021</a></li>
+            <li><a href="#post-2021-09" data-season="fall">September 2021</a></li>
+            <li><a href="#post-2021-08" data-season="summer">August 2021</a></li>
+          </ul>
+        </div>
+        <div data-archive-group="edible">
+          <h3>Articles</h3>
+          <ul data-archive="edible">
+            <li><a href="#post-2025-06" data-season="summer">Summer 2025</a></li>
+            <li><a href="#post-2024-12" data-season="winter">Winter 2024</a></li>
+            <li><a href="#post-2024-09" data-season="fall">Fall 2024</a></li>
+            <li><a href="#post-2024-06" data-season="summer">Summer 2024</a></li>
+            <li><a href="#post-2024-03" data-season="spring">Spring 2024</a></li>
+            <li><a href="#post-2023-12" data-season="winter">Winter 2023</a></li>
+            <li><a href="#post-2023-09" data-season="fall">Fall 2023</a></li>
+            <li><a href="#post-2023-06" data-season="summer">Summer 2023</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="sidebar-block" id="sidebarBackToTop">
+        <button type="button" class="category-card category-card-sm" id="backToTop">
+          <span class="category-name">Back to top &uarr;</span>
+        </button>
       </div>
     </aside>
     </div>
@@ -2412,57 +2425,16 @@
   <script>
     const nav = document.getElementById('navbar');
 
-    // Sizes and positions the RMF mark so it's flush with the top of
-    // "Interwoven" and flush with the bottom of the underline beneath it
-    // -- not a fixed ratio of any single CSS variable, so measured
-    // directly instead of derived algebraically. Also shifts the
-    // navbar/footer underline right by however far the wordmark itself
-    // ends up sitting from the navbar's own left edge, since the RMF mark
-    // and "is" now sit in front of it and would otherwise leave the
-    // underline's cap under RMF instead of under the wordmark.
-    function updateNavLogoLayout() {
-      const wordmarkLink = document.querySelector('.nav-logo-text');
-      const rmfLink = document.querySelector('.nav-logo-img-link');
-      const navLogoEl = document.querySelector('.nav-logo');
-      const weave = document.getElementById('navbarWeave');
-      if (!wordmarkLink || !rmfLink || !navLogoEl || !weave) return;
-
-      // Clear previous inline sizing first so these measurements reflect
-      // the underlying layout, not a stale prior computation.
-      rmfLink.style.height = '';
-      rmfLink.style.top = '';
-      document.querySelectorAll('.nav-logo-img').forEach(img => {
-        img.style.width = '';
-        img.style.height = '';
-      });
-
-      const wordmarkRect = wordmarkLink.getBoundingClientRect();
-      const weaveRect = weave.getBoundingClientRect();
-      const height = weaveRect.bottom - wordmarkRect.top;
-      rmfLink.style.height = height + 'px';
-      document.querySelectorAll('.nav-logo-img').forEach(img => {
-        img.style.width = height + 'px';
-        img.style.height = height + 'px';
-      });
-
-      // A relative top offset (not margin) so this doesn't feed back into
-      // .nav-logo's own intrinsic height -- one pass is enough since
-      // there's nothing left for it to disturb.
-      const top = wordmarkLink.getBoundingClientRect().top - rmfLink.getBoundingClientRect().top;
-      rmfLink.style.top = top + 'px';
-
-      // RMF just changed width (it's square), which moves the wordmark
-      // horizontally -- recompute the underline shift against its new
-      // position rather than the one measured before resizing RMF.
-      const shift = wordmarkLink.getBoundingClientRect().left - navLogoEl.getBoundingClientRect().left;
-      document.documentElement.style.setProperty('--logo-shift', shift + 'px');
-    }
-    updateNavLogoLayout();
-    window.addEventListener('resize', updateNavLogoLayout);
-
     // Keep the footer copyright year current automatically
     const copyYear = document.getElementById('copyYear');
     if (copyYear) copyYear.textContent = new Date().getFullYear();
+
+    const backToTop = document.getElementById('backToTop');
+    if (backToTop) {
+      backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
 
     // Category filter: Blog / Edible / Recipes swap what's visible in
     // place -- no navigation, no page load. Blog and Edible just filter
@@ -2479,7 +2451,7 @@
     const blogSidebarEl = document.querySelector('.blog-sidebar');
     const sidebarBrowseEl = document.getElementById('sidebarBrowse');
     const sidebarArchivesEl = document.getElementById('sidebarArchives');
-    const archiveLists = document.querySelectorAll('.sidebar-block ul[data-archive]');
+    const archiveGroups = document.querySelectorAll('.sidebar-block [data-archive-group]');
     let activeFilter = null;
 
     function applyFilter(category) {
@@ -2510,10 +2482,12 @@
       filterLinks.forEach(link => {
         link.classList.toggle('active', link.dataset.filter === category);
       });
-      // Only the archive matching the active category shows at all --
-      // nothing (not even both at once) until Blog or Edible is picked.
-      archiveLists.forEach(list => {
-        list.hidden = list.dataset.archive !== category;
+      // Only the archive group matching the active category shows at all
+      // -- nothing (not even both at once) until Blog or Edible is picked.
+      // Each group carries its own heading (Archives / Articles) along
+      // with its list, so the heading hides and shows with it.
+      archiveGroups.forEach(group => {
+        group.hidden = group.dataset.archiveGroup !== category;
       });
     }
 
@@ -2524,20 +2498,21 @@
       });
     });
 
-    // Archive links jump straight to one post by id -- switch to that
-    // archive list's own category first (rather than clearing the filter)
-    // so every post in it, including the target, is visible for the
-    // browser to scroll to and for the reader to keep browsing from.
-    document.querySelectorAll('.sidebar-block a[href^="#post-"]').forEach(link => {
+    // Any link to a post by id -- sidebar archive links, and a recipe's
+    // "from the edible article" source link -- switches to that post's
+    // own category first (rather than clearing the filter, or leaving
+    // the recipes panel showing) so the target is visible for the
+    // browser's default same-page navigation to scroll to.
+    document.querySelectorAll('a[href^="#post-"]').forEach(link => {
       link.addEventListener('click', () => {
-        const list = link.closest('ul[data-archive]');
-        applyFilter(list ? list.dataset.archive : null);
+        const target = document.getElementById(link.getAttribute('href').slice(1));
+        applyFilter(target ? target.dataset.category : null);
       });
     });
 
     // Landing state: only the three featured posts, sidebar hidden --
     // unless a deep link asks for the recipes panel specifically (other
-    // pages' "recipe" buttons point at the-blog.html#recipes).
+    // pages' "recipe" buttons point at the-writings.html#recipes).
     if (location.hash === '#recipes') {
       applyFilter('recipes');
       if (recipesPanel) recipesPanel.scrollIntoView({ behavior: 'auto', block: 'start' });
