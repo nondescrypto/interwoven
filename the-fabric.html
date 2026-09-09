@@ -582,36 +582,37 @@
   }
   .lightbox.open { display: flex; }
 
-  /* Fixed at the largest size any photo is allowed to render at, so the
-     arrows anchored to its edges (see .lightbox-nav) land in the same
-     spot for every photo instead of hopping around with each one's
-     actual size. The real photo still only takes up as much of this as
-     its own size needs (see .lightbox-photo-wrap) -- this box is just a
-     stable reference frame for the arrows, not the photo's own box. */
+  /* One standard size for every photo (matching the reference photo's own
+     472x630 size), so photos appear consistently across the site instead
+     of each rendering at its own native resolution -- object-fit:contain
+     on the img scales any photo, any aspect ratio, to fit this same box.
+     Also gives the arrows anchored to its edges (see .lightbox-nav) a
+     fixed spot to land at instead of hopping around with each photo. */
   .lightbox-stage {
     flex: 0 0 auto;
-    width: min(90vw, 1100px);
-    height: 88vh;
+    width: min(90vw, 472px);
+    height: min(82vh, 630px);
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
   .lightbox-photo {
-    max-width: 100%;
-    max-height: 100%;
+    width: 100%;
+    height: 100%;
     cursor: default;
   }
   .lightbox-photo img {
-    max-width: 100%;
-    max-height: 100%;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
     display: block;
     border-radius: 4px;
   }
 
-  /* Shrink-wraps to whatever size .lightbox-photo actually renders at,
-     giving the close button a corner to anchor to right at the photo's
-     own edge instead of the stage's. */
+  /* Shrink-wraps to the stage's fixed standard size (see .lightbox-photo
+     above), giving the close button a corner to anchor to right at the
+     photo box's own edge instead of the stage's. */
   .lightbox-photo-wrap {
     position: relative;
     display: flex;
@@ -916,7 +917,6 @@
       </button>
       <div class="photo-grid" id="photoGrid">
         <div class="grid-photo" data-photo-label="Silk, colors"><img src="pics/silk-colors.jpg" alt="Silk, colors" loading="lazy"></div>
-        <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin.jpg" alt="Silk on mannequin" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin1.jpg" alt="Silk on mannequin" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin2.jpg" alt="Silk on mannequin" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin3.jpg" alt="Silk on mannequin" loading="lazy"></div>
@@ -926,15 +926,11 @@
         <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin7.jpg" alt="Silk on mannequin" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin8.jpg" alt="Silk on mannequin" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin9.jpg" alt="Silk on mannequin" loading="lazy"></div>
-        <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin10.jpg" alt="Silk on mannequin" loading="lazy"></div>
-        <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin11.jpg" alt="Silk on mannequin" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequin12.jpg" alt="Silk on mannequin" loading="lazy"></div>
-        <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-scarf.jpg" alt="Silk on mannequin" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-scarf1.jpg" alt="Silk on mannequin" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Silk on mannequin"><img src="pics/silk-mannequins.jpg" alt="Silk on mannequin" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Silk"><img src="pics/silk_waves.jpg" alt="Silk" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Silk"><img src="pics/silk_waves1.jpg" alt="Silk" loading="lazy"></div>
-        <div class="grid-photo" data-photo-label="Silk"><img src="pics/silk_waves2.jpg" alt="Silk" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Silk"><img src="pics/silk_waves3.jpg" alt="Silk" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Silk"><img src="pics/silk_waves_warm.jpg" alt="Silk" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Silk booth"><img src="pics/booth.jpg" alt="Silk booth" loading="lazy"></div>
@@ -957,8 +953,8 @@
 
     <div class="involved">
       <h3>Come find us</h3>
-      <p>Located below the Portuguese Consulate and across the street from City Hall in New Bedford MA.</p>
-      <p>634 Pleasant Street, New Bedford, MA &middot; (508) 669-6835</p>
+      <p>Located below the Portuguese Consulate and across the street from City Hall in the Seaport District of New Bedford, Massachusetts.</p>
+      <p>634 Pleasant Street, New Bedford, MA 02740 &middot; (508) 669-6835</p>
       <a href="the-shop.html#donate" class="btn-link">Donate</a>
     </div>
   </main>

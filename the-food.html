@@ -520,6 +520,12 @@
     color: var(--stone);
     line-height: 1.6;
   }
+  .event-flyer-dates-note {
+    color: var(--text-muted);
+    font-size: 16.5px;
+    line-height: 1.75;
+    margin-top: 16px;
+  }
 
   .layout-text {
     flex: 1 1 50%;
@@ -555,10 +561,18 @@
      script). This is just the layout wrapper and the caption type. */
   .food-trio {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr 1.5fr 1fr;
     gap: 32px;
     margin-top: 48px;
+    align-items: start;
   }
+  /* The dish (center item) gets a bigger, taller photo box for more
+     vertical presence than the other two -- object-fit:contain (instead
+     of the shared class's cover) keeps the landscape photo's full frame
+     visible, uncropped, letterboxed within that taller box rather than
+     stretched or cut to fill it. */
+  .food-trio-item:nth-child(2) .grid-photo { aspect-ratio: 3 / 4; }
+  .food-trio-item:nth-child(2) .grid-photo img { object-fit: contain; }
   .food-trio-item h3 {
     font-family: "Papyrus Local", "Papyrus", fantasy;
     font-weight: bold;
@@ -699,36 +713,37 @@
   }
   .lightbox.open { display: flex; }
 
-  /* Fixed at the largest size any photo is allowed to render at, so the
-     arrows anchored to its edges (see .lightbox-nav) land in the same
-     spot for every photo instead of hopping around with each one's
-     actual size. The real photo still only takes up as much of this as
-     its own size needs (see .lightbox-photo-wrap) -- this box is just a
-     stable reference frame for the arrows, not the photo's own box. */
+  /* One standard size for every photo (matching the reference photo's own
+     472x630 size), so photos appear consistently across the site instead
+     of each rendering at its own native resolution -- object-fit:contain
+     on the img scales any photo, any aspect ratio, to fit this same box.
+     Also gives the arrows anchored to its edges (see .lightbox-nav) a
+     fixed spot to land at instead of hopping around with each photo. */
   .lightbox-stage {
     flex: 0 0 auto;
-    width: min(90vw, 1100px);
-    height: 88vh;
+    width: min(90vw, 472px);
+    height: min(82vh, 630px);
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
   .lightbox-photo {
-    max-width: 100%;
-    max-height: 100%;
+    width: 100%;
+    height: 100%;
     cursor: default;
   }
   .lightbox-photo img {
-    max-width: 100%;
-    max-height: 100%;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
     display: block;
     border-radius: 4px;
   }
 
-  /* Shrink-wraps to whatever size .lightbox-photo actually renders at,
-     giving the close button a corner to anchor to right at the photo's
-     own edge instead of the stage's. */
+  /* Shrink-wraps to the stage's fixed standard size (see .lightbox-photo
+     above), giving the close button a corner to anchor to right at the
+     photo box's own edge instead of the stage's. */
   .lightbox-photo-wrap {
     position: relative;
     display: flex;
@@ -991,12 +1006,12 @@
 
     <h2 class="gallery-heading">Catering</h2>
     <div class="catering-layout">
-      <div class="grid-photo" data-photo-label="Catering spread"><img src="pics/cater.jpg" alt="Catering spread" loading="lazy"></div>
+      <div class="grid-photo" data-photo-label="Catering spread"><img src="pics/plate.jpg" alt="Catering spread" loading="lazy"></div>
       <div class="catering-text">
         <p>Planning an event and looking for a caterer? Get in touch to talk menu and pricing.</p>
         <a href="the-shop.html#services" class="btn-link">Book a caterer</a>
       </div>
-      <div class="grid-photo" data-photo-label="Catering spread"><img src="pics/cater1.jpg" alt="Catering spread" loading="lazy"></div>
+      <div class="grid-photo" data-photo-label="Catering spread"><img src="pics/cater.jpg" alt="Catering spread" loading="lazy"></div>
     </div>
 
     <div class="event-flyer">
@@ -1012,8 +1027,9 @@
       <h3 class="event-flyer-title">Seafood at Sunset</h3>
       <p class="event-flyer-subtitle">Sundays up on a roof or on a deck</p>
       <div class="event-flyer-rule"></div>
-      <p class="event-flyer-body">Each Sunday throughout the summer, La Rhonda features what's in season in and out of the water (and in a tin), highlighting the city's beautiful harbour through the art of fresh, tapas-style seafood dishes. Come on up and enjoy the vibe and the food &mdash; it's free.</p>
-      <p class="event-flyer-credit">Sponsored by Mass Cultural Council, New Bedford Local Cultural Council, Coastal Foodshed, PLAY, and RMFaz.</p>
+      <p class="event-flyer-body">On Sundays throughout the summer, La Rhonda features what's in season in and out of the water (and in a tin), highlighting the city's beautiful harbour through the art of fresh, tapas-style seafood dishes. Come on up and enjoy the vibe and the food &mdash; it's free.</p>
+      <p class="event-flyer-credit">Sponsored by Mass Cultural Council, New Bedford Local Cultural Council, Coastal Foodshed, PLAY, and Rhonda M. Fazio.</p>
+      <p class="event-flyer-dates-note">Check the calendar for precise dates.</p>
     </div>
 
     <h2 class="gallery-heading">Preparing and Preserving Food is an Art</h2>
@@ -1091,8 +1107,8 @@
 
     <div class="involved">
       <h3>Come find us</h3>
-      <p>Located below the Portuguese Consulate and across the street from City Hall in New Bedford MA.</p>
-      <p>634 Pleasant Street, New Bedford, MA &middot; (508) 669-6835</p>
+      <p>Located below the Portuguese Consulate and across the street from City Hall in the Seaport District of New Bedford, Massachusetts.</p>
+      <p>634 Pleasant Street, New Bedford, MA 02740 &middot; (508) 669-6835</p>
       <a href="the-shop.html#donate" class="btn-link">Donate</a>
     </div>
   </main>

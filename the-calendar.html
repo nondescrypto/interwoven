@@ -33,6 +33,9 @@
     --burgundy: #da1a23;   /* leaf red,    4.53:1 on ivory */
     --gold:     #77710d;   /* leaf yellow, 4.52:1 on ivory */
     --indigo:   #2e3093;   /* leaf blue,   9.59:1 on ivory */
+    --green:    #2f7d32;   /* spring accent, matching the recipe season color */
+    --orange:   #b5560c;
+    --purple:   #7a3aa0;
     --stone:    #8a857c;   /* warm neutral for placeholder fills */
     --line: rgba(26,24,22,0.12);
     --ff-display: "Papyrus Local", "Papyrus", fantasy;
@@ -63,6 +66,9 @@
     --burgundy: #ee2d36;   /* 4.51:1 on dark */
     --gold:     #c4b904;   /* 9.17:1 on dark */
     --indigo:   #7878b3;   /* 4.56:1 on dark */
+    --green:    #6fcf73;
+    --orange:   #e8963f;
+    --purple:   #c48fe0;
     --stone:    #615d56;
     --label-color: #ffffff;
   }
@@ -366,7 +372,20 @@
     font-family: "Papyrus Local", "Papyrus", fantasy;
     font-weight: bold;
     font-size: clamp(38px, 4vw, 55px);
+    margin: 0 0 12px;
+  }
+  .calendar-subtext {
+    font-size: 19px;
+    color: var(--text-muted);
     margin: 0 0 40px;
+  }
+  .calendar-subtext span { font-weight: 600; }
+  .calendar-update-note {
+    font-family: var(--ff-display);
+    font-size: 26px;
+    font-style: italic;
+    color: var(--text-muted);
+    margin-top: 16px;
   }
   .calendar-frame {
     border: 1px solid var(--line);
@@ -491,6 +510,7 @@
   <main>
     <div class="label">The Calendar</div>
     <h1>Upcoming events</h1>
+    <p class="calendar-subtext">for <span style="color: var(--orange);">Interwoven</span>, <span style="color: var(--green);">La Rhonda - The South Coast Sicilian</span>, and <span style="color: var(--purple);">Dyer Maker Studio</span></p>
 
     <div class="calendar-frame">
       <iframe
@@ -498,6 +518,7 @@
         title="Upcoming events calendar">
       </iframe>
     </div>
+    <p class="calendar-update-note">This calendar is updated monthly.</p>
   </main>
   <footer class="site-footer">
     <div class="footer-weave" id="footerWeave"></div>

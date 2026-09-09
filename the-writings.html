@@ -520,6 +520,12 @@
     background: var(--bg);
     margin-bottom: 24px;
   }
+  .photo-credit {
+    margin: -14px 0 20px;
+    font-size: 12.5px;
+    font-style: italic;
+    color: var(--text-muted);
+  }
   .blog-post-photo img {
     position: absolute;
     inset: 0;
@@ -632,9 +638,9 @@
     border-bottom: 1px solid var(--line);
   }
 
-  /* Featured posts: the three top picks (Recipes, October Road, Deep
-     Purple) get a boxed, called-out treatment instead of blending in as
-     just another post in the list -- each outlined in its own category's
+  /* Featured posts: the top picks (Recipes, Deep Purple) get a boxed,
+     called-out treatment instead of blending in as just another post in
+     the list -- each outlined in its own category's
      color (blue/recipes, red/blog, yellow/edible), matching the category
      cards up top. An outline rather than a fill keeps the body text as
      readable as any other post. Recipes has no data-category, so it's
@@ -1123,8 +1129,7 @@
         <a href="#" data-filter="recipes" class="btn-link">Explore the recipes</a>
       </article>
 
-      <article class="blog-post featured" id="post-2022-10" data-category="blog">
-        <div class="featured-tag">Featured</div>
+      <article class="blog-post" id="post-2022-10" data-category="blog">
         <div class="blog-post-gallery float-right">
           <figure>
             <img src="the-blog/blog-pics/october-road.jpg" alt="A group scrapbooking around a table at Interwoven" loading="lazy">
@@ -1144,7 +1149,8 @@
 
       <article class="blog-post featured" id="post-2025-06" data-category="edible">
         <div class="featured-tag">Featured</div>
-        <div class="blog-post-photo placeholder"><span>Photo coming soon</span></div>
+        <div class="blog-post-photo"><img src="the-blog/blog-pics/edible-deep-purple.jpg" alt="Deep Purple" loading="lazy"></div>
+        <p class="photo-credit">Image by Rhonda M. Fazio</p>
         <div class="blog-post-date">Summer 2025</div>
         <h2>Deep Purple</h2>
         <p class="edible-byline">by Rhonda M. Fazio &middot; <em>originally published in edible Southeastern Massachusetts</em></p>

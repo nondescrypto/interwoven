@@ -893,16 +893,17 @@
 
   .lightbox.open { display: flex; }
 
-  /* Fixed at the largest size any photo is allowed to render at, so the
-     arrows anchored to its edges (see .lightbox-nav) land in the same
-     spot for every photo instead of hopping around with each one's
-     actual size. The real photo still only takes up as much of this as
-     its own size needs (see .lightbox-photo-wrap) -- this box is just a
-     stable reference frame for the arrows, not the photo's own box. */
+  /* One standard size for every photo (matching the reference photo's own
+     472x630 size), so photos appear consistently across the site instead
+     of each rendering at its own native resolution -- object-fit:contain
+     on the img (see .lightbox-photo.has-image img) scales any photo, any
+     aspect ratio, to fit this same box. Also gives the arrows anchored to
+     its edges (see .lightbox-nav) a fixed spot to land at instead of
+     hopping around with each photo. */
   .lightbox-stage {
     flex: 0 0 auto;
-    width: min(80vw, 900px);
-    height: min(80vh, 640px);
+    width: min(90vw, 472px);
+    height: min(82vh, 630px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -923,16 +924,13 @@
     cursor: default;
   }
 
-  /* With a real photo, the box shrinks to the image's own rendered size
-     within the stage above, instead of staying a fixed full-stage card --
-     that way the close button (which anchors to this box's own corner)
-     sits right beside the actual photo edge, not off in empty space
-     around a card that's bigger than the photo. */
+  /* With a real photo, the card fills the whole standard stage size
+     instead of shrink-wrapping to the placeholder's content -- the img's
+     own object-fit:contain then does the work of fitting that photo,
+     whatever its native size or aspect ratio, inside this fixed box. */
   .lightbox-photo.has-image {
-    width: auto;
-    height: auto;
-    max-width: 100%;
-    max-height: 100%;
+    width: 100%;
+    height: 100%;
     background: none;
     padding: 0;
     align-items: center;
@@ -940,15 +938,16 @@
   }
 
   .lightbox-photo img {
-    max-width: 100%;
-    max-height: 100%;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
     display: block;
     border-radius: 4px;
   }
 
-  /* Shrink-wraps to whatever size .lightbox-photo actually renders at,
-     giving the close button a corner to anchor to right at the photo's
-     own edge instead of the stage's. */
+  /* Shrink-wraps to the stage's fixed standard size (see .lightbox-photo
+     above), giving the close button a corner to anchor to right at the
+     photo box's own edge instead of the stage's. */
   .lightbox-photo-wrap {
     position: relative;
     display: flex;
@@ -1425,7 +1424,7 @@
 
       <div class="info-note">
         <div class="info-note-label">Pay attention to the location</div>
-        <p>Most events are at Interwoven, but La Rhonda's Sea Food at Sunset or events by other artists might be somewhere else. Thank you for your attention :)</p>
+        <p>Most events are at Interwoven, but La Rhonda's Seafood at Sunset or events by other artists might be somewhere else. Thank you for your attention :)</p>
       </div>
     </section>
 
@@ -1437,6 +1436,8 @@
       <p class="section-body">Every Thursday at the New Bedford Farmers Market in Buttonwood Park, La Rhonda will cook up seasonal dishes to sample featuring locally sourced foods from South Coast farms. 2-6 pm.</p>
       <p class="section-body">In addition, food preservation classes take place at the Coastal Food Shed's Farmers Hub at the Kilburn Mill.</p>
       <a href="the-food.html" class="btn-link btn-link-block">See what's cooking</a>
+      <p class="section-body">Booking private instruction/parties and events upon request<br>Domestic/International Instruction</p>
+      <a href="the-shop.html#services" class="btn-link btn-link-block">Bookings</a>
     </section>
 
 
@@ -1446,7 +1447,9 @@
       <p class="section-body">Be an artist for a day and create your own wearable art! Experience the design process with the art of pure color.</p>
       <p class="section-body">All dyes are natural and extracted without the use of harmful chemicals. Pure, vivid color you can feel and wear anytime of the year.</p>
       <div class="ph-photo ph-photo-large" data-photo-label="Dye process"><img src="pics/dyes1.jpg" alt="Dye process" loading="lazy"></div>
-      <a href="the-fabric.html" class="btn-link btn-link-block">Discover your pattern</a>
+      <a href="the-fabric.html" class="btn-link btn-link-block">The wearable art</a>
+      <p class="section-body">Booking private instruction/parties and events upon request<br>Domestic/International Instruction</p>
+      <a href="the-shop.html#services" class="btn-link btn-link-block">Bookings</a>
     </section>
 
 

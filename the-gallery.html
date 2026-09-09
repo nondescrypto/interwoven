@@ -380,7 +380,7 @@
     height: 420px;
     border-radius: 4px;
     overflow: hidden;
-    background: linear-gradient(155deg, var(--stone) 0%, var(--line) 100%);
+    background: none;
     display: flex;
     align-items: flex-end;
     padding: 20px;
@@ -399,7 +399,7 @@
     inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     display: block;
   }
   .layout-text {
@@ -500,36 +500,37 @@
   }
   .lightbox.open { display: flex; }
 
-  /* Fixed at the largest size any photo is allowed to render at, so the
-     arrows anchored to its edges (see .lightbox-nav) land in the same
-     spot for every photo instead of hopping around with each one's
-     actual size. The real photo still only takes up as much of this as
-     its own size needs (see .lightbox-photo-wrap) -- this box is just a
-     stable reference frame for the arrows, not the photo's own box. */
+  /* One standard size for every photo (matching the reference photo's own
+     472x630 size), so photos appear consistently across the site instead
+     of each rendering at its own native resolution -- object-fit:contain
+     on the img scales any photo, any aspect ratio, to fit this same box.
+     Also gives the arrows anchored to its edges (see .lightbox-nav) a
+     fixed spot to land at instead of hopping around with each photo. */
   .lightbox-stage {
     flex: 0 0 auto;
-    width: min(90vw, 1100px);
-    height: 88vh;
+    width: min(90vw, 472px);
+    height: min(82vh, 630px);
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
   .lightbox-photo {
-    max-width: 100%;
-    max-height: 100%;
+    width: 100%;
+    height: 100%;
     cursor: default;
   }
   .lightbox-photo img {
-    max-width: 100%;
-    max-height: 100%;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
     display: block;
     border-radius: 4px;
   }
 
-  /* Shrink-wraps to whatever size .lightbox-photo actually renders at,
-     giving the close button a corner to anchor to right at the photo's
-     own edge instead of the stage's. */
+  /* Shrink-wraps to the stage's fixed standard size (see .lightbox-photo
+     above), giving the close button a corner to anchor to right at the
+     photo box's own edge instead of the stage's. */
   .lightbox-photo-wrap {
     position: relative;
     display: flex;
@@ -767,22 +768,23 @@
     <h1>A look inside the space</h1>
 
     <div class="layout">
-      <div class="layout-photo" data-photo-label="The main room"><img src="pics/the-venue-full.jpg" alt="The main room" loading="lazy"></div>
+      <div class="layout-photo" data-photo-label="Welcome to Interwoven"><img src="pics/gallery-welcome.jpg" alt="Welcome to Interwoven" loading="lazy"></div>
       <div class="layout-text">
         <h2>Interwoven Maker Space</h2>
         <p>A venue created by an artist for artists, it becomes a space to make creativity blossom. It is a gallery for artists, a performance space for musicians and poets, a place to teach a class and learn new skills - a space where everyone is welcome to create and engage with local artists and their art.</p>
-        <p>Have some tea or coffee over conversation, all together it forms the culture, art, food, fabric and entertainment of the community.</p>
-        <p>This vision of Interwoven Caffe™ is to be open for events, classes, and scheduled city events. </p>
+        <p>All together it forms the Culture, Art, Food, Fabric and Entertainment of the community, this is Interwoven Caffe. Have some tea, coffee, and conversation while you are here.</p>
       </div>
     </div>
 
     <h2 class="gallery-heading">Music & Events</h2>
     <p class="section-note">Interwoven is a venue for many performers, including those that are a part of <a href="https://www.instagram.com/stoveboatconcerts/" target="_blank" rel="noopener">Stoveboat Concerts</a> and <a href="https://scapeghostsounds.com/unexpected-music" target="_blank" rel="noopener">Unexpected Music</a>.</p>
+    <p class="section-note">Interwoven is open during scheduled music and performances, classes and workshops, and select city events.</p>
     <div class="photo-panner">
       <button type="button" class="pan-btn pan-prev" aria-label="Scroll photos left">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <div class="photo-grid" id="photoGrid">
+        <div class="grid-photo" data-photo-label="The main room"><img src="pics/the-venue-full.jpg" alt="The main room" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Music Event"><img src="pics/event.jpg" alt="Music Event" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Music Event"><img src="pics/event1.jpg" alt="Music Event" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Event"><img src="pics/event2.jpg" alt="Event" loading="lazy"></div>
@@ -790,6 +792,7 @@
         <div class="grid-photo" data-photo-label="Event"><img src="pics/event4.jpg" alt="Event" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Event"><img src="pics/event5.jpg" alt="Event" loading="lazy"></div>
         <div class="grid-photo" data-photo-label="Event"><img src="pics/event6.jpg" alt="Event" loading="lazy"></div>
+        <div class="grid-photo" data-photo-label="Event"><img src="pics/gallery-guys-outside.jpg" alt="Event" loading="lazy"></div>
       </div>
       <button type="button" class="pan-btn pan-next" aria-label="Scroll photos right">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -806,8 +809,8 @@
 
     <div class="involved">
       <h3>Come find us</h3>
-      <p>Located below the Portuguese Consulate and across the street from City Hall in New Bedford MA.</p>
-      <p>634 Pleasant Street, New Bedford, MA &middot; (508) 669-6835</p>
+      <p>Located below the Portuguese Consulate and across the street from City Hall in the Seaport District of New Bedford, Massachusetts.</p>
+      <p>634 Pleasant Street, New Bedford, MA 02740 &middot; (508) 669-6835</p>
       <a href="the-shop.html#donate" class="btn-link">Donate</a>
     </div>
   </main>
