@@ -1155,6 +1155,25 @@
     .maker-layout .ph-photo-large { height: 260px; }
   }
 
+  /* Phone-only trims (below the 701px tablet band above, so iPads keep the
+     full copy). A phone panel's usable height is the smallest here, and
+     these were the panels fitPanelContent had to scale hardest to fit --
+     past a point that's unreadable rather than merely smaller, so the
+     secondary content comes out instead.
+
+     Food/Fabric: the booking note and its Bookings button go. The panel's
+     own "See what's cooking"/"The wearable art" link still leads to the
+     same detail pages, which carry the booking information, and The Shop's
+     services table is reachable from the nav. */
+  @media (max-width: 700px) {
+    .booking-cta { display: none; }
+
+    /* The Heart keeps its opening line only -- the long second paragraph is
+       what pushed this panel over the available height. Full text lives on
+       the-maker.html, which the panel's own button already points at. */
+    .maker-text-more { display: none; }
+  }
+
   /* Short viewports -- landscape tablets most of all, where the width is
      generous but the height is tight -- get their vertical rhythm
      tightened directly instead of leaning on fitPanelContent's JS scale
@@ -1436,8 +1455,8 @@
       <p class="section-body">Every Thursday at the New Bedford Farmers Market in Buttonwood Park, La Rhonda will cook up seasonal dishes to sample featuring locally sourced foods from South Coast farms. 2-6 pm.</p>
       <p class="section-body">In addition, food preservation classes take place at the Coastal Food Shed's Farmers Hub at the Kilburn Mill.</p>
       <a href="the-food.html" class="btn-link btn-link-block">See what's cooking</a>
-      <p class="section-body">Booking private instruction/parties and events upon request<br>Domestic/International Instruction</p>
-      <a href="the-shop.html#services" class="btn-link btn-link-block">Bookings</a>
+      <p class="section-body booking-cta">Booking private instruction/parties and events upon request<br>Domestic/International Instruction</p>
+      <a href="the-shop.html#services" class="btn-link btn-link-block booking-cta">Bookings</a>
     </section>
 
 
@@ -1448,8 +1467,8 @@
       <p class="section-body">All dyes are natural and extracted without the use of harmful chemicals. Pure, vivid color you can feel and wear anytime of the year.</p>
       <div class="ph-photo ph-photo-large" data-photo-label="Dye process"><img src="pics/dyes1.jpg" alt="Dye process" loading="lazy"></div>
       <a href="the-fabric.html" class="btn-link btn-link-block">The wearable art</a>
-      <p class="section-body">Booking private instruction/parties and events upon request<br>Domestic/International Instruction</p>
-      <a href="the-shop.html#services" class="btn-link btn-link-block">Bookings</a>
+      <p class="section-body booking-cta">Booking private instruction/parties and events upon request<br>Domestic/International Instruction</p>
+      <a href="the-shop.html#services" class="btn-link btn-link-block booking-cta">Bookings</a>
     </section>
 
 
@@ -1474,7 +1493,7 @@
         <div class="ph-photo ph-photo-large" data-photo-label="Rhonda Fazio"><img src="pics/artist1.jpg" alt="Rhonda Fazio" loading="lazy"></div>
         <div class="maker-text">
           <p>The Child has grown, the dream remains...</p>
-          <p>My journey as an Artist and a Mother is the inspiration I draw from as I continue my travels in this life. It was during the most trying times, that I became the most creative. I shuffled my inherent skills around and developed creative ways to support my son without giving up on my dreams. It became a part of life that continues to be relevant as we adapt to living in an everchanging world.</p>
+          <p class="maker-text-more">My journey as an Artist and a Mother is the inspiration I draw from as I continue my travels in this life. It was during the most trying times, that I became the most creative. I shuffled my inherent skills around and developed creative ways to support my son without giving up on my dreams. It became a part of life that continues to be relevant as we adapt to living in an everchanging world.</p>
         </div>
       </div>
       <a href="the-maker.html" class="btn-link btn-link-block">Meet the Maker</a>
